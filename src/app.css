@@ -1,3 +1,44 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer base {
+  :root {
+    --primary-color: #9f1239;
+    --secondary-color: #fecdd3;
+    --background-color: #fff1f2;
+    --text-color: #881337;
+  }
+  
+  body {
+    @apply bg-rose-50;
+    @apply text-rose-900;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .mobile-container {
+    @apply mx-auto max-w-md min-h-screen bg-white shadow-lg relative overflow-hidden;
+  }
+
+  .app-content {
+    @apply h-[calc(100vh-4rem)] overflow-y-auto pb-16;
+  }
+
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-rose-100 h-16;
+  }
+
+  .nav-items {
+    @apply flex justify-around items-center h-full px-4;
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center justify-center text-rose-300;
+  }
+
+  .nav-item.active {
+    @apply text-rose-600;
+  }
+}
