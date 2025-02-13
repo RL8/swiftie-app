@@ -1,9 +1,10 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
     import Button from '$lib/components/Button.svelte';
 
     function handleGetStarted() {
-        goto('/albums');
+        goto(`${base}/albums`);
     }
 </script>
 

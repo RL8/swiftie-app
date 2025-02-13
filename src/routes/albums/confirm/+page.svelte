@@ -1,15 +1,16 @@
 <script lang="ts">
     import { selectedAlbums } from '$lib/stores/albumSelection';
     import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
     import { onMount } from 'svelte';
     import confetti from 'canvas-confetti';
 
     function handleEdit() {
-        goto('/albums');
+        goto(`${base}/albums`);
     }
     
     function handleContinue() {
-        goto('/songs');
+        goto(`${base}/songs`);
     }
 
     function vibrate() {

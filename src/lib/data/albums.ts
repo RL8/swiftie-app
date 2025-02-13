@@ -1,8 +1,8 @@
 import type { Album } from '$lib/types/album';
+import { base } from '$app/paths';
 
 export const getAlbumPath = (path: string) => {
-    // This will be replaced at runtime with the correct base path
-    return `/albums${path}`;
+    return `${base}/albums${path}`;
 };
 
 export const albums: Album[] = [
