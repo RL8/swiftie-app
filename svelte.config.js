@@ -5,11 +5,25 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	kit: {
 		adapter: adapter({
-			fallback: 'index.html',
+			pages: 'build',
+			assets: 'build',
+			fallback: '404.html',
+			precompress: false,
 			strict: false
 		}),
 		paths: {
 			base: process.env.BASE_PATH || ''
+		},
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				// ignore deliberate link to shiny 404 page
+				if (path === '/404') {
+					return;
+				}
+
+				// otherwise fail the build
+				throw new Error(message);
+			}
 		}
 	},
 	preprocess: vitePreprocess()

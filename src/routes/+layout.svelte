@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from '$app/paths';
     import "../app.css";
     import { page } from '$app/stores';
     import BottomNav from '$lib/components/BottomNav.svelte';
@@ -17,6 +18,10 @@
 </Layout>
 
 <style>
+    :global(html) {
+        background-color: rgb(243 244 246);
+    }
+
     :global(.shimmer) {
         background-size: 200% 100%;
         background-image: linear-gradient(
