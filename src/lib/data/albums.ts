@@ -1,10 +1,15 @@
 import type { Album } from '$lib/types/album';
 
+export const getAlbumPath = (path: string) => {
+    // This will be replaced at runtime with the correct base path
+    return `/albums${path}`;
+};
+
 export const albums: Album[] = [
     {
         id: 'taylor_swift',
         title: 'Debut',
-        coverArt: '/albums/taylor_swift.png',
+        coverArt: getAlbumPath('/taylor_swift.png'),
         releaseYear: 2006,
         isTaylorsVersion: false,
         color: '#D9CAB3',
@@ -17,7 +22,7 @@ export const albums: Album[] = [
     {
         id: 'fearless_tv',
         title: 'Fearless (Taylor\'s Version)',
-        coverArt: '/albums/fearless_tv.png',
+        coverArt: getAlbumPath('/fearless_tv.png'),
         releaseYear: 2021,
         isTaylorsVersion: true,
         color: '#F4E5B2',
@@ -30,7 +35,7 @@ export const albums: Album[] = [
     {
         id: 'speak_now_tv',
         title: 'Speak Now (Taylor\'s Version)',
-        coverArt: '/albums/speak_now_tv.png',
+        coverArt: getAlbumPath('/speak_now_tv.png'),
         releaseYear: 2023,
         isTaylorsVersion: true,
         color: '#D1A0A2',
@@ -43,7 +48,7 @@ export const albums: Album[] = [
     {
         id: 'red_tv',
         title: 'Red (Taylor\'s Version)',
-        coverArt: '/albums/red_tv.png',
+        coverArt: getAlbumPath('/red_tv.png'),
         releaseYear: 2021,
         isTaylorsVersion: true,
         color: '#B02428',
@@ -57,7 +62,7 @@ export const albums: Album[] = [
     {
         id: '1989_tv',
         title: '1989 (Taylor\'s Version)',
-        coverArt: '/albums/1989_tv.png',
+        coverArt: getAlbumPath('/1989_tv.png'),
         releaseYear: 2023,
         isTaylorsVersion: true,
         color: '#8CD1E6',
@@ -71,7 +76,7 @@ export const albums: Album[] = [
     {
         id: 'reputation',
         title: 'Reputation',
-        coverArt: '/albums/reputation.png',
+        coverArt: getAlbumPath('/reputation.png'),
         releaseYear: 2017,
         isTaylorsVersion: false,
         color: '#323232',
@@ -86,7 +91,7 @@ export const albums: Album[] = [
     {
         id: 'lover',
         title: 'Lover',
-        coverArt: '/albums/lover.png',
+        coverArt: getAlbumPath('/lover.png'),
         releaseYear: 2019,
         isTaylorsVersion: false,
         color: '#E8C1E1',
@@ -101,7 +106,7 @@ export const albums: Album[] = [
     {
         id: 'folklore',
         title: 'folklore',
-        coverArt: '/albums/folklore.png',
+        coverArt: getAlbumPath('/folklore.png'),
         releaseYear: 2020,
         isTaylorsVersion: false,
         color: '#ACA9A0',
@@ -115,7 +120,7 @@ export const albums: Album[] = [
     {
         id: 'evermore',
         title: 'evermore',
-        coverArt: '/albums/evermore.png',
+        coverArt: getAlbumPath('/evermore.png'),
         releaseYear: 2020,
         isTaylorsVersion: false,
         color: '#A3BFA8',
@@ -129,7 +134,7 @@ export const albums: Album[] = [
     {
         id: 'midnights',
         title: 'Midnights',
-        coverArt: '/albums/midnights.png',
+        coverArt: getAlbumPath('/midnights.png'),
         releaseYear: 2022,
         isTaylorsVersion: false,
         color: '#1A1A3D',
@@ -143,7 +148,7 @@ export const albums: Album[] = [
     {
         id: 'ttpd',
         title: 'TTPD',
-        coverArt: '/albums/ttpd.png',
+        coverArt: getAlbumPath('/ttpd.png'),
         releaseYear: 2024,
         isTaylorsVersion: false,
         color: '#ccbcaf',

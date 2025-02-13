@@ -2,6 +2,7 @@
     import { albums } from '$lib/data/albums';
     import { selectedAlbums, addAlbum, removeAlbum, isSelectionComplete } from '$lib/stores/albumSelection';
     import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
     import PageHeader from '$lib/components/PageHeader.svelte';
     import Button from '$lib/components/Button.svelte';
     
@@ -15,7 +16,7 @@
     
     function handleContinue() {
         if ($isSelectionComplete) {
-            goto('/albums/confirm');
+            goto(`${base}/albums/confirm`);
         }
     }
     
