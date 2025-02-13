@@ -1,0 +1,13 @@
+/* Spacing Tokens */
+:root {
+    /* Component Spacing */
+    --spacing-header: 2rem;
+    --spacing-footer: 2rem;
+    --spacing-content: 1rem;
+    --spacing-button: 1rem;
+    
+    /* Layout Spacing */
+    --container-max-width: 448px;
+    --container-height: 800px;
+    --container-radius: 1.5rem;
+}

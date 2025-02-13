@@ -1,0 +1,13 @@
+/* Effect Tokens */
+:root {
+    /* Shadows */
+    --shadow-sm: 0 2px 8px;
+    --shadow-md: 0 4px 12px;
+    --shadow-lg: 0 8px 24px;
+    
+    /* Z-index Layers */
+    --z-header: 10;
+    --z-content: 1;
+    --z-footer: 10;
+    --z-overlay: 20;
+}

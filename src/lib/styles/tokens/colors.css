@@ -1,0 +1,17 @@
+/* Color Tokens */
+:root {
+    /* Primary Colors */
+    --color-primary: rgb(244, 63, 94);
+    --color-primary-light: rgb(255, 107, 139);
+    --color-primary-dark: rgb(219, 39, 70);
+    --color-primary-alpha: rgba(244, 63, 94, 0.4);
+    
+    /* Background Colors */
+    --bg-gradient-start: rgb(255, 241, 242);
+    --bg-gradient-end: rgb(254, 205, 211);
+    --bg-container: rgb(226, 232, 240);
+    
+    /* Text Colors */
+    --text-primary: #881337;
+    --text-secondary: #9f1239;
+}

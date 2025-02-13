@@ -1,15 +1,9 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import '$lib/styles/tokens/index.css';
 
 @layer base {
-  :root {
-    --primary-color: #9f1239;
-    --secondary-color: #fecdd3;
-    --background-color: #fff1f2;
-    --text-color: #881337;
-  }
-  
   body {
     @apply bg-rose-50;
     @apply text-rose-900;
