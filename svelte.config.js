@@ -5,10 +5,11 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	kit: {
 		adapter: adapter({
-			fallback: 'index.html'
+			fallback: 'index.html',
+			strict: false
 		}),
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/swiftie-app' : ''
+			base: process.env.BASE_PATH || ''
 		}
 	},
 	preprocess: vitePreprocess()
