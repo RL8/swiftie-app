@@ -1,5 +1,5 @@
 <script>
-    import '../styles/design-system.css';
+    import '../styles/tokens/index.css';
     import { page } from '$app/stores';
     
     $: isHomePage = $page.url.pathname === '/';

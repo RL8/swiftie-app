@@ -1,14 +1,16 @@
 <script lang="ts">
-    import PageHeader from '$lib/components/PageHeader.svelte';
-    import Button from '$lib/components/Button.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import BaseHeader from '$lib/components/layout/HeaderVariants/BaseHeader.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
 </script>
 
-<PageHeader 
-    title="Your Profile" 
-    subtitle="Customize your Swiftie experience" 
-/>
+<StandardLayout>
+    <BaseHeader 
+        slot="header"
+        title="Your Profile"
+        subtitle="Customize your Swiftie experience"
+    />
 
-<main class="flex-1 overflow-y-auto py-4">
     <div class="px-4 space-y-6">
         <div class="flex items-center justify-center">
             <div class="w-24 h-24 bg-rose-200 rounded-full flex items-center justify-center">
@@ -19,18 +21,14 @@
         <div class="space-y-4">
             <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
                 <h3 class="text-lg font-semibold text-rose-800 mb-2">Stats</h3>
-                <div class="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                        <div class="text-2xl font-bold text-rose-600">0</div>
-                        <div class="text-sm text-rose-700">Games</div>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-rose-600">Albums Rated</span>
+                        <span class="font-medium">3</span>
                     </div>
-                    <div>
-                        <div class="text-2xl font-bold text-rose-600">0</div>
-                        <div class="text-sm text-rose-700">Matches</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl font-bold text-rose-600">0</div>
-                        <div class="text-sm text-rose-700">Points</div>
+                    <div class="flex justify-between">
+                        <span class="text-rose-600">Songs Matched</span>
+                        <span class="font-medium">12</span>
                     </div>
                 </div>
             </div>
@@ -38,17 +36,20 @@
             <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
                 <h3 class="text-lg font-semibold text-rose-800 mb-2">Settings</h3>
                 <div class="space-y-4">
-                    <Button variant="secondary">
-                        Edit Profile
-                    </Button>
-                    <Button variant="secondary">
-                        Notification Preferences
-                    </Button>
-                    <Button variant="secondary">
-                        Privacy Settings
-                    </Button>
+                    <div>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="form-checkbox text-rose-500">
+                            <span class="text-rose-600">Enable Notifications</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="form-checkbox text-rose-500" checked>
+                            <span class="text-rose-600">Haptic Feedback</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</StandardLayout>

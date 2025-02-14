@@ -3,8 +3,10 @@
     import { selectedAlbums, addAlbum, removeAlbum, isSelectionComplete } from '$lib/stores/albumSelection';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
-    import PageHeader from '$lib/components/PageHeader.svelte';
-    import Button from '$lib/components/Button.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import ProgressHeader from '$lib/components/layout/HeaderVariants/ProgressHeader.svelte';
+    import ButtonFooter from '$lib/components/layout/FooterVariants/ButtonFooter.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
     
     function handleAlbumClick(album: typeof albums[0]) {
         if ($selectedAlbums.some(a => a.id === album.id)) {
@@ -27,29 +29,18 @@
     ]);
 </script>
 
-<PageHeader 
-    title="Choose Your Top 3" 
-    subtitle="Select your favorite Taylor Swift albums"
-    headerSlot={true}
->
-    <div slot="header" class="progress-bar">
-        <div class="progress-segments">
-            {#each Array(3) as _, i}
-                <div class="segment" class:filled={i < $selectedAlbums.length}>
-                    {#if i < $selectedAlbums.length}
-                        <div class="segment-number">{i + 1}</div>
-                    {/if}
-                </div>
-            {/each}
-        </div>
-    </div>
-</PageHeader>
+<StandardLayout>
+    <ProgressHeader 
+        slot="header"
+        title="Choose Your Top 3"
+        subtitle="Select your favorite Taylor Swift albums"
+        progress={$selectedAlbums.length}
+    />
 
-<main class="flex-1 overflow-y-auto p-4">
     <div class="album-grid">
         {#each gridAlbums as album, i}
             {#if album}
-                <button
+                <div
                     class="vinyl-container"
                     class:selected={$selectedAlbums.some(a => a.id === album.id)}
                     on:click={() => handleAlbumClick(album)}
@@ -60,34 +51,32 @@
                             alt={album.title}
                             class="vinyl-art"
                         />
-                        <div class="vinyl-grooves" />
-                        <div class="vinyl-center" />
+                        <div class="vinyl-grooves"></div>
+                        <div class="vinyl-center"></div>
                         {#if $selectedAlbums.some(a => a.id === album.id)}
                             <div class="rank-badge">
                                 {$selectedAlbums.findIndex(a => a.id === album.id) + 1}
                             </div>
                         {/if}
                     </div>
-                </button>
+                </div>
             {:else}
-                <div class="placeholder" />
+                <div class="placeholder"></div>
             {/if}
         {/each}
     </div>
-</main>
 
-<footer class="p-4 border-t border-rose-100">
-    <div class="max-w-md mx-auto">
+    <ButtonFooter slot="footer">
         <Button 
-            variant="primary" 
-            shimmer={$isSelectionComplete}
-            on:click={handleContinue}
+            variant="primary"
             disabled={!$isSelectionComplete}
+            on:click={handleContinue}
+            fullWidth={true}
         >
             Continue to Songs
         </Button>
-    </div>
-</footer>
+    </ButtonFooter>
+</StandardLayout>
 
 <style>
     .progress-bar {

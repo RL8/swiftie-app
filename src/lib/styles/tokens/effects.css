@@ -4,10 +4,26 @@
     --shadow-sm: 0 2px 8px;
     --shadow-md: 0 4px 12px;
     --shadow-lg: 0 8px 24px;
+    --shadow-primary: var(--shadow-sm) var(--color-primary-alpha);
     
     /* Z-index Layers */
     --z-header: 10;
     --z-content: 1;
     --z-footer: 10;
     --z-overlay: 20;
+    --z-tooltip: 30;
+    --z-modal: 40;
+    
+    /* Backdrop Filters */
+    --blur-sm: blur(4px);
+    --blur-md: blur(8px);
+    --blur-lg: blur(16px);
+    
+    /* Transitions */
+    --transition-transform: transform var(--duration-fast) var(--timing-function);
+    --transition-opacity: opacity var(--duration-fast) var(--timing-function);
+    --transition-colors: background-color var(--duration-fast) var(--timing-function),
+                        border-color var(--duration-fast) var(--timing-function),
+                        color var(--duration-fast) var(--timing-function);
+    --transition-all: all var(--duration-fast) var(--timing-function);
 }

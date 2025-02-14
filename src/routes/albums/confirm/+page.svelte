@@ -4,6 +4,10 @@
     import { base } from '$app/paths';
     import { onMount } from 'svelte';
     import confetti from 'canvas-confetti';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import BaseHeader from '$lib/components/layout/HeaderVariants/BaseHeader.svelte';
+    import ButtonFooter from '$lib/components/layout/FooterVariants/ButtonFooter.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
 
     function handleEdit() {
         goto(`${base}/albums`);
@@ -49,109 +53,102 @@
     });
 </script>
 
-<div class="fixed inset-0 bg-slate-200 flex justify-center items-center p-4">
-    <div class="bg-gradient-to-br from-rose-50 to-rose-100 flex flex-col w-full max-w-md h-[800px] rounded-3xl overflow-hidden shadow-2xl">
-        <header class="w-full bg-rose-50/80 backdrop-blur-sm py-8">
-            <div class="text-center">
-                <h1 class="text-2xl font-bold text-rose-900 mb-2 animate-celebration">Amazing Choices! 🎉</h1>
-                <p class="text-rose-700">Your top 3 Taylor Swift albums</p>
-            </div>
-        </header>
+<StandardLayout>
+    <BaseHeader 
+        slot="header"
+        title="Amazing Choices! 🎉"
+        subtitle="Your top 3 Taylor Swift albums"
+    />
 
-        <main class="flex-1 flex items-center justify-center">
-            <div class="vinyl-container mx-auto">
-                {#if mounted}
-                    {#if showAlbum3}
-                        <div class="vinyl-card vinyl-3"
-                            on:touchstart={vibrate}
-                        >
-                            <div class="vinyl-content">
-                                <div class="vinyl-image">
-                                    <div class="record-spin">
-                                        <img
-                                            src={$selectedAlbums[2].coverArt}
-                                            alt={$selectedAlbums[2].title}
-                                            class="w-full h-full object-cover"
-                                        />
-                                        <div class="vinyl-overlay" />
-                                    </div>
-                                    <div class="rank-badge">
-                                        <span class="rank-number">3</span>
-                                    </div>
-                                </div>
+    <div class="vinyl-container mx-auto">
+        {#if mounted}
+            {#if showAlbum3}
+                <div class="vinyl-card vinyl-3"
+                    on:touchstart={vibrate}
+                >
+                    <div class="vinyl-content">
+                        <div class="vinyl-image">
+                            <div class="record-spin">
+                                <img
+                                    src={$selectedAlbums[2].coverArt}
+                                    alt={$selectedAlbums[2].title}
+                                    class="w-full h-full object-cover"
+                                />
+                                <div class="vinyl-overlay" />
+                            </div>
+                            <div class="rank-badge">
+                                <span class="rank-number">3</span>
                             </div>
                         </div>
-                    {/if}
-                    
-                    {#if showAlbum2}
-                        <div class="vinyl-card vinyl-2"
-                            on:touchstart={vibrate}
-                        >
-                            <div class="vinyl-content">
-                                <div class="vinyl-image">
-                                    <div class="record-spin">
-                                        <img
-                                            src={$selectedAlbums[1].coverArt}
-                                            alt={$selectedAlbums[1].title}
-                                            class="w-full h-full object-cover"
-                                        />
-                                        <div class="vinyl-overlay" />
-                                    </div>
-                                    <div class="rank-badge">
-                                        <span class="rank-number">2</span>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            {/if}
+            
+            {#if showAlbum2}
+                <div class="vinyl-card vinyl-2"
+                    on:touchstart={vibrate}
+                >
+                    <div class="vinyl-content">
+                        <div class="vinyl-image">
+                            <div class="record-spin">
+                                <img
+                                    src={$selectedAlbums[1].coverArt}
+                                    alt={$selectedAlbums[1].title}
+                                    class="w-full h-full object-cover"
+                                />
+                                <div class="vinyl-overlay" />
+                            </div>
+                            <div class="rank-badge">
+                                <span class="rank-number">2</span>
                             </div>
                         </div>
-                    {/if}
-                    
-                    {#if showAlbum1}
-                        <div class="vinyl-card vinyl-1"
-                            on:touchstart={vibrate}
-                        >
-                            <div class="vinyl-content">
-                                <div class="vinyl-image">
-                                    <div class="record-spin">
-                                        <img
-                                            src={$selectedAlbums[0].coverArt}
-                                            alt={$selectedAlbums[0].title}
-                                            class="w-full h-full object-cover"
-                                        />
-                                        <div class="vinyl-overlay" />
-                                    </div>
-                                    <div class="rank-badge">
-                                        <span class="rank-number">1</span>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            {/if}
+            
+            {#if showAlbum1}
+                <div class="vinyl-card vinyl-1"
+                    on:touchstart={vibrate}
+                >
+                    <div class="vinyl-content">
+                        <div class="vinyl-image">
+                            <div class="record-spin">
+                                <img
+                                    src={$selectedAlbums[0].coverArt}
+                                    alt={$selectedAlbums[0].title}
+                                    class="w-full h-full object-cover"
+                                />
+                                <div class="vinyl-overlay" />
+                            </div>
+                            <div class="rank-badge">
+                                <span class="rank-number">1</span>
                             </div>
                         </div>
-                    {/if}
-                {/if}
-            </div>
-        </main>
-        
-        <footer class="w-full bg-white/60 backdrop-blur-sm border-t border-rose-100 py-8">
-            <div class="max-w-md mx-auto px-4 flex gap-4">
-                {#if mounted}
-                    <button
-                        class="button-secondary flex-1"
-                        on:touchstart={vibrate}
-                        on:click={handleEdit}
-                    >
-                        Edit Selection
-                    </button>
-                    <button
-                        class="button-primary subtle-shimmer flex-1"
-                        on:touchstart={vibrate}
-                        on:click={handleContinue}
-                    >
-                        Continue to Songs
-                    </button>
-                {/if}
-            </div>
-        </footer>
+                    </div>
+                </div>
+            {/if}
+        {/if}
     </div>
-</div>
+
+    <ButtonFooter slot="footer">
+        {#if mounted}
+            <Button 
+                variant="secondary"
+                on:click={() => goto(`${base}/albums`)}
+                fullWidth={true}
+            >
+                Edit Selection
+            </Button>
+            <Button 
+                variant="primary"
+                on:click={handleContinue}
+                fullWidth={true}
+            >
+                Continue to Songs
+            </Button>
+        {/if}
+    </ButtonFooter>
+</StandardLayout>
 
 <style>
     .animate-gradient {

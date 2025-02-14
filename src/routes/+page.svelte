@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
-    import Button from '$lib/components/Button.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
 
     function handleGetStarted() {
         goto(`${base}/albums`);
@@ -30,8 +30,12 @@
     </div>
 
     <div class="w-full max-w-xs">
-        <Button variant="primary" shimmer={true} on:click={handleGetStarted}>
-            Start Your Journey
+        <Button 
+            variant="primary"
+            fullWidth={true}
+            on:click={() => goto('/albums')}
+        >
+            Get Started
         </Button>
     </div>
 </div>

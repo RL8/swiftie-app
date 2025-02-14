@@ -11,27 +11,28 @@
     const selectionIndex = $derived($selectedAlbums.findIndex(a => a.id === album.id) + 1);
 </script>
 
-<div
+<div 
     class="album-card"
     style="animation-delay: {index * 50}ms"
     on:click
-    on:keydown={(e) => e.key === 'Enter' && e.currentTarget.click()}
     role="button"
     tabindex="0"
 >
-    <div class="album-content">
-        <img
-            src={album.coverArt}
-            alt={album.title}
-            class="w-full h-full object-cover"
-        />
-        
-        {#if isSelected}
-            <div class="selection-overlay">
-                <span class="text-4xl font-bold text-white">{selectionIndex}</span>
-            </div>
-        {/if}
-    </div>
+    <slot>
+        <div class="album-content">
+            <img
+                src={album.coverArt}
+                alt={album.title}
+                class="w-full h-full object-cover"
+            />
+            
+            {#if isSelected}
+                <div class="selection-overlay">
+                    <span class="text-4xl font-bold text-white">{selectionIndex}</span>
+                </div>
+            {/if}
+        </div>
+    </slot>
 </div>
 
 <style>
