@@ -1,9 +1,29 @@
 <script lang="ts">
     import { page } from '$app/stores';
+    import { onMount } from 'svelte';
     
     export let showHeader = true;
     export let showFooter = true;
     export let customGradient = 'bg-gradient-to-br from-rose-50 to-rose-100';
+    export let hasFooterNav = false;
+    
+    let footerSlot: HTMLElement;
+    
+    function checkFooterNav() {
+        if (footerSlot) {
+            // Check for any interactive elements that could be navigation
+            const hasNavElements = footerSlot.querySelector('nav, button, a, [role="button"]') !== null;
+            hasFooterNav = hasNavElements;
+        }
+    }
+    
+    $: if (footerSlot) {
+        checkFooterNav();
+    }
+    
+    onMount(() => {
+        checkFooterNav();
+    });
 </script>
 
 <div class="fixed inset-0 bg-slate-200 flex justify-center items-center p-4">
@@ -19,7 +39,9 @@
         </div>
 
         {#if showFooter}
-            <slot name="footer" />
+            <footer bind:this={footerSlot}>
+                <slot name="footer" />
+            </footer>
         {/if}
     </div>
 </div>

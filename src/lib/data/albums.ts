@@ -21,7 +21,7 @@ export const albums: Album[] = [
     },
     {
         id: 'fearless_tv',
-        title: 'Fearless (Taylor\'s Version)',
+        title: 'Fearless TV',
         coverArt: getAlbumPath('/fearless_tv.png'),
         releaseYear: 2021,
         isTaylorsVersion: true,
@@ -34,7 +34,7 @@ export const albums: Album[] = [
     },
     {
         id: 'speak_now_tv',
-        title: 'Speak Now (Taylor\'s Version)',
+        title: 'Speak Now TV',
         coverArt: getAlbumPath('/speak_now_tv.png'),
         releaseYear: 2023,
         isTaylorsVersion: true,
@@ -47,7 +47,7 @@ export const albums: Album[] = [
     },
     {
         id: 'red_tv',
-        title: 'Red (Taylor\'s Version)',
+        title: 'Red TV',
         coverArt: getAlbumPath('/red_tv.png'),
         releaseYear: 2021,
         isTaylorsVersion: true,
@@ -61,7 +61,7 @@ export const albums: Album[] = [
     },
     {
         id: '1989_tv',
-        title: '1989 (Taylor\'s Version)',
+        title: '1989 TV',
         coverArt: getAlbumPath('/1989_tv.png'),
         releaseYear: 2023,
         isTaylorsVersion: true,
@@ -75,7 +75,7 @@ export const albums: Album[] = [
     },
     {
         id: 'reputation',
-        title: 'Reputation',
+        title: 'reputation',
         coverArt: getAlbumPath('/reputation.png'),
         releaseYear: 2017,
         isTaylorsVersion: false,
@@ -147,11 +147,22 @@ export const albums: Album[] = [
     },
     {
         id: 'ttpd',
-        title: 'TTPD',
+        title: 'The Tortured Poets Department',
         coverArt: getAlbumPath('/ttpd.png'),
         releaseYear: 2024,
         isTaylorsVersion: false,
         color: '#ccbcaf',
-        songs: []
+        songs: [
+            'Fortnight', 'The Tortured Poets Department', 
+            'My Boy Only Breaks His Favorite Toys', 'Down Bad',
+            'So Long, London', 'But Daddy I Love Him',
+            'Fresh Out the Slammer', 'Florida!!!',
+            'Guilty as Sin?', 'Who\'s Afraid of Little Old Me?',
+            'I Can Fix Him (No Really I Can)', 'loml',
+            'I Can Do It With a Broken Heart',
+            'The Smallest Man Who Ever Lived', 'The Alchemy',
+            'Clara Bow',
+            'The Manuscript', 'The Bolter', 'The Albatross', 'The Black Dog'
+        ]
     }
 ];

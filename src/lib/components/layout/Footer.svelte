@@ -17,10 +17,10 @@
         background: var(--bg-header);
         backdrop-filter: var(--blur-sm);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        height: var(--footer-height);
         display: flex;
         justify-content: center;
         align-items: center;
+        min-height: var(--footer-height);
     }
 
     .with-border {
@@ -42,5 +42,6 @@
     .footer-button :global(button) {
         height: calc(var(--footer-height) - (2 * var(--spacing-footer)));
         min-height: unset;
+        min-width: 12rem;
     }
 </style>

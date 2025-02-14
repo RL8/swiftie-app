@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { base } from '$app/paths';
-    import "../app.css";
+    import '../app.css';
     import { page } from '$app/stores';
     import BottomNav from '$lib/components/BottomNav.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    
-    $: showBottomNav = !$page.url.pathname.includes('/albums');
 </script>
 
 <StandardLayout>
-    <div class:pb-16={showBottomNav}>
+    <div class:pb-16={!$page.url.pathname.includes('/albums')}>
         <slot />
     </div>
-    {#if showBottomNav}
+    {#if !$page.url.pathname.includes('/albums')}
         <BottomNav />
     {/if}
 </StandardLayout>

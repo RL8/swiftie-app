@@ -44,8 +44,9 @@
                     confetti({
                         particleCount: 150,
                         spread: 100,
-                        origin: { x: 0.2, y: 0.3 },
-                        colors: ['#FFB6C1', '#FF69B4', '#FF1493']
+                        origin: { x: 0.5, y: 0.5 },
+                        colors: ['#FFB6C1', '#FF69B4', '#FF1493'],
+                        disableForReducedMotion: true
                     });
                 }, 600); // Longer delay for more impact
             }, 600);
@@ -76,6 +77,9 @@
                                     <div class="vinyl-overlay" />
                                 </div>
                                 <div class="rank-badge">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
                                     <span class="rank-number">3</span>
                                 </div>
                             </div>
@@ -97,6 +101,9 @@
                                     <div class="vinyl-overlay" />
                                 </div>
                                 <div class="rank-badge">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
                                     <span class="rank-number">2</span>
                                 </div>
                             </div>
@@ -118,6 +125,9 @@
                                     <div class="vinyl-overlay" />
                                 </div>
                                 <div class="rank-badge">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
                                     <span class="rank-number">1</span>
                                 </div>
                             </div>
@@ -279,22 +289,30 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 2rem;
-        height: 2rem;
-        background: rgb(244, 63, 94);
-        border-radius: 50%;
+        width: 3rem;
+        height: 3rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 8px rgba(244, 63, 94, 0.4);
-        animation: pulse 4s ease infinite;
         z-index: 10;
+        color: rgb(244, 63, 94);
+        animation: pulse 4s ease infinite;
+    }
+
+    .heart-icon {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 2px 8px rgba(244, 63, 94, 0.4));
     }
 
     .rank-number {
+        position: relative;
         color: white;
         font-size: 1.75rem;
         font-weight: bold;
+        z-index: 11;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     }
 
     @keyframes spin {
