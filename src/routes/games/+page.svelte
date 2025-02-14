@@ -1,98 +1,113 @@
 <script lang="ts">
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    import BaseHeader from '$lib/components/layout/HeaderVariants/BaseHeader.svelte';
-    import ButtonFooter from '$lib/components/layout/FooterVariants/ButtonFooter.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
+
+    function startGame() {
+        // TODO: Implement game start logic
+        console.log('Starting game...');
+    }
 </script>
 
 <StandardLayout>
-    <BaseHeader 
+    <Header 
         slot="header"
-        title="Games & Activities"
-        subtitle="Fun ways to explore Taylor's music"
-    />
+        title="Taylor Swift Games"
+        subtitle="Test your Swiftie knowledge" />
 
-    <div class="p-6 space-y-6">
-        <div class="game-card">
-            <div class="game-content">
-                <div class="game-icon">🎵</div>
-                <div class="game-info">
-                    <h3>Song Match</h3>
-                    <p>Match lyrics with the correct song title</p>
+    <main slot="main" class="container-responsive">
+        <div class="grid-responsive gap-dynamic">
+            <div class="game-card">
+                <div class="game-content">
+                    <div class="game-icon">🎵</div>
+                    <div class="game-info">
+                        <h3>Song Match</h3>
+                        <p>Match lyrics with the correct song title</p>
+                    </div>
                 </div>
+                <Button 
+                    variant="secondary"
+                    size="compact"
+                    fullWidth={true}
+                    on:click={() => startGame()}
+                >
+                    Play Now
+                </Button>
             </div>
-            <Button 
-                variant="secondary"
-                size="compact"
-                fullWidth={true}
-            >
-                Play Now
-            </Button>
-        </div>
 
-        <div class="game-card">
-            <div class="game-content">
-                <div class="game-icon">🎸</div>
-                <div class="game-info">
-                    <h3>Era Quiz</h3>
-                    <p>Test your knowledge of Taylor's eras</p>
+            <div class="game-card">
+                <div class="game-content">
+                    <div class="game-icon">🎸</div>
+                    <div class="game-info">
+                        <h3>Era Quiz</h3>
+                        <p>Test your knowledge of Taylor's eras</p>
+                    </div>
                 </div>
+                <Button 
+                    variant="secondary"
+                    size="compact"
+                    fullWidth={true}
+                    on:click={() => startGame()}
+                >
+                    Start Game
+                </Button>
             </div>
-            <Button 
-                variant="secondary"
-                size="compact"
-                fullWidth={true}
-            >
-                Start Game
-            </Button>
-        </div>
 
-        <div class="game-card">
-            <div class="game-content">
-                <div class="game-icon">📝</div>
-                <div class="game-info">
-                    <h3>Lyric Challenge</h3>
-                    <p>Complete the missing lyrics</p>
+            <div class="game-card">
+                <div class="game-content">
+                    <div class="game-icon">📝</div>
+                    <div class="game-info">
+                        <h3>Lyric Challenge</h3>
+                        <p>Complete the missing lyrics</p>
+                    </div>
                 </div>
+                <Button 
+                    variant="secondary"
+                    size="compact"
+                    fullWidth={true}
+                    on:click={() => startGame()}
+                >
+                    Begin
+                </Button>
             </div>
-            <Button 
-                variant="secondary"
-                size="compact"
-                fullWidth={true}
-            >
-                Begin
-            </Button>
         </div>
-    </div>
+    </main>
+
+    <Footer slot="footer" variant="button">
+        <Button variant="primary" on:click={() => startGame()}>
+            Start Game
+        </Button>
+    </Footer>
 </StandardLayout>
 
 <style>
     .game-card {
-        background: white;
-        border-radius: 1.25rem;
-        padding: 1.25rem;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        background: var(--bg-overlay);
+        border-radius: var(--radius-card);
+        padding: var(--spacing-card);
+        backdrop-filter: var(--blur-md);
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--dynamic-spacing-sm);
     }
 
     .game-content {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding-bottom: 0.5rem;
+        gap: var(--dynamic-spacing-sm);
+        padding-bottom: var(--dynamic-spacing-sm);
     }
 
     .game-icon {
-        background: #FFF1F5;
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 1rem;
+        background: var(--bg-gradient-start);
+        width: clamp(3rem, 8vw, 3.5rem);
+        height: clamp(3rem, 8vw, 3.5rem);
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.75rem;
+        font-size: clamp(1.5rem, 4vw, 1.75rem);
     }
 
     .game-info {
@@ -100,15 +115,15 @@
     }
 
     .game-info h3 {
-        font-size: 1.25rem;
+        font-size: clamp(1rem, 3vw, 1.25rem);
         font-weight: 600;
-        color: #1F2937;
+        color: var(--text-dark);
         margin: 0;
     }
 
     .game-info p {
-        color: #6B7280;
-        margin: 0.25rem 0 0 0;
-        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: var(--dynamic-spacing-sm) 0 0 0;
+        font-size: clamp(0.75rem, 2vw, 0.875rem);
     }
 </style>

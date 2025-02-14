@@ -1,0 +1,84 @@
+/* Responsive Container */
+.container-responsive {
+    height: var(--content-height);
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--dynamic-spacing-md);
+}
+
+/* Responsive Grid */
+.grid-responsive {
+    display: grid;
+    gap: var(--grid-gap-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    align-items: start;
+}
+
+/* Dynamic Sizing */
+.h-dynamic-sm {
+    height: var(--container-sm);
+}
+
+.h-dynamic-md {
+    height: var(--container-md);
+}
+
+.h-dynamic-lg {
+    height: var(--container-lg);
+}
+
+/* Responsive Padding */
+.p-dynamic {
+    padding: var(--dynamic-spacing-md);
+}
+
+.py-dynamic {
+    padding-top: var(--dynamic-spacing-md);
+    padding-bottom: var(--dynamic-spacing-md);
+}
+
+.px-dynamic {
+    padding-left: var(--dynamic-spacing-md);
+    padding-right: var(--dynamic-spacing-md);
+}
+
+/* Responsive Margins */
+.m-dynamic {
+    margin: var(--dynamic-spacing-md);
+}
+
+.my-dynamic {
+    margin-top: var(--dynamic-spacing-md);
+    margin-bottom: var(--dynamic-spacing-md);
+}
+
+.mx-dynamic {
+    margin-left: var(--dynamic-spacing-md);
+    margin-right: var(--dynamic-spacing-md);
+}
+
+/* Responsive Gaps */
+.gap-dynamic {
+    gap: var(--grid-gap-md);
+}
+
+.gap-dynamic-sm {
+    gap: var(--grid-gap-sm);
+}
+
+.gap-dynamic-lg {
+    gap: var(--grid-gap-lg);
+}
+
+/* Responsive Heights */
+.h-screen-dynamic {
+    height: var(--content-height);
+}
+
+.min-h-screen-dynamic {
+    min-height: var(--content-height);
+}
+
+.max-h-screen-dynamic {
+    max-height: var(--content-height);
+}

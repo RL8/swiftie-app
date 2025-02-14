@@ -1,12 +1,11 @@
 <script lang="ts">
-    type ButtonVariant = 'primary' | 'secondary';
-    type ButtonSize = 'compact' | 'default';
+    import type { ButtonProps } from '$lib/types/components';
     
-    export let variant: ButtonVariant = 'primary';
-    export let size: ButtonSize = 'default';
-    export let disabled = false;
-    export let fullWidth = false;
-    export let type = 'button';
+    export let variant: ButtonProps['variant'] = 'primary';
+    export let size: ButtonProps['size'] = 'default';
+    export let disabled: ButtonProps['disabled'] = false;
+    export let fullWidth: ButtonProps['fullWidth'] = false;
+    export let type: ButtonProps['type'] = 'button';
 
     function handleTouchStart() {
         if (navigator.vibrate && !disabled) {

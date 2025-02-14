@@ -1,4 +1,4 @@
-import type { Album } from '$lib/types/album';
+import type { Album } from '$lib/types/components';
 import { base } from '$app/paths';
 
 export const getAlbumPath = (path: string) => {

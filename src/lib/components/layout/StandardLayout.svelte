@@ -12,9 +12,11 @@
             <slot name="header" />
         {/if}
 
-        <main class="flex-1 overflow-y-auto">
-            <slot />
-        </main>
+        <div class="flex-1 overflow-y-auto relative scrollbar-taylor">
+            <slot name="main">
+                <slot />
+            </slot>
+        </div>
 
         {#if showFooter}
             <slot name="footer" />
@@ -23,7 +25,14 @@
 </div>
 
 <style>
-    main {
-        z-index: var(--z-content);
+    :global(.app-frame) {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    :global(.app-frame > *) {
+        position: relative;
+        z-index: 1;
     }
 </style>

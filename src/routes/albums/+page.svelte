@@ -1,11 +1,11 @@
 <script lang="ts">
     import { albums } from '$lib/data/albums';
-    import { selectedAlbums, addAlbum, removeAlbum, isSelectionComplete } from '$lib/stores/albumSelection';
+    import { selectedAlbums, addAlbum, removeAlbum } from '$lib/stores/albums';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    import ProgressHeader from '$lib/components/layout/HeaderVariants/ProgressHeader.svelte';
-    import ButtonFooter from '$lib/components/layout/FooterVariants/ButtonFooter.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
     
     function handleAlbumClick(album: typeof albums[0]) {
@@ -17,7 +17,7 @@
     }
     
     function handleContinue() {
-        if ($isSelectionComplete) {
+        if ($selectedAlbums.length === 3) {
             goto(`${base}/albums/confirm`);
         }
     }
@@ -30,52 +30,54 @@
 </script>
 
 <StandardLayout>
-    <ProgressHeader 
+    <Header 
         slot="header"
-        title="Choose Your Top 3"
-        subtitle="Select your favorite Taylor Swift albums"
+        variant="progress"
+        title="Pick Your Top 3"
+        subtitle="Choose your favorite Taylor Swift albums"
         progress={$selectedAlbums.length}
-    />
+        maxProgress={3} />
 
-    <div class="album-grid">
-        {#each gridAlbums as album, i}
-            {#if album}
-                <div
-                    class="vinyl-container"
-                    class:selected={$selectedAlbums.some(a => a.id === album.id)}
-                    on:click={() => handleAlbumClick(album)}
-                >
-                    <div class="vinyl">
-                        <img
-                            src={album.coverArt}
-                            alt={album.title}
-                            class="vinyl-art"
-                        />
-                        <div class="vinyl-grooves"></div>
-                        <div class="vinyl-center"></div>
-                        {#if $selectedAlbums.some(a => a.id === album.id)}
-                            <div class="rank-badge">
-                                {$selectedAlbums.findIndex(a => a.id === album.id) + 1}
-                            </div>
-                        {/if}
+    <main slot="main" class="h-full flex flex-col p-4">
+        <div class="album-grid flex-1">
+            {#each gridAlbums as album, i}
+                {#if album}
+                    <div
+                        class="vinyl-container"
+                        class:selected={$selectedAlbums.some(a => a.id === album.id)}
+                        on:click={() => handleAlbumClick(album)}
+                    >
+                        <div class="vinyl">
+                            <img
+                                src={album.coverArt}
+                                alt={album.title}
+                                class="vinyl-art"
+                            />
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-center"></div>
+                            {#if $selectedAlbums.some(a => a.id === album.id)}
+                                <div class="rank-badge">
+                                    {$selectedAlbums.findIndex(a => a.id === album.id) + 1}
+                                </div>
+                            {/if}
+                        </div>
                     </div>
-                </div>
-            {:else}
-                <div class="placeholder"></div>
-            {/if}
-        {/each}
-    </div>
+                {:else}
+                    <div class="placeholder"></div>
+                {/if}
+            {/each}
+        </div>
+    </main>
 
-    <ButtonFooter slot="footer">
+    <Footer variant="button" slot="footer">
         <Button 
             variant="primary"
-            disabled={!$isSelectionComplete}
-            on:click={handleContinue}
-            fullWidth={true}
+            disabled={$selectedAlbums.length < 3}
+            on:click={() => goto(`${base}/albums/confirm`)}
         >
-            Continue to Songs
+            Continue
         </Button>
-    </ButtonFooter>
+    </Footer>
 </StandardLayout>
 
 <style>
@@ -112,7 +114,8 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(4, 1fr);
-        gap: 0.75rem;
+        gap: clamp(0.5rem, 2vh, 0.75rem);
+        height: 100%;
     }
 
     .placeholder {
@@ -125,6 +128,7 @@
         aspect-ratio: 1;
         position: relative;
         transition: transform 0.2s ease;
+        height: 100%;
     }
 
     .vinyl-container:active {

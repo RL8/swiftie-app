@@ -1,0 +1,177 @@
+/* Taylor Swift Fan App Theme */
+:root {
+    /* Viewport and Container */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+
+    /* Container Sizes */
+    --container-sm: calc(100vh - 120px);
+    --container-md: calc(100vh - 80px);
+    --container-lg: calc(100vh - 40px);
+    --container-max-width: 448px;
+
+    /* Dynamic Spacing */
+    --dynamic-spacing-xs: clamp(0.25rem, 1vh, 0.5rem);
+    --dynamic-spacing-sm: clamp(0.5rem, 1.5vh, 0.75rem);
+    --dynamic-spacing-md: clamp(0.75rem, 2vh, 1rem);
+    --dynamic-spacing-lg: clamp(1rem, 2.5vh, 1.5rem);
+
+    /* Component Sizing */
+    --header-height: clamp(48px, 8vh, 64px);
+    --footer-height: clamp(48px, 8vh, 64px);
+    --content-height: calc(100vh - var(--header-height) - var(--footer-height));
+    
+    /* Grid System */
+    --grid-gap-sm: clamp(0.5rem, 2vw, 1rem);
+    --grid-gap-md: clamp(1rem, 3vw, 1.5rem);
+    --grid-gap-lg: clamp(1.5rem, 4vw, 2rem);
+
+    /* Colors */
+    --color-primary: rgb(244, 63, 94);
+    --color-primary-light: rgb(255, 107, 139);
+    --color-primary-dark: rgb(219, 39, 70);
+    --color-primary-alpha: rgba(244, 63, 94, 0.4);
+    
+    /* Background Colors */
+    --bg-gradient-start: rgb(255, 241, 242);
+    --bg-gradient-end: rgb(254, 205, 211);
+    --bg-container: rgb(226, 232, 240);
+    --bg-overlay: rgba(255, 255, 255, 0.6);
+    --bg-header: rgba(255, 241, 242, 0.8);
+    
+    /* Text Colors */
+    --text-primary: #881337;
+    --text-secondary: #9f1239;
+    --text-light: #ffffff;
+    --text-dark: #1f2937;
+    
+    /* Spacing Scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    
+    /* Component Spacing */
+    --spacing-header: var(--dynamic-spacing-sm);
+    --spacing-footer: var(--dynamic-spacing-sm);
+    --spacing-content: var(--dynamic-spacing-md);
+    --spacing-button: var(--dynamic-spacing-sm);
+    --spacing-card: var(--dynamic-spacing-md);
+    --spacing-input: var(--dynamic-spacing-md);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+    --radius-button: var(--radius-md);
+    --radius-container: var(--radius-lg);
+    --radius-card: var(--radius-lg);
+    --radius-badge: var(--radius-full);
+    
+    /* Effects */
+    --shadow-sm: 0 2px 8px;
+    --shadow-md: 0 4px 12px;
+    --shadow-lg: 0 8px 24px;
+    --shadow-primary: var(--shadow-sm) var(--color-primary-alpha);
+    
+    /* Z-index Layers */
+    --z-header: 10;
+    --z-content: 1;
+    --z-footer: 10;
+    --z-overlay: 20;
+    --z-tooltip: 30;
+    --z-modal: 40;
+    
+    /* Backdrop Filters */
+    --blur-sm: blur(4px);
+    --blur-md: blur(8px);
+    --blur-lg: blur(16px);
+    
+    /* Animation */
+    --duration-fast: 0.3s;
+    --duration-medium: 0.8s;
+    --duration-slow: 2s;
+    --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Scrollbar Colors */
+    --scrollbar-track: rgba(244, 63, 94, 0.05);
+    --scrollbar-thumb: rgba(244, 63, 94, 0.2);
+    --scrollbar-thumb-hover: rgba(244, 63, 94, 0.3);
+    --scrollbar-width: 8px;
+    --scrollbar-height: 8px;
+}
+
+/* Global Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Animation Utilities */
+.subtle-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.subtle-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+/* Custom Scrollbar */
+.scrollbar-taylor {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-taylor::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-height);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: var(--radius-full);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-full);
+    transition: background var(--duration-fast) var(--timing-function);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}

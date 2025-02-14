@@ -1,16 +1,16 @@
 <script lang="ts">
     import { base } from '$app/paths';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    import BaseHeader from '$lib/components/layout/HeaderVariants/BaseHeader.svelte';
-    import ButtonFooter from '$lib/components/layout/FooterVariants/ButtonFooter.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
 </script>
 
 <StandardLayout>
-    <BaseHeader 
+    <Header 
         slot="header"
         title="Page Not Found"
-        subtitle="Oops! Looks like we're in a blank space"
+        subtitle="Sorry, we couldn't find what you're looking for"
     />
 
     <div class="flex flex-col items-center justify-center flex-1 p-4 text-center">
@@ -18,8 +18,11 @@
         <p class="text-rose-700 mb-8">
             The page you're looking for seems to have disappeared like a cruel summer.
         </p>
-        <a href="{base}/" class="button-primary">
-            Back to Home
-        </a>
     </div>
+
+    <Footer variant="button" slot="footer">
+        <Button variant="primary" on:click={() => goto(base)}>
+            Go Home
+        </Button>
+    </Footer>
 </StandardLayout>

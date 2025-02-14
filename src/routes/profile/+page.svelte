@@ -1,11 +1,11 @@
 <script lang="ts">
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    import BaseHeader from '$lib/components/layout/HeaderVariants/BaseHeader.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
     import Button from '$lib/components/Button/Button.svelte';
 </script>
 
 <StandardLayout>
-    <BaseHeader 
+    <Header 
         slot="header"
         title="Your Profile"
         subtitle="Customize your Swiftie experience"

@@ -3,44 +3,29 @@
     import "../app.css";
     import { page } from '$app/stores';
     import BottomNav from '$lib/components/BottomNav.svelte';
-    import Layout from '$lib/components/Layout.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     
     $: showBottomNav = !$page.url.pathname.includes('/albums');
 </script>
 
-<Layout>
+<StandardLayout>
     <div class:pb-16={showBottomNav}>
         <slot />
     </div>
     {#if showBottomNav}
         <BottomNav />
     {/if}
-</Layout>
+</StandardLayout>
 
 <style>
     :global(html) {
-        background-color: rgb(243 244 246);
+        background-color: rgb(226, 232, 240);
+        height: 100%;
     }
 
-    :global(.shimmer) {
-        background-size: 200% 100%;
-        background-image: linear-gradient(
-            110deg,
-            #f43f5e 0%,
-            #f43f5e 40%,
-            #ff6b8b 50%,
-            #f43f5e 60%,
-            #f43f5e 100%
-        );
-        animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-        0% {
-            background-position: 200% 0;
-        }
-        100% {
-            background-position: -200% 0;
-        }
+    :global(body) {
+        height: 100%;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
 </style>
