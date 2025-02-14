@@ -14,7 +14,9 @@
     }
     
     function handleContinue() {
-        goto(`${base}/songs`);
+        if ($selectedAlbums.length === 3) {
+            goto(`${base}/albums/songs`);
+        }
     }
 
     function vibrate() {

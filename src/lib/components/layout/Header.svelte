@@ -8,122 +8,91 @@
     export let maxProgress: number | undefined = undefined;
 </script>
 
-<header class="header" class:with-progress={variant === 'progress'}>
-    <div class="header-content">
-        <h1 class="title">{title}</h1>
-        {#if subtitle}
-            <p class="subtitle">{subtitle}</p>
-        {/if}
-    </div>
-    {#if variant === 'progress'}
-        <div class="progress-bar">
-            <div class="progress-chevrons">
-                {#each Array(maxProgress) as _, i}
-                    <div class="chevron {i < progress ? 'filled' : ''}">
-                        <span class="chevron-number">{i + 1}</span>
-                    </div>
-                {/each}
+<div class="header {variant}">
+    {#if variant === "progress"}
+        <div class="progress-header">
+            <div class="left-content">
+                <slot name="left" />
+            </div>
+            <div class="center-content">
+                <h1>{title}</h1>
+                {#if subtitle}
+                    <p>{subtitle}</p>
+                {/if}
+                <div class="progress-dots">
+                    {#each Array(maxProgress) as _, i}
+                        <div class="dot" class:active={i < progress} />
+                    {/each}
+                </div>
+            </div>
+            <div class="right-content">
+                <!-- Reserved for future use -->
             </div>
         </div>
+    {:else}
+        <h1>{title}</h1>
+        {#if subtitle}
+            <p>{subtitle}</p>
+        {/if}
     {/if}
-</header>
+</div>
 
 <style>
     .header {
-        padding: var(--spacing-header);
-        background: var(--bg-header);
-        backdrop-filter: var(--blur-sm);
+        padding: 1rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-header {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .left-content, .right-content {
+        display: flex;
+        align-items: center;
+    }
+
+    .center-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        text-align: center;
-        min-height: var(--header-height);
+        gap: 0.5rem;
     }
 
-    .header-content {
-        max-width: 20rem;
-    }
-
-    .title {
-        font-size: clamp(1.25rem, 3vh, 1.5rem);
+    h1 {
+        font-size: 1.1rem;
         font-weight: 600;
+        margin: 0;
         color: var(--text-primary);
+    }
+
+    p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
         margin: 0;
     }
 
-    .subtitle {
-        font-size: clamp(0.875rem, 2.25vh, 1rem);
-        color: var(--text-secondary);
-        margin: var(--dynamic-spacing-xs) 0 0;
-    }
-
-    .progress-bar {
-        margin-top: var(--dynamic-spacing-sm);
-        width: 100%;
-        max-width: 24rem;
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        backdrop-filter: blur(8px);
-    }
-
-    .progress-chevrons {
+    .progress-dots {
         display: flex;
-        justify-content: center;
-        gap: 0;
-        margin-top: 0;
-        width: 100%;
-        max-width: 24rem;
-        margin-left: auto;
-        margin-right: auto;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        gap: 0.5rem;
+        margin-top: 0.25rem;
     }
 
-    .chevron {
-        width: 9rem;
-        height: 3rem;
-        background: rgba(244, 63, 94, 0.3);
-        clip-path: polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%);
-        margin: 0 0.000625rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        transition: all 0.3s ease;
+    .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease-out;
     }
 
-    .chevron.filled {
+    .dot.active {
         background: rgb(244, 63, 94);
-        filter: drop-shadow(0 2px 8px rgba(244, 63, 94, 0.3));
-    }
-
-    .chevron-number {
-        color: white;
-        font-size: 1.25rem;
-        font-weight: 500;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 20;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        opacity: 0.7;
-        transition: all 0.3s ease;
-    }
-
-    .filled .chevron-number {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.05);
-    }
-
-    @keyframes appear {
-        from {
-            transform: scaleX(0);
-        }
-        to {
-            transform: scaleX(1);
-        }
     }
 </style>
