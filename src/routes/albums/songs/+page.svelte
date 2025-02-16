@@ -9,7 +9,7 @@
     import Button from '$lib/components/Button/Button.svelte';
     import { fade } from 'svelte/transition';
     
-    const music = getContext<MusicContext>('music');
+    const music = getContext<() => MusicContext>('music')();
     let currentSongSelections: string[] = [];
     let currentAlbumIndex = 0;
     
@@ -28,9 +28,8 @@
     function handleBack() {
         if (currentAlbumIndex > 0) {
             currentAlbumIndex--;
-            currentSongSelections = [];
+            currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
         } else {
-            music.clearSongSelections();
             goto(`${base}/albums/confirm`);
         }
     }
@@ -38,11 +37,11 @@
     function handleContinue() {
         if (currentSongSelections.length === 3) {
             // Store the current album's song selections
-            music.addSongSelection(currentAlbum.id, currentSongSelections);
+            music.updateSelectedSongs(currentAlbum.id, currentSongSelections);
             
             if (currentAlbumIndex < 2) {
                 currentAlbumIndex++;
-                currentSongSelections = [];
+                currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
             } else {
                 goto(`${base}/albums/results`);
             }

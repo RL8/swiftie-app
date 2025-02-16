@@ -10,7 +10,7 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
 
-    const music = getContext<MusicContext>('music');
+    const music = getContext<() => MusicContext>('music')();
 
     function handleEdit() {
         goto(`${base}/albums`);

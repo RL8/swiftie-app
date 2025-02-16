@@ -12,7 +12,7 @@
     $: currentPathWithoutBase = currentPath.replace(base, '');
 </script>
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4">
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4" style="display: none;">
     <div class="max-w-md mx-auto flex justify-around items-center">
         {#each navItems as { path, label, icon }}
             <a 

@@ -23,10 +23,8 @@ export function createMusicContext() {
         if (selectedAlbums.find(a => a.id === album.id)) return;
         
         selectedAlbums.push(album);
-        
-        // Select 3 random songs by default
-        const shuffledSongs = [...album.songs].sort(() => Math.random() - 0.5);
-        selectedSongsByAlbum.set(album.id, shuffledSongs.slice(0, 3));
+        // Initialize empty song selection for this album
+        selectedSongsByAlbum.set(album.id, []);
     }
 
     function removeAlbum(albumId: string) {
@@ -49,7 +47,6 @@ export function createMusicContext() {
 
     // Return read-only access to state and methods
     return {
-        get albums() { return albums; },
         get selectedAlbums() { return selectedAlbums; },
         get selectedSongsByAlbum() { return selectedSongsByAlbum; },
         get totalSelections() { return totalSelections; },
@@ -57,7 +54,8 @@ export function createMusicContext() {
         selectAlbum,
         removeAlbum,
         updateSelectedSongs,
-        clearSelections
+        clearSelections,
+        albums,
     };
 }
 

@@ -10,8 +10,7 @@
 
     const music = getContext<MusicContext>('music');
 
-    function handleStartGame() {
-        music.selectRandomAlbumsAndSongs();
+    function handleGetStarted() {
         goto(`${base}/albums`);
     }
 </script>
@@ -34,9 +33,9 @@
     <Footer variant="button" slot="footer">
         <Button 
             variant="primary"
-            on:click={handleStartGame}
+            on:click={handleGetStarted}
             fullWidth={true}>
-            Start Game
+            Get Started
         </Button>
     </Footer>
 </StandardLayout>
