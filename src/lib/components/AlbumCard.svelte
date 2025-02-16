@@ -1,39 +1,39 @@
 <script lang="ts">
-    import type { Album } from '$lib/types/album';
-    import { selectedAlbums } from '$lib/stores/albumSelection';
-    
-    let { album, index } = $props<{
-        album: Album;
-        index: number;
-    }>();
-    
-    const isSelected = $derived($selectedAlbums.some(a => a.id === album.id));
-    const selectionIndex = $derived($selectedAlbums.findIndex(a => a.id === album.id) + 1);
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import type { Album } from '$lib/types';
+
+    const music = getContext<MusicContext>('music');
+
+    export let album: Album;
+    export let index: number;
+    export let onClick: () => void = () => {};
+    export let showBorder = true;
+
+    $: isSelected = music.selectedAlbums.some(a => a.id === album.id);
+    $: selectionIndex = music.selectedAlbums.findIndex(a => a.id === album.id) + 1;
 </script>
 
-<div 
+<button
     class="album-card"
+    class:selected={isSelected}
+    class:show-border={showBorder}
     style="animation-delay: {index * 50}ms"
-    on:click
-    role="button"
-    tabindex="0"
+    on:click={onClick}
 >
-    <slot>
-        <div class="album-content">
-            <img
-                src={album.coverArt}
-                alt={album.title}
-                class="w-full h-full object-cover"
-            />
-            
-            {#if isSelected}
-                <div class="selection-overlay">
-                    <span class="text-4xl font-bold text-white">{selectionIndex}</span>
-                </div>
-            {/if}
-        </div>
-    </slot>
-</div>
+    <div class="album-content">
+        <img
+            src={album.coverArt}
+            alt={album.title}
+            class="w-full h-full object-cover"
+        />
+        {#if isSelected}
+            <div class="selection-overlay">
+                <span class="text-4xl font-bold text-white">{selectionIndex}</span>
+            </div>
+        {/if}
+    </div>
+</button>
 
 <style>
     .album-card {
@@ -67,7 +67,7 @@
         justify-content: center;
     }
 
-    :global(.album-card[data-selected="true"]) .album-content {
+    .album-card.selected {
         box-shadow: 0 0 0 2px rgb(244, 63, 94);
         transform: translateY(-0.25rem);
     }

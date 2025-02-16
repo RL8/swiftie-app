@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { albums } from '$lib/data/albums';
-    import { selectedAlbums } from '$lib/stores/albums';
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
@@ -9,38 +9,42 @@
     import Button from '$lib/components/Button/Button.svelte';
     import { fade } from 'svelte/transition';
     
-    let selectedSongs: string[] = [];
+    const music = getContext<MusicContext>('music');
+    let currentSongSelections: string[] = [];
     let currentAlbumIndex = 0;
     
     // Get the current album based on index
-    $: currentAlbum = $selectedAlbums[currentAlbumIndex];
+    $: currentAlbum = music.selectedAlbums[currentAlbumIndex];
     
     function handleSongSelect(songTitle: string) {
-        const songIndex = selectedSongs.indexOf(songTitle);
+        const songIndex = currentSongSelections.indexOf(songTitle);
         if (songIndex !== -1) {
-            selectedSongs = selectedSongs.filter(s => s !== songTitle);
-        } else if (selectedSongs.length < 3) {
-            selectedSongs = [...selectedSongs, songTitle];
+            currentSongSelections = currentSongSelections.filter(s => s !== songTitle);
+        } else if (currentSongSelections.length < 3) {
+            currentSongSelections = [...currentSongSelections, songTitle];
         }
     }
     
     function handleBack() {
         if (currentAlbumIndex > 0) {
             currentAlbumIndex--;
-            selectedSongs = [];
+            currentSongSelections = [];
         } else {
+            music.clearSongSelections();
             goto(`${base}/albums/confirm`);
         }
     }
     
     function handleContinue() {
-        if (selectedSongs.length === 3) {
+        if (currentSongSelections.length === 3) {
+            // Store the current album's song selections
+            music.addSongSelection(currentAlbum.id, currentSongSelections);
+            
             if (currentAlbumIndex < 2) {
                 currentAlbumIndex++;
-                selectedSongs = [];
+                currentSongSelections = [];
             } else {
-                // TODO: Navigate to results when all albums are done
-                goto(`${base}/results`);
+                goto(`${base}/albums/results`);
             }
         }
     }
@@ -52,12 +56,12 @@
         variant="progress"
         title="Now, select your 3 top bangers from {currentAlbum?.title}"
         subtitle="Choose your favorite songs"
-        progress={selectedSongs.length}
+        progress={currentSongSelections.length}
         maxProgress={3}>
         
         <!-- Selected Albums Stack in Header -->
         <div class="albums-stack" slot="left">
-            {#each $selectedAlbums as album, i}
+            {#each music.selectedAlbums as album, i}
                 <div 
                     class="selected-album"
                     class:active={i === currentAlbumIndex}
@@ -82,25 +86,25 @@
         </div>
     </Header>
 
-    <main slot="main" class="flex flex-col h-full p-4">
+    <main slot="main" class="flex flex-col items-center justify-start h-full p-4">
         <!-- Songs List -->
         <div class="songs-container" in:fade>
             {#each currentAlbum?.songs || [] as song, i}
                 <button
                     class="song-item"
-                    class:selected={selectedSongs.includes(song)}
+                    class:selected={currentSongSelections.includes(song)}
                     on:click={() => handleSongSelect(song)}
                 >
                     <div class="song-info">
                         <span class="song-number">{i + 1}.</span>
                         <span class="song-title">{song}</span>
                     </div>
-                    {#if selectedSongs.includes(song)}
+                    {#if currentSongSelections.includes(song)}
                         <div class="heart-badge-song">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
                                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                             </svg>
-                            <span class="heart-number-song">{selectedSongs.indexOf(song) + 1}</span>
+                            <span class="heart-number-song">{currentSongSelections.indexOf(song) + 1}</span>
                         </div>
                     {/if}
                 </button>
@@ -114,7 +118,7 @@
         </Button>
         <Button 
             variant="primary"
-            disabled={selectedSongs.length < 3}
+            disabled={currentSongSelections.length < 3}
             on:click={handleContinue}
         >
             {currentAlbumIndex < 2 ? 'Next Album' : 'See Results'}
@@ -212,6 +216,8 @@
         gap: 0.5rem;
         overflow-y: auto;
         padding: 0.5rem;
+        width: 100%;
+        max-width: var(--container-max-width);
     }
 
     .song-item {

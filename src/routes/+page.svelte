@@ -1,46 +1,45 @@
 <script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
 
-    function handleGetStarted() {
+    const music = getContext<MusicContext>('music');
+
+    function handleStartGame() {
+        music.selectRandomAlbumsAndSongs();
         goto(`${base}/albums`);
     }
 </script>
 
-<main class="flex flex-col items-center justify-center min-h-[var(--content-height)] p-4">
-    <div class="max-w-sm text-center">
-        <div class="welcome-title mb-12">
-            <h1 class="text-6xl font-bold text-rose-600 mb-2">Swiftie</h1>
-            <div class="text-2xl font-medium bg-gradient-to-r from-rose-600 to-rose-400 text-transparent bg-clip-text">
-                Mix • Match • Magic
-            </div>
-        </div>
+<StandardLayout>
+    <Header
+        slot="header"
+        title="Taylor Swift Game"
+        subtitle="Find your favorite Taylor's songs" />
 
-        <div class="vinyl-decoration mb-12">
-            <div class="relative w-48 h-48">
-                <div class="absolute inset-0 rounded-full bg-black shadow-lg">
-                    <div class="absolute inset-8 rounded-full bg-gradient-to-br from-gray-800 to-gray-900">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-4 h-4 rounded-full bg-rose-500"></div>
-                        </div>
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-rose-500/10 to-transparent animate-shine"></div>
-                    </div>
-                </div>
-            </div>
+    <main slot="main" class="flex flex-col items-center justify-center h-full p-4">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold mb-4">Ready to play?</h2>
+            <p class="text-lg mb-8">
+                We'll help you discover your favorite Taylor Swift songs by exploring her albums together.
+            </p>
         </div>
+    </main>
 
-        <div class="w-full max-w-xs">
-            <Button 
-                variant="primary"
-                fullWidth={true}
-                on:click={() => goto('/albums')}
-            >
-                Get Started
-            </Button>
-        </div>
-    </div>
-</main>
+    <Footer variant="button" slot="footer">
+        <Button 
+            variant="primary"
+            on:click={handleStartGame}
+            fullWidth={true}>
+            Start Game
+        </Button>
+    </Footer>
+</StandardLayout>
 
 <style>
     .welcome-title {

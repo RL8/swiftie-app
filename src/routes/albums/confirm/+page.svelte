@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { selectedAlbums } from '$lib/stores/albums';
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
     import { onMount } from 'svelte';
@@ -9,12 +10,14 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
 
+    const music = getContext<MusicContext>('music');
+
     function handleEdit() {
         goto(`${base}/albums`);
     }
     
     function handleContinue() {
-        if ($selectedAlbums.length === 3) {
+        if (music.selectedAlbums.length === 3) {
             goto(`${base}/albums/songs`);
         }
     }
@@ -72,8 +75,8 @@
                             <div class="vinyl-image">
                                 <div class="record-spin">
                                     <img
-                                        src={$selectedAlbums[2].coverArt}
-                                        alt={$selectedAlbums[2].title}
+                                        src={music.selectedAlbums[2].coverArt}
+                                        alt={music.selectedAlbums[2].title}
                                         class="w-full h-full object-cover"
                                     />
                                     <div class="vinyl-overlay" />
@@ -96,8 +99,8 @@
                             <div class="vinyl-image">
                                 <div class="record-spin">
                                     <img
-                                        src={$selectedAlbums[1].coverArt}
-                                        alt={$selectedAlbums[1].title}
+                                        src={music.selectedAlbums[1].coverArt}
+                                        alt={music.selectedAlbums[1].title}
                                         class="w-full h-full object-cover"
                                     />
                                     <div class="vinyl-overlay" />
@@ -120,8 +123,8 @@
                             <div class="vinyl-image">
                                 <div class="record-spin">
                                     <img
-                                        src={$selectedAlbums[0].coverArt}
-                                        alt={$selectedAlbums[0].title}
+                                        src={music.selectedAlbums[0].coverArt}
+                                        alt={music.selectedAlbums[0].title}
                                         class="w-full h-full object-cover"
                                     />
                                     <div class="vinyl-overlay" />
@@ -144,7 +147,7 @@
         {#if mounted}
             <Button 
                 variant="secondary"
-                on:click={() => goto(`${base}/albums`)}
+                on:click={handleEdit}
                 fullWidth={true}>
                 Edit Selection
             </Button>

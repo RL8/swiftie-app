@@ -1,8 +1,14 @@
 <script lang="ts">
     import '../app.css';
     import { page } from '$app/stores';
+    import { setContext } from 'svelte';
+    import { createMusicContext } from '$lib/context/music.svelte';
     import BottomNav from '$lib/components/BottomNav.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+
+    // Create and provide the music context
+    const musicContext = createMusicContext();
+    setContext('music', () => musicContext);
 </script>
 
 <StandardLayout>
