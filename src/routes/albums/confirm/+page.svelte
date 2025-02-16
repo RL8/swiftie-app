@@ -9,6 +9,7 @@
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import VinylRecord from '$lib/components/music/VinylRecord.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -53,7 +54,7 @@
                         colors: ['#FFB6C1', '#FF69B4', '#FF1493'],
                         disableForReducedMotion: true
                     });
-                }, 600); // Longer delay for more impact
+                }, 600);
             }, 600);
         }, 300);
     });
@@ -72,22 +73,17 @@
                     <div class="vinyl-card vinyl-3"
                         on:touchstart={vibrate}>
                         <div class="vinyl-content">
-                            <div class="vinyl-image">
-                                <div class="record-spin">
-                                    <img
-                                        src={music.selectedAlbums[2].coverArt}
-                                        alt={music.selectedAlbums[2].title}
-                                        class="w-full h-full object-cover"
-                                    />
-                                    <div class="vinyl-overlay" />
-                                </div>
-                                <div class="rank-badge">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
-                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                                    </svg>
-                                    <span class="rank-number">3</span>
-                                </div>
-                            </div>
+                            <span class="rank-number" style="color: {music.selectedAlbums[2].color}">3</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[2].coverArt}
+                                title={music.selectedAlbums[2].title}
+                                selected={true}
+                                selectionNumber={3}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
                         </div>
                     </div>
                 {/if}
@@ -96,22 +92,17 @@
                     <div class="vinyl-card vinyl-2"
                         on:touchstart={vibrate}>
                         <div class="vinyl-content">
-                            <div class="vinyl-image">
-                                <div class="record-spin">
-                                    <img
-                                        src={music.selectedAlbums[1].coverArt}
-                                        alt={music.selectedAlbums[1].title}
-                                        class="w-full h-full object-cover"
-                                    />
-                                    <div class="vinyl-overlay" />
-                                </div>
-                                <div class="rank-badge">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
-                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                                    </svg>
-                                    <span class="rank-number">2</span>
-                                </div>
-                            </div>
+                            <span class="rank-number" style="color: {music.selectedAlbums[1].color}">2</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[1].coverArt}
+                                title={music.selectedAlbums[1].title}
+                                selected={true}
+                                selectionNumber={2}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
                         </div>
                     </div>
                 {/if}
@@ -120,22 +111,17 @@
                     <div class="vinyl-card vinyl-1"
                         on:touchstart={vibrate}>
                         <div class="vinyl-content">
-                            <div class="vinyl-image">
-                                <div class="record-spin">
-                                    <img
-                                        src={music.selectedAlbums[0].coverArt}
-                                        alt={music.selectedAlbums[0].title}
-                                        class="w-full h-full object-cover"
-                                    />
-                                    <div class="vinyl-overlay" />
-                                </div>
-                                <div class="rank-badge">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
-                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                                    </svg>
-                                    <span class="rank-number">1</span>
-                                </div>
-                            </div>
+                            <span class="rank-number" style="color: {music.selectedAlbums[0].color}">1</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[0].coverArt}
+                                title={music.selectedAlbums[0].title}
+                                selected={true}
+                                selectionNumber={1}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
                         </div>
                     </div>
                 {/if}
@@ -162,26 +148,6 @@
 </StandardLayout>
 
 <style>
-    .animate-gradient {
-        background-size: 200% 200%;
-        animation: gradientShift 20s ease infinite;
-    }
-
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    .animate-celebration {
-        animation: celebration 2s ease infinite;
-    }
-
-    @keyframes celebration {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-3px); }
-    }
-
     .vinyl-container {
         position: relative;
         width: 288px;
@@ -251,83 +217,27 @@
     }
 
     .vinyl-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .vinyl-image {
         position: relative;
-        width: 13rem;
-        height: 13rem;
-        border-radius: 50%;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    .record-spin {
-        width: 100%;
-        height: 100%;
-        animation: spin 16s linear infinite;
-    }
-
-    .vinyl-overlay {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-            circle at center,
-            transparent 18%,
-            rgba(0, 0, 0, 0.1) 20%,
-            transparent 22%,
-            rgba(0, 0, 0, 0.1) 24%,
-            transparent 26%,
-            rgba(0, 0, 0, 0.1) 28%,
-            transparent 30%,
-            rgba(0, 0, 0, 0.1) 32%,
-            transparent 34%
-        );
-        pointer-events: none;
-    }
-
-    .rank-badge {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 3rem;
-        height: 3rem;
         display: flex;
-        align-items: center;
         justify-content: center;
-        z-index: 10;
-        color: rgb(244, 63, 94);
-        animation: pulse 4s ease infinite;
-    }
-
-    .heart-icon {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        filter: drop-shadow(0 2px 8px rgba(244, 63, 94, 0.4));
+        align-items: center;
     }
 
     .rank-number {
-        position: relative;
-        color: white;
-        font-size: 1.75rem;
-        font-weight: bold;
-        z-index: 11;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        position: absolute;
+        left: -4rem;
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+                     0 0 20px currentColor;
+        font-family: 'Playfair Display', serif;
+        letter-spacing: -0.02em;
     }
 
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: translate(-50%, -50%) scale(1); }
-        50% { transform: translate(-50%, -50%) scale(1.1); }
+    :global(.confirm-vinyl) {
+        width: 13rem;
+        height: 13rem;
     }
 
     .button-primary {
@@ -355,52 +265,5 @@
     .button-primary:active,
     .button-secondary:active {
         transform: scale(0.98);
-    }
-
-    .subtle-shimmer {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .subtle-shimmer::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background: linear-gradient(
-            110deg,
-            rgba(255,255,255,0) 0%,
-            rgba(255,255,255,0.3) 50%,
-            rgba(255,255,255,0) 100%
-        );
-        animation: subtle-shimmer 2s infinite;
-        transform: translateX(-100%);
-    }
-
-    @keyframes subtle-shimmer {
-        100% {
-            transform: translateX(100%);
-        }
-    }
-
-    .shimmer {
-        background: linear-gradient(to right, #eff1f3 8%, #e2e2e2 18%, #eff1f3 33%);
-        background-size: 1000px 104px;
-        animation: shimmer 3s linear infinite forwards;
-        border-radius: 0.5rem;
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    @keyframes shimmer {
-        0% {
-            background-position: -468px 0;
-        }
-        100% {
-            background-position: 468px 0;
-        }
     }
 </style>

@@ -8,13 +8,14 @@
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
     import { fade } from 'svelte/transition';
+    import { tapAnimation } from '$lib/actions/tapAnimation';
     
     const music = getContext<() => MusicContext>('music')();
-    let currentSongSelections: string[] = [];
-    let currentAlbumIndex = 0;
+    let currentSongSelections = $state<string[]>([]);
+    let currentAlbumIndex = $state(0);
     
     // Get the current album based on index
-    $: currentAlbum = music.selectedAlbums[currentAlbumIndex];
+    const currentAlbum = $derived(music.selectedAlbums[currentAlbumIndex]);
     
     function handleSongSelect(songTitle: string) {
         const songIndex = currentSongSelections.indexOf(songTitle);
@@ -90,12 +91,13 @@
         <div class="songs-container" in:fade>
             {#each currentAlbum?.songs || [] as song, i}
                 <button
-                    class="song-item"
+                    class="song-card"
                     class:selected={currentSongSelections.includes(song)}
                     on:click={() => handleSongSelect(song)}
+                    use:tapAnimation
                 >
                     <div class="song-info">
-                        <span class="song-number">{i + 1}.</span>
+                        <span class="song-number" style="text-align: right;">{i + 1}.</span>
                         <span class="song-title">{song}</span>
                     </div>
                     {#if currentSongSelections.includes(song)}
@@ -212,55 +214,58 @@
     .songs-container {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        overflow-y: auto;
-        padding: 0.5rem;
+        gap: 0.2rem;
+        padding: 0.2rem;
         width: 100%;
         max-width: var(--container-max-width);
     }
 
-    .song-item {
+    .song-card {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.3rem 0.5rem;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 0.5rem;
         transition: all 0.2s ease-out;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1),
+                   0 1px 2px rgba(0, 0, 0, 0.15);
         text-align: left;
         width: 100%;
     }
 
-    .song-item:hover {
+    .song-card:hover {
         background: rgba(255, 255, 255, 0.15);
     }
 
-    .song-item.selected {
+    .song-card.selected {
         background: rgba(244, 63, 94, 0.2);
     }
 
     .song-info {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.2rem;
         flex: 1;
     }
 
     .song-number {
         color: var(--text-secondary);
-        font-size: 0.9rem;
-        min-width: 1.5rem;
+        font-size: 0.8rem;
+        min-width: 1.2rem;
+        text-align: right;
     }
 
     .song-title {
         color: var(--text-primary);
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 500;
     }
 
     .heart-badge-song {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1.2rem;
+        height: 1.2rem;
         color: rgb(244, 63, 94);
         position: relative;
         display: flex;
@@ -272,7 +277,7 @@
     .heart-number-song {
         position: absolute;
         color: white;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: bold;
     }
 </style>

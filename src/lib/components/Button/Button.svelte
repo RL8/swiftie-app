@@ -1,11 +1,20 @@
 <script lang="ts">
-    import type { ButtonProps } from '$lib/types/components';
-    
+    import { tap } from '@sveltejs/gestures';
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
     export let variant: ButtonProps['variant'] = 'primary';
     export let size: ButtonProps['size'] = 'default';
     export let disabled: ButtonProps['disabled'] = false;
     export let fullWidth: ButtonProps['fullWidth'] = false;
     export let type: ButtonProps['type'] = 'button';
+
+    function handleTap(event: CustomEvent) {
+        if (!disabled) {
+            dispatch('click', event.detail);
+        }
+    }
 
     function handleTouchStart() {
         if (navigator.vibrate && !disabled) {
@@ -17,13 +26,10 @@
 <button
     {type}
     {disabled}
-    class="btn"
-    class:btn-primary={variant === 'primary'}
-    class:btn-secondary={variant === 'secondary'}
-    class:btn-compact={size === 'compact'}
-    class:btn-full={fullWidth}
+    class="btn btn-{variant} {fullWidth ? 'btn-full' : ''} {size === 'compact' ? 'btn-compact' : ''}"
     class:btn-disabled={disabled}
-    on:click
+    use:tap
+    on:tap={handleTap}
     on:touchstart={handleTouchStart}
     {...$$restProps}
 >
@@ -35,34 +41,34 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
-        border-radius: 0.375rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        min-width: 120px;
-        font-size: 1rem;
-        border: none;
+        transition: transform 0.15s ease-out;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active:not(.btn-disabled) {
+        transform: translateY(1px);
     }
 
     .btn-primary {
-        background: #E31C58;
+        background-color: rgb(244, 63, 94);
         color: white;
     }
 
-    .btn-primary:hover:not(.btn-disabled) {
-        background: #C01145;
-        transform: translateY(-1px);
+    .btn-primary:active:not(.btn-disabled) {
+        background-color: rgb(225, 29, 72);
     }
 
     .btn-secondary {
-        background: transparent;
-        color: #E31C58;
-        border: 2px solid #E31C58;
+        background-color: rgb(226, 232, 240);
+        color: rgb(15, 23, 42);
     }
 
-    .btn-secondary:hover:not(.btn-disabled) {
-        background: rgba(227, 28, 88, 0.1);
+    .btn-secondary:active:not(.btn-disabled) {
+        background-color: rgb(203, 213, 225);
     }
 
     .btn-disabled {

@@ -1,13 +1,16 @@
 <!-- VinylRecord.svelte -->
 <script lang="ts">
+    import { tap } from '@sveltejs/gestures';
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
     /** The source URL for the album cover art */
     export let coverArt: string;
     /** The album title for alt text */
     export let title: string;
     /** Whether the record is currently selected */
     export let selected: boolean = false;
-    /** The selection number (1-3) to show when selected */
-    export let selectionNumber: number | null = null;
     /** Whether to animate the record */
     export let animate: boolean = true;
     /** Custom CSS class to apply to the container */
@@ -30,30 +33,35 @@
         badgeColor: string;
     } = {
         centerColor: 'rgba(0, 0, 0, 0.8)',
-        grooveColor: 'rgba(255, 255, 255, 0.05)',
+        grooveColor: 'rgba(255, 255, 255, 0.2)',
         selectionColor: 'rgba(244, 63, 94, 0.2)',
         badgeColor: 'rgb(244, 63, 94)',
     };
 
+    /** The selection number (1-3) to show when selected */
+    export let selectionNumber: number | null = null;
+
     // Random initial rotation for subtle animation
     const randomRotation = Math.random() * 5 - 2.5;
+
+    function handleTap(event: CustomEvent) {
+        dispatch('click', event.detail);
+    }
 </script>
 
 <div
     class="vinyl-container {class_}"
     class:selected
     style="--random-rotation: {randomRotation};"
-    on:click
-    on:keydown
+    use:tap
+    on:tap={handleTap}
 >
-    {#if selected && selectionNumber !== null && badgePosition === 'container'}
+    {#if selected && badgePosition === 'container'}
         <div class="heart-badge container-badge">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={config.badgeColor} class="heart-icon">
                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
             </svg>
-            <span class="heart-number">
-                {selectionNumber}
-            </span>
+            <span class="heart-number">{selectionNumber}</span>
         </div>
     {/if}
     <div class="vinyl">
@@ -64,17 +72,15 @@
             alt={title}
         />
         {#if showGrooves}
-            <div class="vinyl-grooves" style={`background: repeating-radial-gradient(circle at center, transparent 0, transparent 3px, ${config.grooveColor} 3.5px, rgba(0, 0, 0, 0.15) 4px)`}></div>
+            <div class="vinyl-grooves" style={`background: repeating-radial-gradient(circle at center, transparent 0, transparent 4px, ${config.grooveColor} 5px, rgba(0, 0, 0, 0.1125) 6px)`}></div>
         {/if}
         <div class="vinyl-center" style={`background: radial-gradient(circle at center, ${config.centerColor} 0%, rgba(0, 0, 0, 0.9) 50%, #000 100%)`}></div>
-        {#if selected && selectionNumber !== null && badgePosition === 'image'}
+        {#if selected && badgePosition === 'image'}
             <div class="heart-badge image-badge">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={config.badgeColor} class="heart-icon">
                     <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                 </svg>
-                <span class="heart-number">
-                    {selectionNumber}
-                </span>
+                <span class="heart-number">{selectionNumber}</span>
             </div>
         {/if}
         {#if selected && showSelectionOverlay}
@@ -89,6 +95,7 @@
         position: relative;
         transform: rotate(calc(var(--random-rotation, 0) * 1deg));
         transition: all 0.3s ease-out;
+        touch-action: manipulation;
     }
 
     .vinyl-container:not(.selected) {
@@ -98,6 +105,10 @@
     .vinyl-container.selected {
         z-index: 20;
         animation: fullRotate 8s linear infinite;
+    }
+
+    .vinyl-container:active {
+        transform: scale(0.98);
     }
 
     @keyframes fullRotate {
@@ -134,10 +145,10 @@
     .vinyl-grooves {
         position: absolute;
         inset: 0;
-        mix-blend-mode: overlay;
+        mix-blend-mode: multiply;
         z-index: 2;
         pointer-events: none;
-        opacity: 0.85;
+        opacity: 1;
     }
 
     .vinyl-center {

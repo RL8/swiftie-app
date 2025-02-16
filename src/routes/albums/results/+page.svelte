@@ -82,6 +82,7 @@
                                     coverArt={music.selectedAlbums[0].coverArt}
                                     title={music.selectedAlbums[0].title}
                                     selected={true}
+                                    selectionNumber={1}
                                     badgePosition="none"
                                     showSelectionOverlay={false}
                                     showGrooves={true}
@@ -89,10 +90,13 @@
                                 />
                                 <div class="song-list">
                                     <ul class="songs">
-                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || [] as song}
-                                            <li class="song-item" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
-                                                {song}
-                                            </li>
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[0].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
                                         {/each}
                                     </ul>
                                 </div>
@@ -115,6 +119,7 @@
                                     coverArt={music.selectedAlbums[1].coverArt}
                                     title={music.selectedAlbums[1].title}
                                     selected={true}
+                                    selectionNumber={2}
                                     badgePosition="none"
                                     showSelectionOverlay={false}
                                     showGrooves={true}
@@ -122,10 +127,13 @@
                                 />
                                 <div class="song-list">
                                     <ul class="songs">
-                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || [] as song}
-                                            <li class="song-item" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">
-                                                {song}
-                                            </li>
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[1].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
                                         {/each}
                                     </ul>
                                 </div>
@@ -148,6 +156,7 @@
                                     coverArt={music.selectedAlbums[2].coverArt}
                                     title={music.selectedAlbums[2].title}
                                     selected={true}
+                                    selectionNumber={3}
                                     badgePosition="none"
                                     showSelectionOverlay={false}
                                     showGrooves={true}
@@ -155,10 +164,13 @@
                                 />
                                 <div class="song-list">
                                     <ul class="songs">
-                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || [] as song}
-                                            <li class="song-item" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">
-                                                {song}
-                                            </li>
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[2].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
                                         {/each}
                                     </ul>
                                 </div>
@@ -184,7 +196,7 @@
     .results-container {
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 1rem;
         max-width: 32rem;
         margin: 0 auto;
     }
@@ -192,19 +204,20 @@
     .album-container {
         background: white;
         border-radius: 1rem;
-        padding: 1.5rem;
+        padding: 0.75rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease;
+        transition: transform 0.15s;
+        touch-action: manipulation;
     }
 
-    .album-container:hover {
-        transform: scale(1.02);
+    .album-container:active {
+        transform: scale(0.99);
     }
 
     .album-display {
         display: flex;
-        gap: 1.5rem;
-        align-items: flex-start;
+        gap: 0.75rem;
+        align-items: center;
         position: relative;
     }
 
@@ -220,23 +233,40 @@
         overflow-y: auto;
     }
 
+    .song-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0.125rem;
+    }
+
+    .song-rank {
+        font-size: 0.8rem;
+        min-width: 1rem;
+        text-align: right;
+    }
+
+    .song-item {
+        padding: 0.2rem 0.375rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        transition: transform 0.15s;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+    }
+
+    .song-item:active {
+        transform: scale(0.98);
+    }
+
     .songs {
         list-style: none;
         padding: 0;
         margin: 0;
-    }
-
-    .song-item {
-        padding: 0.4rem 0.75rem;
-        border-radius: 0.5rem;
-        margin-bottom: 0.25rem;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: transform 0.2s ease;
-    }
-
-    .song-item:hover {
-        transform: scale(1.02);
     }
 
     @keyframes heartbeat {

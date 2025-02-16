@@ -49,6 +49,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@sveltejs/gestures": "^0.0.1",
 		"canvas-confetti": "^1.9.3"
 	}
 }
