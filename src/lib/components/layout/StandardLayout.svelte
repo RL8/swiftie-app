@@ -47,7 +47,7 @@
     });
 </script>
 
-<div class="fixed inset-0 bg-slate-200 flex justify-center items-center p-4">
+<div class="fixed inset-0 bg-slate-200 flex justify-center items-center">
     <div class="app-frame {customGradient} flex flex-col w-full max-w-full h-full md:max-w-md md:h-[800px] rounded-3xl overflow-hidden shadow-2xl">
         {#if showHeader}
             {@render header?.()}
