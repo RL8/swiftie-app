@@ -71,10 +71,10 @@
     .album-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(4, 1fr);
         gap: 0.5rem;
         width: 100%;
         max-width: 24rem;
+        min-width: 16rem;
         margin: 0 auto;
     }
 
