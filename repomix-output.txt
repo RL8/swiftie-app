@@ -1,0 +1,4616 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+
+Additional Info:
+----------------
+
+================================================================
+Directory Structure
+================================================================
+.github/workflows/deploy.yml
+.gitignore
+.npmrc
+.prettierignore
+.prettierrc
+.storybook/main.ts
+.storybook/preview.ts
+eslint.config.js
+package.json
+postcss.config.js
+public/global.css
+public/index.html
+README.md
+repomix.config.json
+rollup.config.js
+scripts/setupTypeScript.js
+server.py
+src/app.css
+src/app.d.ts
+src/app.html
+src/App.svelte
+src/lib/actions/tapAnimation.ts
+src/lib/components/AlbumCard.svelte
+src/lib/components/BottomNav.svelte
+src/lib/components/Button/Button.svelte
+src/lib/components/layout/Footer.svelte
+src/lib/components/layout/Header.svelte
+src/lib/components/layout/StandardLayout.svelte
+src/lib/components/music/VinylRecord.svelte
+src/lib/context/music.svelte.ts
+src/lib/data/albums.ts
+src/lib/index.ts
+src/lib/stores/albumPaths.ts
+src/lib/stores/games.ts
+src/lib/styles/responsive.css
+src/lib/styles/theme.css
+src/lib/styles/tokens/index.css
+src/lib/types/album.ts
+src/lib/types/components.ts
+src/main.js
+src/routes/+layout.svelte
+src/routes/+layout.ts
+src/routes/+page.svelte
+src/routes/404/+page.svelte
+src/routes/albums/+page.svelte
+src/routes/albums/confirm/+page.svelte
+src/routes/albums/results/+page.svelte
+src/routes/albums/songs/+page.svelte
+src/routes/games/+page.svelte
+src/routes/profile/+page.svelte
+src/stories/assets/accessibility.svg
+src/stories/assets/discord.svg
+src/stories/assets/github.svg
+src/stories/assets/tutorials.svg
+src/stories/assets/youtube.svg
+src/stories/button.css
+src/stories/Configure.mdx
+src/stories/header.css
+src/stories/Header.stories.svelte
+src/stories/Header.svelte
+src/stories/page.css
+src/stories/Page.stories.svelte
+src/stories/Page.svelte
+svelte.config.js
+tailwind.config.ts
+tsconfig.json
+vite.config.ts
+
+================================================================
+Files
+================================================================
+
+================
+File: .github/workflows/deploy.yml
+================
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Build site
+        env:
+          BASE_PATH: '/swiftie-app'
+        run: |
+          npm run build
+          touch build/.nojekyll
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+================
+File: .gitignore
+================
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+*storybook.log
+
+================
+File: .npmrc
+================
+engine-strict=true
+
+================
+File: .prettierignore
+================
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+================
+File: .prettierrc
+================
+{
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "none",
+	"printWidth": 100,
+	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+	"overrides": [
+		{
+			"files": "*.svelte",
+			"options": {
+				"parser": "svelte"
+			}
+		}
+	]
+}
+
+================
+File: .storybook/main.ts
+================
+import type { StorybookConfig } from '@storybook/sveltekit';
+
+const config: StorybookConfig = {
+  "stories": [
+    "../src/**/*.mdx",
+    "../src/**/*.stories.@(js|ts|svelte)"
+  ],
+  "addons": [
+    "@storybook/addon-svelte-csf",
+    "@storybook/addon-essentials",
+    "@chromatic-com/storybook",
+    "@storybook/addon-interactions"
+  ],
+  "framework": {
+    "name": "@storybook/sveltekit",
+    "options": {}
+  }
+};
+export default config;
+
+================
+File: .storybook/preview.ts
+================
+import type { Preview } from '@storybook/svelte'
+
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+       color: /(background|color)$/i,
+       date: /Date$/i,
+      },
+    },
+  },
+};
+
+export default preview;
+
+================
+File: eslint.config.js
+================
+import prettier from 'eslint-config-prettier';
+import js from '@eslint/js';
+import { includeIgnoreFile } from '@eslint/compat';
+import svelte from 'eslint-plugin-svelte';
+import globals from 'globals';
+import { fileURLToPath } from 'node:url';
+import ts from 'typescript-eslint';
+const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+
+export default ts.config(
+	includeIgnoreFile(gitignorePath),
+	js.configs.recommended,
+	...ts.configs.recommended,
+	...svelte.configs['flat/recommended'],
+	prettier,
+	...svelte.configs['flat/prettier'],
+	{
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				...globals.node
+			}
+		}
+	},
+	{
+		files: ['**/*.svelte'],
+
+		languageOptions: {
+			parserOptions: {
+				parser: ts.parser
+			}
+		}
+	}
+);
+
+================
+File: package.json
+================
+{
+	"name": "ts6feb",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check . && eslint .",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
+	},
+	"devDependencies": {
+		"@chromatic-com/storybook": "^3.2.4",
+		"@eslint/compat": "^1.2.5",
+		"@eslint/js": "^9.18.0",
+		"@storybook/addon-essentials": "^8.5.3",
+		"@storybook/addon-interactions": "^8.5.3",
+		"@storybook/addon-svelte-csf": "^5.0.0-next.23",
+		"@storybook/blocks": "^8.5.3",
+		"@storybook/svelte": "^8.5.3",
+		"@storybook/sveltekit": "^8.5.3",
+		"@storybook/test": "^8.5.3",
+		"@sveltejs/adapter-auto": "^4.0.0",
+		"@sveltejs/adapter-static": "^3.0.8",
+		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@tailwindcss/forms": "^0.5.10",
+		"@tailwindcss/typography": "^0.5.16",
+		"autoprefixer": "^10.4.20",
+		"eslint": "^9.18.0",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-svelte": "^2.46.1",
+		"globals": "^15.14.0",
+		"prettier": "^3.4.2",
+		"prettier-plugin-svelte": "^3.3.3",
+		"prettier-plugin-tailwindcss": "^0.6.10",
+		"storybook": "^8.5.3",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"tailwindcss": "^3.4.17",
+		"typescript": "^5.5.0",
+		"typescript-eslint": "^8.20.0",
+		"vite": "^6.0.0"
+	},
+	"dependencies": {
+		"@sveltejs/gestures": "^0.0.1",
+		"canvas-confetti": "^1.9.3"
+	}
+}
+
+================
+File: postcss.config.js
+================
+export default {
+	plugins: {
+		tailwindcss: {},
+		autoprefixer: {}
+	}
+};
+
+================
+File: public/global.css
+================
+html, body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: #333;
+	margin: 0;
+	padding: 8px;
+	box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+a {
+	color: rgb(0,100,200);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: rgb(0,80,160);
+}
+
+label {
+	display: block;
+}
+
+input, button, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
+	-webkit-padding: 0.4em 0;
+	padding: 0.4em;
+	margin: 0 0 0.5em 0;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+}
+
+input:disabled {
+	color: #ccc;
+}
+
+button {
+	color: #333;
+	background-color: #f4f4f4;
+	outline: none;
+}
+
+button:disabled {
+	color: #999;
+}
+
+button:not(:disabled):active {
+	background-color: #ddd;
+}
+
+button:focus {
+	border-color: #666;
+}
+
+================
+File: public/index.html
+================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>Svelte app</title>
+
+	<link rel='icon' type='image/png' href='/favicon.png'>
+	<link rel='stylesheet' href='/global.css'>
+	<link rel='stylesheet' href='/build/bundle.css'>
+
+	<script defer src='/build/bundle.js'></script>
+</head>
+
+<body>
+</body>
+</html>
+
+================
+File: README.md
+================
+# sv
+
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+
+## Creating a project
+
+If you're seeing this, you've probably already done this step. Congrats!
+
+```bash
+# create a new project in the current directory
+npx sv create
+
+# create a new project in my-app
+npx sv create my-app
+```
+
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+================
+File: repomix.config.json
+================
+{
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/.git/**",
+    "**/package-lock.json"
+  ],
+  "filePatterns": [
+    "**/*.{js,ts,svelte,css,html,json,md,mdx}"
+  ],
+  "analysis": {
+    "showTopFiles": 10,
+    "showFileTypes": true,
+    "showDirectoryStructure": true
+  },
+  "security": {
+    "enabled": true,
+    "patterns": [
+      "**/*.env*",
+      "**/config.*.json",
+      "**/credentials.*"
+    ]
+  },
+  "output": {
+    "file": "repomix-analysis.txt",
+    "format": "detailed"
+  }
+}
+
+================
+File: rollup.config.js
+================
+import { spawn } from 'child_process';
+import svelte from 'rollup-plugin-svelte';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
+import resolve from '@rollup/plugin-node-resolve';
+import livereload from 'rollup-plugin-livereload';
+import css from 'rollup-plugin-css-only';
+
+const production = !process.env.ROLLUP_WATCH;
+
+function serve() {
+	let server;
+
+	function toExit() {
+		if (server) server.kill(0);
+	}
+
+	return {
+		writeBundle() {
+			if (server) return;
+			server = spawn('npm', ['run', 'start', '--', '--dev'], {
+				stdio: ['ignore', 'inherit', 'inherit'],
+				shell: true
+			});
+
+			process.on('SIGTERM', toExit);
+			process.on('exit', toExit);
+		}
+	};
+}
+
+export default {
+	input: 'src/main.js',
+	output: {
+		sourcemap: true,
+		format: 'iife',
+		name: 'app',
+		file: 'public/build/bundle.js'
+	},
+	plugins: [
+		svelte({
+			compilerOptions: {
+				// enable run-time checks when not in production
+				dev: !production
+			}
+		}),
+		// we'll extract any component CSS out into
+		// a separate file - better for performance
+		css({ output: 'bundle.css' }),
+
+		// If you have external dependencies installed from
+		// npm, you'll most likely need these plugins. In
+		// some cases you'll need additional configuration -
+		// consult the documentation for details:
+		// https://github.com/rollup/plugins/tree/master/packages/commonjs
+		resolve({
+			browser: true,
+			dedupe: ['svelte'],
+			exportConditions: ['svelte']
+		}),
+		commonjs(),
+
+		// In dev mode, call `npm run start` once
+		// the bundle has been generated
+		!production && serve(),
+
+		// Watch the `public` directory and refresh the
+		// browser on changes when not in production
+		!production && livereload('public'),
+
+		// If we're building for production (npm run build
+		// instead of npm run dev), minify
+		production && terser()
+	],
+	watch: {
+		clearScreen: false
+	}
+};
+
+================
+File: scripts/setupTypeScript.js
+================
+// @ts-check
+
+/** This script modifies the project to support TS code in .svelte files like:
+
+  <script lang="ts">
+  	export let name: string;
+  </script>
+ 
+  As well as validating the code for CI.
+  */
+
+/**  To work on this script:
+  rm -rf test-template template && git clone sveltejs/template test-template && node scripts/setupTypeScript.js test-template
+*/
+
+import fs from "fs"
+import path from "path"
+import { argv } from "process"
+import url from 'url';
+
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const projectRoot = argv[2] || path.join(__dirname, "..")
+
+// Add deps to pkg.json
+const packageJSON = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"))
+packageJSON.devDependencies = Object.assign(packageJSON.devDependencies, {
+  "svelte-check": "^3.0.0",
+  "svelte-preprocess": "^5.0.0",
+  "@rollup/plugin-typescript": "^11.0.0",
+  "typescript": "^4.9.0",
+  "tslib": "^2.5.0",
+  "@tsconfig/svelte": "^3.0.0"
+})
+
+// Add script for checking
+packageJSON.scripts = Object.assign(packageJSON.scripts, {
+  "check": "svelte-check"
+})
+
+// Write the package JSON
+fs.writeFileSync(path.join(projectRoot, "package.json"), JSON.stringify(packageJSON, null, "  "))
+
+// mv src/main.js to main.ts - note, we need to edit rollup.config.js for this too
+const beforeMainJSPath = path.join(projectRoot, "src", "main.js")
+const afterMainTSPath = path.join(projectRoot, "src", "main.ts")
+fs.renameSync(beforeMainJSPath, afterMainTSPath)
+
+// Switch the app.svelte file to use TS
+const appSveltePath = path.join(projectRoot, "src", "App.svelte")
+let appFile = fs.readFileSync(appSveltePath, "utf8")
+appFile = appFile.replace("<script>", '<script lang="ts">')
+appFile = appFile.replace("export let name;", 'export let name: string;')
+fs.writeFileSync(appSveltePath, appFile)
+
+// Edit rollup config
+const rollupConfigPath = path.join(projectRoot, "rollup.config.js")
+let rollupConfig = fs.readFileSync(rollupConfigPath, "utf8")
+
+// Edit imports
+rollupConfig = rollupConfig.replace(`'rollup-plugin-css-only';`, `'rollup-plugin-css-only';
+import sveltePreprocess from 'svelte-preprocess';
+import typescript from '@rollup/plugin-typescript';`)
+
+// Replace name of entry point
+rollupConfig = rollupConfig.replace(`'src/main.js'`, `'src/main.ts'`)
+
+// Add preprocessor
+rollupConfig = rollupConfig.replace(
+  'compilerOptions:',
+  'preprocess: sveltePreprocess({ sourceMap: !production }),\n\t\t\tcompilerOptions:'
+);
+
+// Add TypeScript
+rollupConfig = rollupConfig.replace(
+  'commonjs(),',
+  'commonjs(),\n\t\ttypescript({\n\t\t\tsourceMap: !production,\n\t\t\tinlineSources: !production\n\t\t}),'
+);
+fs.writeFileSync(rollupConfigPath, rollupConfig)
+
+// Add svelte.config.js
+const tsconfig = `{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+}`
+const tsconfigPath =  path.join(projectRoot, "tsconfig.json")
+fs.writeFileSync(tsconfigPath, tsconfig)
+
+// Add TSConfig
+const svelteConfig = `import sveltePreprocess from 'svelte-preprocess';
+
+export default {
+  preprocess: sveltePreprocess()
+};
+`
+const svelteConfigPath =  path.join(projectRoot, "svelte.config.js")
+fs.writeFileSync(svelteConfigPath, svelteConfig)
+
+// Add global.d.ts
+const dtsPath =  path.join(projectRoot, "src", "global.d.ts")
+fs.writeFileSync(dtsPath, `/// <reference types="svelte" />`)
+
+// Delete this script, but not during testing
+if (!argv[2]) {
+  // Remove the script
+  fs.unlinkSync(path.join(__filename))
+
+  // Check for Mac's DS_store file, and if it's the only one left remove it
+  const remainingFiles = fs.readdirSync(path.join(__dirname))
+  if (remainingFiles.length === 1 && remainingFiles[0] === '.DS_store') {
+    fs.unlinkSync(path.join(__dirname, '.DS_store'))
+  }
+
+  // Check if the scripts folder is empty
+  if (fs.readdirSync(path.join(__dirname)).length === 0) {
+    // Remove the scripts folder
+    fs.rmdirSync(path.join(__dirname))
+  }
+}
+
+// Adds the extension recommendation
+fs.mkdirSync(path.join(projectRoot, ".vscode"), { recursive: true })
+fs.writeFileSync(path.join(projectRoot, ".vscode", "extensions.json"), `{
+  "recommendations": ["svelte.svelte-vscode"]
+}
+`)
+
+console.log("Converted to TypeScript.")
+
+if (fs.existsSync(path.join(projectRoot, "node_modules"))) {
+  console.log("\nYou will need to re-run your dependency manager to get started.")
+}
+
+================
+File: server.py
+================
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+import os
+import sys
+from pathlib import Path
+
+PORT = 8000
+DIRECTORY = "build"
+
+class SPAHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=DIRECTORY, **kwargs)
+
+    def do_GET(self):
+        # Try to serve the file directly
+        try:
+            super().do_GET()
+        except Exception:
+            # If file not found, serve index.html for SPA routing
+            self.path = '/index.html'
+            super().do_GET()
+
+    def end_headers(self):
+        # Add CORS headers
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        super().end_headers()
+
+def run(port=PORT):
+    # Ensure build directory exists
+    if not os.path.exists(DIRECTORY):
+        print(f"Error: {DIRECTORY} directory not found!")
+        print("Please run 'npm run build' first.")
+        sys.exit(1)
+
+    # Start server
+    server_address = ('', port)
+    httpd = HTTPServer(server_address, SPAHandler)
+    print(f"Server running on http://localhost:{port}")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nShutting down server...")
+        httpd.shutdown()
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        run(port=int(sys.argv[1]))
+    else:
+        run()
+
+================
+File: src/app.css
+================
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import '$lib/styles/tokens/index.css';
+
+@layer base {
+  body {
+    @apply bg-rose-50;
+    height: 100%;
+    min-height: 100vh;
+    max-width: 100vw;
+    @apply text-rose-900;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  .mobile-container {
+    @apply mx-auto max-w-md min-h-screen bg-white shadow-lg relative overflow-hidden;
+  }
+
+  .app-content {
+    @apply h-[calc(100vh-4rem)] overflow-y-auto pb-16;
+  }
+
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-rose-100 h-16;
+  }
+
+  .nav-items {
+    @apply flex justify-around items-center h-full px-4;
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center justify-center text-rose-300;
+  }
+
+  .nav-item.active {
+    @apply text-rose-600;
+  }
+}
+
+================
+File: src/app.d.ts
+================
+// See https://svelte.dev/docs/kit/types#app.d.ts
+// for information about these interfaces
+declare global {
+	namespace App {
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
+		// interface PageState {}
+		// interface Platform {}
+	}
+}
+
+export {};
+
+================
+File: src/app.html
+================
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&display=swap" rel="stylesheet">
+		<meta name="base-url" content="%sveltekit.assets%" />
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
+
+================
+File: src/App.svelte
+================
+<script lang="ts">
+	let { name } = $props();
+</script>
+
+<main>
+	<h1>Hello {name}!</h1>
+	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+</main>
+
+<style>
+	main {
+		text-align: center;
+		padding: 1em;
+		max-width: 240px;
+		margin: 0 auto;
+	}
+
+	h1 {
+		color: #ff3e00;
+		text-transform: uppercase;
+		font-size: 4em;
+		font-weight: 100;
+	}
+
+	@media (min-width: 640px) {
+		main {
+			max-width: none;
+		}
+	}
+</style>
+
+================
+File: src/lib/actions/tapAnimation.ts
+================
+export function tapAnimation(node: HTMLElement) {
+    const duration = '150ms';
+    const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
+
+    function setTransition() {
+        node.style.transition = `transform ${duration} ${easing}`;
+    }
+
+    function handleTouchStart() {
+        setTransition();
+        node.style.transform = 'scale(0.97)';
+    }
+    
+    function handleTouchEnd() {
+        setTransition();
+        node.style.transform = 'scale(1)';
+    }
+
+    // Add initial transition
+    setTransition();
+
+    node.addEventListener('touchstart', handleTouchStart);
+    node.addEventListener('touchend', handleTouchEnd);
+    // Also handle mouse for desktop testing
+    node.addEventListener('mousedown', handleTouchStart);
+    node.addEventListener('mouseup', handleTouchEnd);
+    node.addEventListener('mouseleave', handleTouchEnd);
+
+    return {
+        destroy() {
+            node.removeEventListener('touchstart', handleTouchStart);
+            node.removeEventListener('touchend', handleTouchEnd);
+            node.removeEventListener('mousedown', handleTouchStart);
+            node.removeEventListener('mouseup', handleTouchEnd);
+            node.removeEventListener('mouseleave', handleTouchEnd);
+        }
+    };
+}
+
+================
+File: src/lib/components/AlbumCard.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import type { Album } from '$lib/types';
+
+    const music = getContext<MusicContext>('music');
+
+    interface Props {
+        album: Album;
+        index: number;
+        onClick?: () => void;
+        showBorder?: boolean;
+    }
+
+    let {
+        album,
+        index,
+        onClick = () => {},
+        showBorder = true
+    }: Props = $props();
+
+    let isSelected = $derived(music.selectedAlbums.some(a => a.id === album.id));
+    let selectionIndex = $derived(music.selectedAlbums.findIndex(a => a.id === album.id) + 1);
+</script>
+
+<button
+    class="album-card"
+    class:selected={isSelected}
+    class:show-border={showBorder}
+    style="animation-delay: {index * 50}ms"
+    onclick={onClick}
+>
+    <div class="album-content">
+        <img
+            src={album.coverArt}
+            alt={album.title}
+            class="w-full h-full object-cover"
+        />
+        {#if isSelected}
+            <div class="selection-overlay">
+                <span class="text-4xl font-bold text-white">{selectionIndex}</span>
+            </div>
+        {/if}
+    </div>
+</button>
+
+<style>
+    .album-card {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .album-card:hover {
+        transform: translateY(-0.25rem);
+    }
+
+    .album-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .selection-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(244, 63, 94, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .album-card.selected {
+        box-shadow: 0 0 0 2px rgb(244, 63, 94);
+        transform: translateY(-0.25rem);
+    }
+</style>
+
+================
+File: src/lib/components/BottomNav.svelte
+================
+<script lang="ts">
+    import { page } from '$app/stores';
+    import { base } from '$app/paths';
+    
+    const navItems = [
+        { path: `${base}/`, label: 'Home', icon: '🏠' },
+        { path: `${base}/games`, label: 'Games', icon: '🎮' },
+        { path: `${base}/profile`, label: 'Profile', icon: '👤' }
+    ];
+
+    let currentPath = $derived($page.url.pathname);
+    let currentPathWithoutBase = $derived(currentPath.replace(base, ''));
+</script>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4" style="display: none;">
+    <div class="max-w-md mx-auto flex justify-around items-center">
+        {#each navItems as { path, label, icon }}
+            <a 
+                href={path} 
+                class="flex flex-col items-center p-2 {currentPathWithoutBase === path.replace(base, '') ? 'text-rose-600' : 'text-gray-600'}"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {#if path === `${base}/`}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    {:else if path === `${base}/games`}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    {:else if path === `${base}/profile`}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    {/if}
+                </svg>
+                <span class="text-xs mt-1">{label}</span>
+            </a>
+        {/each}
+    </div>
+</nav>
+
+================
+File: src/lib/components/Button/Button.svelte
+================
+<script lang="ts">
+    import { tap } from '@sveltejs/gestures';
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
+    interface Props {
+        variant?: ButtonProps['variant'];
+        size?: ButtonProps['size'];
+        disabled?: ButtonProps['disabled'];
+        fullWidth?: ButtonProps['fullWidth'];
+        type?: ButtonProps['type'];
+        children?: import('svelte').Snippet;
+        [key: string]: any
+    }
+
+    let {
+        variant = 'primary',
+        size = 'default',
+        disabled = false,
+        fullWidth = false,
+        type = 'button',
+        children,
+        ...rest
+    }: Props = $props();
+
+    function handleTap(event: CustomEvent) {
+        if (!disabled) {
+            dispatch('click', event.detail);
+        }
+    }
+
+    function handleTouchStart() {
+        if (navigator.vibrate && !disabled) {
+            navigator.vibrate(50);
+        }
+    }
+</script>
+
+<button
+    {type}
+    {disabled}
+    class="btn btn-{variant} {fullWidth ? 'btn-full' : ''} {size === 'compact' ? 'btn-compact' : ''}"
+    class:btn-disabled={disabled}
+    use:tap
+    ontap={handleTap}
+    ontouchstart={handleTouchStart}
+    {...rest}
+>
+    {@render children?.()}
+</button>
+
+<style>
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: transform 0.15s ease-out;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active:not(.btn-disabled) {
+        transform: translateY(1px);
+    }
+
+    .btn-primary {
+        background-color: rgb(244, 63, 94);
+        color: white;
+    }
+
+    .btn-primary:active:not(.btn-disabled) {
+        background-color: rgb(225, 29, 72);
+    }
+
+    .btn-secondary {
+        background-color: rgb(226, 232, 240);
+        color: rgb(15, 23, 42);
+    }
+
+    .btn-secondary:active:not(.btn-disabled) {
+        background-color: rgb(203, 213, 225);
+    }
+
+    .btn-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .btn-compact {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        min-width: unset;
+        opacity: 0.9;
+    }
+</style>
+
+================
+File: src/lib/components/layout/Footer.svelte
+================
+<script lang="ts">
+    import type { FooterProps } from '$lib/types/components';
+    
+    interface Props {
+        variant?: FooterProps['variant'];
+        hasBorder?: FooterProps['hasBorder'];
+        children?: import('svelte').Snippet;
+    }
+
+    let { variant = 'base', hasBorder = true, children }: Props = $props();
+</script>
+
+<footer class="footer" class:with-border={hasBorder}>
+    <div class="footer-content" class:footer-button={variant === 'button'}>
+        {@render children?.()}
+    </div>
+</footer>
+
+<style>
+    .footer {
+        padding: var(--spacing-footer);
+        background: var(--bg-header);
+        backdrop-filter: var(--blur-sm);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: var(--footer-height);
+    }
+
+    .with-border {
+        border-top: 1px solid rgb(254 205 211);
+    }
+
+    .footer-content {
+        width: 100%;
+        max-width: var(--container-max-width);
+        display: flex;
+        justify-content: center;
+        gap: var(--dynamic-spacing-sm);
+    }
+
+    .footer-button {
+        padding: 0 var(--spacing-footer);
+    }
+
+    .footer-button :global(button) {
+        height: calc(var(--footer-height) - (2 * var(--spacing-footer)));
+        min-height: unset;
+        min-width: 12rem;
+    }
+</style>
+
+================
+File: src/lib/components/layout/Header.svelte
+================
+<script lang="ts">
+    import type { HeaderProps } from '$lib/types/components';
+    
+    interface Props {
+        variant?: HeaderProps['variant'];
+        title: string;
+        subtitle?: string | undefined;
+        progress?: number | undefined;
+        maxProgress?: number | undefined;
+        left?: import('svelte').Snippet;
+    }
+
+    let {
+        variant = 'base',
+        title,
+        subtitle = undefined,
+        progress = undefined,
+        maxProgress = undefined,
+        left
+    }: Props = $props();
+</script>
+
+<div class="header {variant}">
+    {#if variant === "progress"}
+        <div class="progress-header">
+            <div class="left-content">
+                {@render left?.()}
+            </div>
+            <div class="center-content">
+                <h1>{title}</h1>
+                {#if subtitle}
+                    <p>{subtitle}</p>
+                {/if}
+                <div class="progress-dots">
+                    {#each Array(maxProgress) as _, i}
+                        <div class="dot" class:active={i < progress}></div>
+                    {/each}
+                </div>
+            </div>
+            <div class="right-content">
+                <!-- Reserved for future use -->
+            </div>
+        </div>
+    {:else}
+        <h1>{title}</h1>
+        {#if subtitle}
+            <p>{subtitle}</p>
+        {/if}
+    {/if}
+</div>
+
+<style>
+    .header {
+        padding: 1rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-header {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .left-content, .right-content {
+        display: flex;
+        align-items: center;
+    }
+
+    .center-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .progress-dots {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
+    }
+
+    .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease-out;
+    }
+
+    .dot.active {
+        background: rgb(244, 63, 94);
+    }
+</style>
+
+================
+File: src/lib/components/layout/StandardLayout.svelte
+================
+<script lang="ts">
+    import { run } from 'svelte/legacy';
+
+    import { page } from '$app/stores';
+    import { onMount } from 'svelte';
+    
+    interface Props {
+        showHeader?: boolean;
+        showFooter?: boolean;
+        customGradient?: string;
+        hasFooterNav?: boolean;
+        header?: import('svelte').Snippet;
+        main?: import('svelte').Snippet;
+        children?: import('svelte').Snippet;
+        footer?: import('svelte').Snippet;
+    }
+
+    let {
+        showHeader = true,
+        showFooter = true,
+        customGradient = 'bg-gradient-to-br from-rose-50 to-rose-100',
+        hasFooterNav = $bindable(false),
+        header,
+        main,
+        children,
+        footer
+    }: Props = $props();
+    
+    let footerSlot: HTMLElement = $state();
+    
+    function checkFooterNav() {
+        if (footerSlot) {
+            // Check for any interactive elements that could be navigation
+            const hasNavElements = footerSlot.querySelector('nav, button, a, [role="button"]') !== null;
+            hasFooterNav = hasNavElements;
+        }
+    }
+    
+    run(() => {
+        if (footerSlot) {
+            checkFooterNav();
+        }
+    });
+    
+    onMount(() => {
+        checkFooterNav();
+    });
+</script>
+
+<div class="fixed inset-0 bg-slate-200 flex justify-center items-center p-4">
+    <div class="app-frame {customGradient} flex flex-col w-full max-w-md h-[800px] rounded-3xl overflow-hidden shadow-2xl">
+        {#if showHeader}
+            {@render header?.()}
+        {/if}
+
+        <div class="flex-1 overflow-y-auto relative scrollbar-taylor">
+            {#if main}{@render main()}{:else}
+                {@render children?.()}
+            {/if}
+        </div>
+
+        {#if showFooter}
+            <footer bind:this={footerSlot}>
+                {@render footer?.()}
+            </footer>
+        {/if}
+    </div>
+</div>
+
+<style>
+    :global(.app-frame) {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    :global(.app-frame > *) {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+================
+File: src/lib/components/music/VinylRecord.svelte
+================
+<!-- VinylRecord.svelte -->
+<script lang="ts">
+    import { tap } from '@sveltejs/gestures';
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    interface Props {
+        /** The source URL for the album cover art */
+        coverArt: string;
+        /** The album title for alt text */
+        title: string;
+        /** Whether the record is currently selected */
+        selected?: boolean;
+        /** Whether to animate the record */
+        animate?: boolean;
+        /** Custom CSS class to apply to the container */
+        class_?: string;
+        /** Position of the heart badge. Can be 'image', 'container', or 'none' */
+        badgePosition?: 'image' | 'container' | 'none';
+        /** Whether to show the selection overlay when selected */
+        showSelectionOverlay?: boolean;
+        /** Whether to show the vinyl grooves effect */
+        showGrooves?: boolean;
+        /** Configuration for the vinyl record's visual appearance */
+        config?: {
+        /** The color of the vinyl record's center */
+        centerColor: string;
+        /** The color of the vinyl record's grooves */
+        grooveColor: string;
+        /** The color of the selection overlay */
+        selectionColor: string;
+        /** The color of the heart badge */
+        badgeColor: string;
+    };
+        /** The selection number (1-3) to show when selected */
+        selectionNumber?: number | null;
+    }
+
+    let {
+        coverArt,
+        title,
+        selected = false,
+        animate = true,
+        class_ = '',
+        badgePosition = 'image',
+        showSelectionOverlay = true,
+        showGrooves = true,
+        config = {
+        centerColor: 'rgba(0, 0, 0, 0.8)',
+        grooveColor: 'rgba(255, 255, 255, 0.2)',
+        selectionColor: 'rgba(244, 63, 94, 0.2)',
+        badgeColor: 'rgb(244, 63, 94)',
+    },
+        selectionNumber = null
+    }: Props = $props();
+
+    // Random initial rotation for subtle animation
+    const randomRotation = Math.random() * 5 - 2.5;
+
+    function handleTap(event: CustomEvent) {
+        dispatch('click', event.detail);
+    }
+</script>
+
+<div
+    class="vinyl-container {class_}"
+    class:selected
+    style="--random-rotation: {randomRotation};"
+    use:tap
+    ontap={handleTap}
+>
+    {#if selected && badgePosition === 'container'}
+        <div class="heart-badge container-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={config.badgeColor} class="heart-icon">
+                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+            </svg>
+            <span class="heart-number">{selectionNumber}</span>
+        </div>
+    {/if}
+    <div class="vinyl">
+        <img
+            src={coverArt}
+            {title}
+            class="vinyl-art"
+            alt={title}
+        />
+        {#if showGrooves}
+            <div class="vinyl-grooves" style={`background: repeating-radial-gradient(circle at center, transparent 0, transparent 4px, ${config.grooveColor} 5px, rgba(0, 0, 0, 0.1125) 6px)`}></div>
+        {/if}
+        <div class="vinyl-center" style={`background: radial-gradient(circle at center, ${config.centerColor} 0%, rgba(0, 0, 0, 0.9) 50%, #000 100%)`}></div>
+        {#if selected && badgePosition === 'image'}
+            <div class="heart-badge image-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={config.badgeColor} class="heart-icon">
+                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                </svg>
+                <span class="heart-number">{selectionNumber}</span>
+            </div>
+        {/if}
+        {#if selected && showSelectionOverlay}
+            <div class="selection-overlay" style={`background: ${config.selectionColor}`}></div>
+        {/if}
+    </div>
+</div>
+
+<style>
+    .vinyl-container {
+        aspect-ratio: 1;
+        position: relative;
+        transform: rotate(calc(var(--random-rotation, 0) * 1deg));
+        transition: all 0.3s ease-out;
+        touch-action: manipulation;
+    }
+
+    .vinyl-container:not(.selected) {
+        animation: subtleRotate 2s ease-in-out infinite;
+    }
+
+    .vinyl-container.selected {
+        z-index: 20;
+        animation: fullRotate 8s linear infinite;
+    }
+
+    .vinyl-container:active {
+        transform: scale(0.98);
+    }
+
+    @keyframes fullRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes subtleRotate {
+        0% { transform: rotate(calc(var(--random-rotation, 0) * 1deg)); }
+        50% { transform: rotate(calc((var(--random-rotation, 0) + 2) * 1deg)); }
+        100% { transform: rotate(calc(var(--random-rotation, 0) * 1deg)); }
+    }
+
+    .vinyl {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: #000;
+        overflow: hidden;
+        box-shadow: 
+            0 4px 12px rgba(0, 0, 0, 0.2),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .vinyl-art {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+    }
+
+    .vinyl-grooves {
+        position: absolute;
+        inset: 0;
+        mix-blend-mode: multiply;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 1;
+    }
+
+    .vinyl-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20%;
+        height: 20%;
+        border-radius: 50%;
+        z-index: 4;
+        box-shadow: 
+            0 0 0 2px rgba(255, 255, 255, 0.1),
+            inset 0 0 0 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .vinyl-center::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 15%;
+        height: 15%;
+        background: rgb(226, 232, 240);
+        border-radius: 50%;
+        box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+
+    .selection-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        z-index: 3;
+        box-shadow: inset 0 0 20px rgba(244, 63, 94, 0.4);
+    }
+
+    .heart-badge {
+        position: absolute;
+        width: 3.6rem;
+        height: 3.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 30;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        pointer-events: none;
+    }
+
+    .heart-badge.image-badge {
+        top: -0.4rem;
+        left: -0.4rem;
+        animation: noRotate 8s linear infinite reverse;
+    }
+
+    .heart-badge.container-badge {
+        top: -1rem;
+        left: -1rem;
+    }
+
+    @keyframes noRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .heart-icon {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .heart-number {
+        position: relative;
+        color: white;
+        font-weight: bold;
+        font-size: 1.25rem;
+        z-index: 11;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+================
+File: src/lib/context/music.svelte.ts
+================
+import { albums } from '$lib/data/albums';
+import type { Album } from '$lib/types/components';
+
+export function createMusicContext() {
+    // Core state
+    const selectedAlbums = $state<Album[]>([]);
+    const selectedSongsByAlbum = $state<Map<string, string[]>>(new Map());
+
+    // Derived states
+    const totalSelections = $derived(() => selectedAlbums.length);
+    
+    const selectedSongsCount = $derived(() => {
+        let count = 0;
+        for (const songs of selectedSongsByAlbum.values()) {
+            count += songs.length;
+        }
+        return count;
+    });
+
+    // Methods
+    function selectAlbum(album: Album) {
+        if (selectedAlbums.length >= 3) return;
+        if (selectedAlbums.find(a => a.id === album.id)) return;
+        
+        selectedAlbums.push(album);
+        // Initialize empty song selection for this album
+        selectedSongsByAlbum.set(album.id, []);
+    }
+
+    function removeAlbum(albumId: string) {
+        const index = selectedAlbums.findIndex(album => album.id === albumId);
+        if (index !== -1) {
+            selectedAlbums.splice(index, 1);
+            selectedSongsByAlbum.delete(albumId);
+        }
+    }
+
+    function updateSelectedSongs(albumId: string, songs: string[]) {
+        if (songs.length !== 3) return; // Maintain 3 songs requirement
+        selectedSongsByAlbum.set(albumId, songs);
+    }
+
+    function clearSelections() {
+        selectedAlbums.length = 0;
+        selectedSongsByAlbum.clear();
+    }
+
+    // Return read-only access to state and methods
+    return {
+        get selectedAlbums() { return selectedAlbums; },
+        get selectedSongsByAlbum() { return selectedSongsByAlbum; },
+        get totalSelections() { return totalSelections; },
+        get selectedSongsCount() { return selectedSongsCount; },
+        selectAlbum,
+        removeAlbum,
+        updateSelectedSongs,
+        clearSelections,
+        albums,
+    };
+}
+
+// Type for the context return value
+export type MusicContext = ReturnType<typeof createMusicContext>;
+
+================
+File: src/lib/data/albums.ts
+================
+import type { Album } from '$lib/types/components';
+import { base } from '$app/paths';
+
+export const getAlbumPath = (path: string) => {
+    return `${base}/albums${path}`;
+};
+
+export const albums: Album[] = [
+    {
+        id: 'taylor_swift',
+        title: 'Debut',
+        coverArt: getAlbumPath('/taylor_swift.png'),
+        releaseYear: 2006,
+        isTaylorsVersion: false,
+        color: '#D9CAB3',
+        songs: [
+            'Tim McGraw', 'Picture to Burn', 'Teardrops on My Guitar', 'A Place in This World',
+            'Cold as You', 'The Outside', 'Tied Together with a Smile', 'Stay Beautiful',
+            'Should\'ve Said No', 'Mary\'s Song (Oh My My My)', 'Our Song'
+        ]
+    },
+    {
+        id: 'fearless_tv',
+        title: 'Fearless TV',
+        coverArt: getAlbumPath('/fearless_tv.png'),
+        releaseYear: 2021,
+        isTaylorsVersion: true,
+        color: '#F4E5B2',
+        songs: [
+            'Fearless', 'Fifteen', 'Love Story', 'Hey Stephen', 'White Horse',
+            'You Belong With Me', 'Breathe', 'Tell Me Why', 'You\'re Not Sorry',
+            'The Way I Loved You', 'Forever & Always', 'The Best Day', 'Change'
+        ]
+    },
+    {
+        id: 'speak_now_tv',
+        title: 'Speak Now TV',
+        coverArt: getAlbumPath('/speak_now_tv.png'),
+        releaseYear: 2023,
+        isTaylorsVersion: true,
+        color: '#D1A0A2',
+        songs: [
+            'Mine', 'Sparks Fly', 'Back To December', 'Speak Now', 'Dear John',
+            'Mean', 'The Story Of Us', 'Never Grow Up', 'Enchanted',
+            'Better Than Revenge', 'Innocent', 'Haunted', 'Last Kiss', 'Long Live'
+        ]
+    },
+    {
+        id: 'red_tv',
+        title: 'Red TV',
+        coverArt: getAlbumPath('/red_tv.png'),
+        releaseYear: 2021,
+        isTaylorsVersion: true,
+        color: '#B02428',
+        songs: [
+            'State Of Grace', 'Red', 'Treacherous', 'I Knew You Were Trouble',
+            'All Too Well', '22', 'I Almost Do', 'We Are Never Ever Getting Back Together',
+            'Stay Stay Stay', 'The Last Time', 'Holy Ground', 'Sad Beautiful Tragic',
+            'The Lucky One', 'Everything Has Changed', 'Starlight', 'Begin Again'
+        ]
+    },
+    {
+        id: '1989_tv',
+        title: '1989 TV',
+        coverArt: getAlbumPath('/1989_tv.png'),
+        releaseYear: 2023,
+        isTaylorsVersion: true,
+        color: '#8CD1E6',
+        songs: [
+            'Welcome To New York', 'Blank Space', 'Style', 'Out Of The Woods',
+            'All You Had To Do Was Stay', 'Shake It Off', 'I Wish You Would',
+            'Bad Blood', 'Wildest Dreams', 'How You Get The Girl', 'This Love',
+            'I Know Places', 'Clean'
+        ]
+    },
+    {
+        id: 'reputation',
+        title: 'reputation',
+        coverArt: getAlbumPath('/reputation.png'),
+        releaseYear: 2017,
+        isTaylorsVersion: false,
+        color: '#323232',
+        songs: [
+            '...Ready For It?', 'End Game', 'I Did Something Bad', 'Don\'t Blame Me',
+            'Delicate', 'Look What You Made Me Do', 'So It Goes...', 'Gorgeous',
+            'Getaway Car', 'King Of My Heart', 'Dancing With Our Hands Tied',
+            'Dress', 'This Is Why We Can\'t Have Nice Things', 'Call It What You Want',
+            'New Year\'s Day'
+        ]
+    },
+    {
+        id: 'lover',
+        title: 'Lover',
+        coverArt: getAlbumPath('/lover.png'),
+        releaseYear: 2019,
+        isTaylorsVersion: false,
+        color: '#E8C1E1',
+        songs: [
+            'I Forgot That You Existed', 'Cruel Summer', 'Lover', 'The Man',
+            'The Archer', 'I Think He Knows', 'Miss Americana & The Heartbreak Prince',
+            'Paper Rings', 'Cornelia Street', 'Death By A Thousand Cuts', 'London Boy',
+            'Soon You\'ll Get Better', 'False God', 'You Need To Calm Down', 'Afterglow',
+            'ME!', 'It\'s Nice To Have A Friend', 'Daylight'
+        ]
+    },
+    {
+        id: 'folklore',
+        title: 'folklore',
+        coverArt: getAlbumPath('/folklore.png'),
+        releaseYear: 2020,
+        isTaylorsVersion: false,
+        color: '#ACA9A0',
+        songs: [
+            'the 1', 'cardigan', 'the last great american dynasty', 'exile',
+            'my tears ricochet', 'mirrorball', 'seven', 'august',
+            'this is me trying', 'illicit affairs', 'invisible string',
+            'mad woman', 'epiphany', 'betty', 'peace', 'hoax'
+        ]
+    },
+    {
+        id: 'evermore',
+        title: 'evermore',
+        coverArt: getAlbumPath('/evermore.png'),
+        releaseYear: 2020,
+        isTaylorsVersion: false,
+        color: '#A3BFA8',
+        songs: [
+            'willow', 'champagne problems', 'gold rush', '\'tis the damn season',
+            'tolerate it', 'no body, no crime', 'happiness', 'dorothea',
+            'coney island', 'ivy', 'cowboy like me', 'long story short',
+            'marjorie', 'closure', 'evermore'
+        ]
+    },
+    {
+        id: 'midnights',
+        title: 'Midnights',
+        coverArt: getAlbumPath('/midnights.png'),
+        releaseYear: 2022,
+        isTaylorsVersion: false,
+        color: '#1A1A3D',
+        songs: [
+            'Lavender Haze', 'Maroon', 'Anti-Hero', 'Snow On The Beach', 
+            'You\'re On Your Own, Kid', 'Midnight Rain', 'Question...?', 
+            'Vigilante Shit', 'Bejeweled', 'Labyrinth', 'Karma', 
+            'Sweet Nothing', 'Mastermind'
+        ]
+    },
+    {
+        id: 'ttpd',
+        title: 'The Tortured Poets Department',
+        coverArt: getAlbumPath('/ttpd.png'),
+        releaseYear: 2024,
+        isTaylorsVersion: false,
+        color: '#ccbcaf',
+        songs: [
+            'Fortnight', 'The Tortured Poets Department', 
+            'My Boy Only Breaks His Favorite Toys', 'Down Bad',
+            'So Long, London', 'But Daddy I Love Him',
+            'Fresh Out the Slammer', 'Florida!!!',
+            'Guilty as Sin?', 'Who\'s Afraid of Little Old Me?',
+            'I Can Fix Him (No Really I Can)', 'loml',
+            'I Can Do It With a Broken Heart',
+            'The Smallest Man Who Ever Lived', 'The Alchemy',
+            'Clara Bow',
+            'The Manuscript', 'The Bolter', 'The Albatross', 'The Black Dog'
+        ]
+    }
+];
+
+================
+File: src/lib/index.ts
+================
+// place files you want to import through the `$lib` alias in this folder.
+
+================
+File: src/lib/stores/albumPaths.ts
+================
+import { derived } from 'svelte/store';
+import { page } from '$app/stores';
+import { base } from '$app/paths';
+
+export const albumBasePath = derived(page, () => `${base}/albums`);
+
+================
+File: src/lib/stores/games.ts
+================
+import { writable } from 'svelte/store';
+import type { Game } from '$lib/types/components';
+
+export const currentGame = writable<Game | null>(null);
+export const gameScore = writable<number>(0);
+export const gameHistory = writable<Array<{
+    gameId: string;
+    score: number;
+    date: Date;
+}>>([]);
+
+export function startGame(game: Game) {
+    currentGame.set(game);
+    gameScore.set(0);
+}
+
+export function endGame(finalScore: number) {
+    currentGame.subscribe(game => {
+        if (game) {
+            gameHistory.update(history => [
+                ...history,
+                {
+                    gameId: game.id,
+                    score: finalScore,
+                    date: new Date()
+                }
+            ]);
+        }
+    });
+    
+    currentGame.set(null);
+    gameScore.set(0);
+}
+
+================
+File: src/lib/styles/responsive.css
+================
+/* Responsive Container */
+.container-responsive {
+    height: var(--content-height);
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--dynamic-spacing-sm);
+}
+
+/* Responsive Grid */
+.grid-responsive {
+    display: grid;
+    gap: var(--grid-gap-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    align-items: stretch;
+}
+
+/* Dynamic Sizing */
+.h-dynamic-sm {
+    height: var(--container-sm);
+}
+
+.h-dynamic-md {
+    height: var(--container-md);
+}
+
+.h-dynamic-lg {
+    height: var(--container-lg);
+}
+
+/* Responsive Padding */
+.p-dynamic {
+    padding: var(--dynamic-spacing-md);
+}
+
+.py-dynamic {
+    padding-top: var(--dynamic-spacing-md);
+    padding-bottom: var(--dynamic-spacing-md);
+}
+
+.px-dynamic {
+    padding-left: var(--dynamic-spacing-md);
+    padding-right: var(--dynamic-spacing-md);
+}
+
+/* Responsive Margins */
+.m-dynamic {
+    margin: var(--dynamic-spacing-md);
+}
+
+.my-dynamic {
+    margin-top: var(--dynamic-spacing-md);
+    margin-bottom: var(--dynamic-spacing-md);
+}
+
+.mx-dynamic {
+    margin-left: var(--dynamic-spacing-md);
+    margin-right: var(--dynamic-spacing-md);
+}
+
+/* Responsive Gaps */
+.gap-dynamic {
+    gap: var(--grid-gap-md);
+}
+
+.gap-dynamic-sm {
+    gap: var(--grid-gap-sm);
+}
+
+.gap-dynamic-lg {
+    gap: var(--grid-gap-lg);
+}
+
+/* Responsive Heights */
+.h-screen-dynamic {
+    height: var(--content-height);
+}
+
+.min-h-screen-dynamic {
+    min-height: var(--content-height);
+}
+
+.max-h-screen-dynamic {
+    max-height: var(--content-height);
+}
+
+/* Custom Scrollbar - All scrollbar styles temporarily disabled for mobile optimization */
+/*
+.scrollbar-taylor {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-taylor::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--scrollbar-radius);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+*/
+
+/* Hide scrollbar but keep functionality - temporarily disabled */
+/*
+.scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+*/
+
+================
+File: src/lib/styles/theme.css
+================
+/* Taylor Swift Fan App Theme */
+:root {
+    /* Viewport and Container */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+
+    /* Container Sizes */
+    --container-sm: calc(100vh - 120px);
+    --container-md: calc(100vh - 80px);
+    --container-lg: calc(100vh - 40px);
+    --container-max-width: 448px;
+
+    /* Dynamic Spacing */
+    --dynamic-spacing-xs: clamp(0.25rem, 1vh, 0.5rem);
+    --dynamic-spacing-sm: clamp(0.5rem, 1.5vh, 0.75rem);
+    --dynamic-spacing-md: clamp(0.75rem, 2vh, 1rem);
+    --dynamic-spacing-lg: clamp(1rem, 2.5vh, 1.5rem);
+
+    /* Component Sizing */
+    --header-height: clamp(74px, 12vh, 96px);
+    --footer-height: clamp(74px, 12vh, 96px);
+    --content-height: calc(100vh - var(--header-height) - var(--footer-height));
+    
+    /* Grid System */
+    --grid-gap-sm: clamp(0.5rem, 2vw, 1rem);
+    --grid-gap-md: clamp(1rem, 3vw, 1.5rem);
+    --grid-gap-lg: clamp(1.5rem, 4vw, 2rem);
+
+    /* Colors */
+    --color-primary: rgb(244, 63, 94);
+    --color-primary-light: rgb(255, 107, 139);
+    --color-primary-dark: rgb(219, 39, 70);
+    --color-primary-alpha: rgba(244, 63, 94, 0.4);
+    
+    /* Background Colors */
+    --bg-gradient-start: rgb(255, 241, 242);
+    --bg-gradient-end: rgb(254, 205, 211);
+    --bg-container: rgb(226, 232, 240);
+    --bg-overlay: rgba(255, 255, 255, 0.6);
+    --bg-header: rgba(255, 241, 242, 0.8);
+    
+    /* Text Colors */
+    --text-primary: #881337;
+    --text-secondary: #9f1239;
+    --text-light: #ffffff;
+    --text-dark: #1f2937;
+    
+    /* Spacing Scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    
+    /* Component Spacing */
+    --spacing-header: var(--dynamic-spacing-md);
+    --spacing-footer: var(--dynamic-spacing-md);
+    --spacing-content: var(--dynamic-spacing-md);
+    --spacing-button: var(--dynamic-spacing-sm);
+    --spacing-card: var(--dynamic-spacing-md);
+    --spacing-input: var(--dynamic-spacing-md);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+    --radius-button: var(--radius-md);
+    --radius-container: var(--radius-lg);
+    --radius-card: var(--radius-lg);
+    --radius-badge: var(--radius-full);
+    
+    /* Effects */
+    --shadow-sm: 0 2px 8px;
+    --shadow-md: 0 4px 12px;
+    --shadow-lg: 0 8px 24px;
+    --shadow-primary: var(--shadow-sm) var(--color-primary-alpha);
+    
+    /* Z-index Layers */
+    --z-header: 10;
+    --z-content: 1;
+    --z-footer: 10;
+    --z-overlay: 20;
+    --z-tooltip: 30;
+    --z-modal: 40;
+    
+    /* Backdrop Filters */
+    --blur-sm: blur(4px);
+    --blur-md: blur(8px);
+    --blur-lg: blur(16px);
+    
+    /* Animation */
+    --duration-fast: 0.3s;
+    --duration-medium: 0.8s;
+    --duration-slow: 2s;
+    --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Scrollbar Colors */
+    --scrollbar-track: rgba(244, 63, 94, 0.05);
+    --scrollbar-thumb: rgba(244, 63, 94, 0.2);
+    --scrollbar-thumb-hover: rgba(244, 63, 94, 0.3);
+    --scrollbar-width: 8px;
+    --scrollbar-height: 8px;
+}
+
+/* Global Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Animation Utilities */
+.subtle-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.subtle-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+/* Custom Scrollbar */
+.scrollbar-taylor {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scrollbar-taylor::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-height);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: var(--radius-full);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-full);
+    transition: background var(--duration-fast) var(--timing-function);
+}
+
+.scrollbar-taylor::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+================
+File: src/lib/styles/tokens/index.css
+================
+@import '../theme.css';
+@import '../responsive.css';
+
+/* Base Styles */
+html, body {
+    min-height: 100vh;
+    background: linear-gradient(
+        to bottom right,
+        var(--bg-gradient-start),
+        var(--bg-gradient-end)
+    );
+}
+
+/* Container Styles */
+.container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--dynamic-spacing-md);
+}
+
+/* Card Styles */
+.card {
+    background: var(--bg-overlay);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-card);
+    backdrop-filter: var(--blur-md);
+}
+
+================
+File: src/lib/types/album.ts
+================
+export type Album = {
+    id: string;
+    title: string;
+    coverArt: string;
+    releaseYear: number;
+    isTaylorsVersion: boolean;
+    songs: string[];
+    color: string;
+};
+
+================
+File: src/lib/types/components.ts
+================
+// Common component props and types
+
+// Button Types
+export type ButtonVariant = 'primary' | 'secondary';
+export type ButtonSize = 'compact' | 'default';
+
+export interface ButtonProps {
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    disabled?: boolean;
+    fullWidth?: boolean;
+    type?: 'button' | 'submit' | 'reset';
+}
+
+// Layout Types
+export type HeaderVariant = 'base' | 'progress';
+export type FooterVariant = 'base' | 'button';
+
+export interface HeaderProps {
+    title: string;
+    subtitle?: string;
+    variant?: HeaderVariant;
+    progress?: number;
+    maxProgress?: number;
+}
+
+export interface FooterProps {
+    variant?: FooterVariant;
+    hasBorder?: boolean;
+}
+
+// Album Types
+export interface Album {
+    id: string;
+    title: string;
+    coverArt: string;
+    releaseYear: number;
+    isTaylorsVersion: boolean;
+    color: string;
+    songs: string[];
+}
+
+// Game Types
+export interface Game {
+    id: string;
+    title: string;
+    description: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+    category: 'lyrics' | 'trivia' | 'memory';
+    imageUrl?: string;
+}
+
+// User Types
+export interface UserProfile {
+    username: string;
+    favoriteAlbum?: Album;
+    gamesPlayed: number;
+    highScores: Record<string, number>;
+    achievements: string[];
+}
+
+================
+File: src/main.js
+================
+import App from './App.svelte';
+import { mount } from "svelte";
+
+const app = mount(App, {
+	target: document.body,
+	props: {
+		name: 'world'
+	}
+});
+
+export default app;
+
+================
+File: src/routes/+layout.svelte
+================
+<script lang="ts">
+    import '../app.css';
+    import { page } from '$app/stores';
+    import { setContext } from 'svelte';
+    import { createMusicContext } from '$lib/context/music.svelte';
+    import BottomNav from '$lib/components/BottomNav.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
+
+    // Create and provide the music context
+    const musicContext = createMusicContext();
+    setContext('music', () => musicContext);
+</script>
+
+<StandardLayout>
+    <div class:pb-16={!$page.url.pathname.includes('/albums')}>
+        {@render children?.()}
+    </div>
+    {#if !$page.url.pathname.includes('/albums')}
+        <BottomNav />
+    {/if}
+</StandardLayout>
+
+<style>
+    :global(html) {
+        background-color: rgb(226, 232, 240);
+        height: 100%;
+    }
+
+    :global(body) {
+        height: 100%;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+</style>
+
+================
+File: src/routes/+layout.ts
+================
+export const ssr = false;
+export const prerender = true;
+export const trailingSlash = 'always';
+
+================
+File: src/routes/+page.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+
+    const music = getContext<MusicContext>('music');
+
+    function handleGetStarted() {
+        goto(`${base}/albums`);
+    }
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header
+            
+            title="Taylor Swift Game"
+            subtitle="Find your favorite Taylor's songs" />
+    {/snippet}
+
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-center h-full p-4">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold mb-4">Ready to play?</h2>
+                <p class="text-lg mb-8">
+                    We'll help you discover your favorite Taylor Swift songs by exploring her albums together.
+                </p>
+            </div>
+        </main>
+    {/snippet}
+
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                on:click={handleGetStarted}
+                fullWidth={true}>
+                Get Started
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .welcome-title {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .vinyl-decoration {
+        animation: tilt 10s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes tilt {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+    }
+
+    @keyframes shine {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(100%); }
+    }
+
+    :global(.animate-shine) {
+        animation: shine 3s linear infinite;
+    }
+</style>
+
+================
+File: src/routes/404/+page.svelte
+================
+<script lang="ts">
+    import { base } from '$app/paths';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            title="Page Not Found"
+            subtitle="Sorry, we couldn't find what you're looking for"
+        />
+    {/snippet}
+
+    <div class="flex flex-col items-center justify-center flex-1 p-4 text-center">
+        <div class="text-6xl mb-4">🎵</div>
+        <p class="text-rose-700 mb-8">
+            The page you're looking for seems to have disappeared like a cruel summer.
+        </p>
+    </div>
+
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button variant="primary" on:click={() => goto(base)}>
+                Go Home
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+================
+File: src/routes/albums/+page.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+    import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    
+    const music = getContext<() => MusicContext>('music')();
+    
+    function handleAlbumClick(album: typeof music.albums[0]) {
+        if (music.selectedAlbums.some(a => a.id === album.id)) {
+            music.removeAlbum(album.id);
+        } else if (music.selectedAlbums.length < 3) {
+            music.selectAlbum(album);
+        }
+    }
+    
+    function handleContinue() {
+        if (music.selectedAlbums.length === 3) {
+            goto(`${base}/albums/confirm`);
+        }
+    }
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            variant="progress"
+            title="Pick Your Top 3"
+            subtitle="Choose your favorite Taylor Swift albums"
+            progress={music.selectedAlbums.length}
+            maxProgress={3} />
+    {/snippet}
+
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-center h-full p-4">
+            <div class="album-grid">
+                {#each music.albums as album}
+                    {@const isSelected = music.selectedAlbums.some(a => a.id === album.id)}
+                    {@const selectionIndex = music.selectedAlbums.findIndex(a => a.id === album.id)}
+                    <div class="album-wrapper">
+                        <VinylRecord
+                            coverArt={album.coverArt}
+                            title={album.title}
+                            selected={isSelected}
+                            selectionNumber={isSelected ? selectionIndex + 1 : null}
+                            badgePosition="image"
+                            showSelectionOverlay={true}
+                            showGrooves={true}
+                            on:click={() => handleAlbumClick(album)}
+                        />
+                    </div>
+                {/each}
+            </div>
+        </main>
+    {/snippet}
+
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                disabled={music.selectedAlbums.length < 3}
+                on:click={handleContinue}
+            >
+                Continue
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .album-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 24rem;
+        min-width: 16rem;
+        margin: 0 auto;
+    }
+
+    .album-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+================
+File: src/routes/albums/confirm/+page.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import { onMount } from 'svelte';
+    import confetti from 'canvas-confetti';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+
+    const music = getContext<() => MusicContext>('music')();
+
+    function handleEdit() {
+        goto(`${base}/albums`);
+    }
+    
+    function handleContinue() {
+        if (music.selectedAlbums.length === 3) {
+            goto(`${base}/albums/songs`);
+        }
+    }
+
+    function vibrate() {
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }
+
+    let mounted = $state(false);
+    let showAlbum3 = $state(false);
+    let showAlbum2 = $state(false);
+    let showAlbum1 = $state(false);
+
+    onMount(() => {
+        mounted = true;
+        
+        // Start animation sequence after a short delay
+        setTimeout(() => {
+            showAlbum3 = true;
+            
+            setTimeout(() => {
+                showAlbum2 = true;
+                
+                setTimeout(() => {
+                    showAlbum1 = true;
+                    // Trigger confetti when album 1 appears
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { x: 0.5, y: 0.5 },
+                        colors: ['#FFB6C1', '#FF69B4', '#FF1493'],
+                        disableForReducedMotion: true
+                    });
+                }, 600);
+            }, 600);
+        }, 300);
+    });
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header
+            
+            title="Amazing Choices! 🎉"
+            subtitle="Your top 3 Taylor Swift albums" />
+    {/snippet}
+
+    <div class="flex-1 p-6">
+        <div class="vinyl-container mx-auto">
+            {#if mounted}
+                {#if showAlbum3}
+                    <div class="vinyl-card vinyl-3"
+                        ontouchstart={vibrate}>
+                        <div class="vinyl-content">
+                            <span class="rank-number" style="color: {music.selectedAlbums[2].color}">3</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[2].coverArt}
+                                title={music.selectedAlbums[2].title}
+                                selected={true}
+                                selectionNumber={3}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
+                        </div>
+                    </div>
+                {/if}
+                
+                {#if showAlbum2}
+                    <div class="vinyl-card vinyl-2"
+                        ontouchstart={vibrate}>
+                        <div class="vinyl-content">
+                            <span class="rank-number" style="color: {music.selectedAlbums[1].color}">2</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[1].coverArt}
+                                title={music.selectedAlbums[1].title}
+                                selected={true}
+                                selectionNumber={2}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
+                        </div>
+                    </div>
+                {/if}
+                
+                {#if showAlbum1}
+                    <div class="vinyl-card vinyl-1"
+                        ontouchstart={vibrate}>
+                        <div class="vinyl-content">
+                            <span class="rank-number" style="color: {music.selectedAlbums[0].color}">1</span>
+                            <VinylRecord
+                                coverArt={music.selectedAlbums[0].coverArt}
+                                title={music.selectedAlbums[0].title}
+                                selected={true}
+                                selectionNumber={1}
+                                badgePosition="none"
+                                showSelectionOverlay={false}
+                                showGrooves={true}
+                                class_="confirm-vinyl"
+                            />
+                        </div>
+                    </div>
+                {/if}
+            {/if}
+        </div>
+    </div>
+
+    {#snippet footer()}
+        <Footer variant="button" >
+            {#if mounted}
+                <Button 
+                    variant="secondary"
+                    on:click={handleEdit}
+                    fullWidth={true}>
+                    Edit Selection
+                </Button>
+                <Button 
+                    variant="primary"
+                    on:click={handleContinue}
+                    fullWidth={true}>
+                    Continue to Songs
+                </Button>
+            {/if}
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .vinyl-container {
+        position: relative;
+        width: 288px;
+        height: 488px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .vinyl-card {
+        position: absolute;
+        left: 0;
+        transition: transform 0.3s ease;
+    }
+
+    .vinyl-1 {
+        top: 0;
+        z-index: 3;
+        animation: slideInOne 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vinyl-2 {
+        top: 140px;
+        left: 40px;
+        z-index: 2;
+        animation: slideInTwo 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vinyl-3 {
+        top: 280px;
+        left: 80px;
+        z-index: 1;
+        animation: slideInThree 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideInOne {
+        from {
+            opacity: 0;
+            transform: translate(-100%, 0) rotate(-15deg);
+        }
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+    }
+
+    @keyframes slideInTwo {
+        from {
+            opacity: 0;
+            transform: translate(-100%, 0) rotate(-15deg);
+        }
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+    }
+
+    @keyframes slideInThree {
+        from {
+            opacity: 0;
+            transform: translate(-100%, 0) rotate(-15deg);
+        }
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+    }
+
+    .vinyl-content {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rank-number {
+        position: absolute;
+        left: -4rem;
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+                     0 0 20px currentColor;
+        font-family: 'Playfair Display', serif;
+        letter-spacing: -0.02em;
+    }
+
+    :global(.confirm-vinyl) {
+        width: 13rem;
+        height: 13rem;
+    }
+
+    .button-primary {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        background: rgb(244, 63, 94);
+        color: white;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transform-origin: center;
+        transition: transform 100ms ease;
+    }
+
+    .button-secondary {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        background: rgb(254, 242, 242);
+        color: rgb(244, 63, 94);
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transform-origin: center;
+        transition: transform 100ms ease;
+    }
+
+    .button-primary:active,
+    .button-secondary:active {
+        transform: scale(0.98);
+    }
+</style>
+
+================
+File: src/routes/albums/results/+page.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import { onMount } from 'svelte';
+    import confetti from 'canvas-confetti';
+    import { fade } from 'svelte/transition';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+
+    const music = getContext<() => MusicContext>('music')();
+
+    function handleStartOver() {
+        music.clearSelections();
+        goto(`${base}/albums`);
+    }
+
+    function isColorLight(color: string) {
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness > 155;
+    }
+
+    let mounted = $state(false);
+    let showAlbum1 = $state(false);
+    let showAlbum2 = $state(false);
+    let showAlbum3 = $state(false);
+
+    onMount(() => {
+        mounted = true;
+        
+        // Start animation sequence after a short delay
+        setTimeout(() => {
+            showAlbum1 = true;
+            
+            setTimeout(() => {
+                showAlbum2 = true;
+                
+                setTimeout(() => {
+                    showAlbum3 = true;
+                    // Trigger confetti when all albums appear
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { x: 0.5, y: 0.5 },
+                        colors: ['#FFB6C1', '#FF69B4', '#FF1493'],
+                        disableForReducedMotion: true
+                    });
+                }, 600);
+            }, 600);
+        }, 300);
+    });
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            title="Your Top 3"
+            subtitle="Your favorite albums and songs" />
+    {/snippet}
+
+    <div class="flex-1 p-6">
+        {#if mounted}
+            <div class="results-container">
+                {#if showAlbum1}
+                    <div class="album-result">
+                        <div class="heart-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                            </svg>
+                            <span class="heart-number">1</span>
+                        </div>
+                        <div class="album-container" transition:fade>
+                            <div class="album-display">
+                                <VinylRecord
+                                    coverArt={music.selectedAlbums[0].coverArt}
+                                    title={music.selectedAlbums[0].title}
+                                    selected={true}
+                                    selectionNumber={1}
+                                    badgePosition="none"
+                                    showSelectionOverlay={false}
+                                    showGrooves={true}
+                                    class_="results-vinyl"
+                                />
+                                <div class="song-list">
+                                    <ul class="songs">
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[0].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
+                                        {/each}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+                {#if showAlbum2}
+                    <div class="album-result">
+                        <div class="heart-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                            </svg>
+                            <span class="heart-number">2</span>
+                        </div>
+                        <div class="album-container" transition:fade>
+                            <div class="album-display">
+                                <VinylRecord
+                                    coverArt={music.selectedAlbums[1].coverArt}
+                                    title={music.selectedAlbums[1].title}
+                                    selected={true}
+                                    selectionNumber={2}
+                                    badgePosition="none"
+                                    showSelectionOverlay={false}
+                                    showGrooves={true}
+                                    class_="results-vinyl"
+                                />
+                                <div class="song-list">
+                                    <ul class="songs">
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[1].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
+                                        {/each}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+                {#if showAlbum3}
+                    <div class="album-result">
+                        <div class="heart-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                            </svg>
+                            <span class="heart-number">3</span>
+                        </div>
+                        <div class="album-container" transition:fade>
+                            <div class="album-display">
+                                <VinylRecord
+                                    coverArt={music.selectedAlbums[2].coverArt}
+                                    title={music.selectedAlbums[2].title}
+                                    selected={true}
+                                    selectionNumber={3}
+                                    badgePosition="none"
+                                    showSelectionOverlay={false}
+                                    showGrooves={true}
+                                    class_="results-vinyl"
+                                />
+                                <div class="song-list">
+                                    <ul class="songs">
+                                        {#each music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || [] as song, i}
+                                            <div class="song-wrapper">
+                                                <span class="song-rank" style="color: {music.selectedAlbums[2].color}">{i + 1}</span>
+                                                <li class="song-item" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">
+                                                    {song}
+                                                </li>
+                                            </div>
+                                        {/each}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+            </div>
+        {/if}
+    </div>
+
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                on:click={handleStartOver}
+            >
+                Start Over
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .results-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 32rem;
+        margin: 0 auto;
+    }
+
+    .album-container {
+        background: white;
+        border-radius: 1rem;
+        padding: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.15s;
+        touch-action: manipulation;
+    }
+
+    .album-container:active {
+        transform: scale(0.99);
+    }
+
+    .album-display {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        position: relative;
+    }
+
+    :global(.results-vinyl) {
+        width: 120px;
+        height: 120px;
+        flex-shrink: 0;
+    }
+
+    .song-list {
+        flex-grow: 1;
+        max-height: 120px;
+        overflow-y: auto;
+    }
+
+    .song-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0.125rem;
+    }
+
+    .song-rank {
+        font-size: 0.8rem;
+        min-width: 1rem;
+        text-align: right;
+    }
+
+    .song-item {
+        padding: 0.2rem 0.375rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        transition: transform 0.15s;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+    }
+
+    .song-item:active {
+        transform: scale(0.98);
+    }
+
+    .songs {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    @keyframes heartbeat {
+        0% { transform: scale(1); }
+        14% { transform: scale(1.1); }
+        28% { transform: scale(1); }
+        42% { transform: scale(1.1); }
+        70% { transform: scale(1); }
+    }
+
+    .heart-badge {
+        position: absolute;
+        top: -1rem;
+        left: -1rem;
+        width: 3.6rem;
+        height: 3.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 30;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    .heart-icon {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        color: rgb(244, 63, 94);
+    }
+
+    .heart-number {
+        position: relative;
+        color: white;
+        font-weight: bold;
+        font-size: 1.25rem;
+        z-index: 11;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .album-result {
+        position: relative;
+    }
+</style>
+
+================
+File: src/routes/albums/songs/+page.svelte
+================
+<script lang="ts">
+    import { getContext } from 'svelte';
+    import type { MusicContext } from '$lib/context/music.svelte';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+    import { fade } from 'svelte/transition';
+    import { tapAnimation } from '$lib/actions/tapAnimation';
+    
+    const music = getContext<() => MusicContext>('music')();
+    let currentSongSelections = $state<string[]>([]);
+    let currentAlbumIndex = $state(0);
+    
+    // Get the current album based on index
+    const currentAlbum = $derived(music.selectedAlbums[currentAlbumIndex]);
+    
+    function handleSongSelect(songTitle: string) {
+        const songIndex = currentSongSelections.indexOf(songTitle);
+        if (songIndex !== -1) {
+            currentSongSelections = currentSongSelections.filter(s => s !== songTitle);
+        } else if (currentSongSelections.length < 3) {
+            currentSongSelections = [...currentSongSelections, songTitle];
+        }
+    }
+    
+    function handleBack() {
+        if (currentAlbumIndex > 0) {
+            currentAlbumIndex--;
+            currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
+        } else {
+            goto(`${base}/albums/confirm`);
+        }
+    }
+    
+    function handleContinue() {
+        if (currentSongSelections.length === 3) {
+            // Store the current album's song selections
+            music.updateSelectedSongs(currentAlbum.id, currentSongSelections);
+            
+            if (currentAlbumIndex < 2) {
+                currentAlbumIndex++;
+                currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
+            } else {
+                goto(`${base}/albums/results`);
+            }
+        }
+    }
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            variant="progress"
+            title="Now, select your 3 top bangers from {currentAlbum?.title}"
+            subtitle="Choose your favorite songs"
+            progress={currentSongSelections.length}
+            maxProgress={3}>
+            
+            <!-- Selected Albums Stack in Header -->
+            {#snippet left()}
+                <div class="albums-stack" >
+                    {#each music.selectedAlbums as album, i}
+                        <div 
+                            class="selected-album"
+                            class:active={i === currentAlbumIndex}
+                            style="transform: translate({i * -4}px, {i * -4}px)">
+                            <div class="vinyl-mini">
+                                <img
+                                    src={album.coverArt}
+                                    alt={album.title}
+                                    class="vinyl-art-mini"
+                                />
+                                <div class="vinyl-grooves-mini"></div>
+                                <div class="vinyl-center-mini"></div>
+                                <div class="heart-badge-mini">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
+                                    <span class="heart-number-mini">{i + 1}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            {/snippet}
+        </Header>
+    {/snippet}
+
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-start h-full p-4">
+            <!-- Songs List -->
+            <div class="songs-container" in:fade>
+                {#each currentAlbum?.songs || [] as song, i}
+                    <button
+                        class="song-card"
+                        class:selected={currentSongSelections.includes(song)}
+                        onclick={() => handleSongSelect(song)}
+                        use:tapAnimation
+                    >
+                        <div class="song-info">
+                            <span class="song-number" style="text-align: right;">{i + 1}.</span>
+                            <span class="song-title">{song}</span>
+                        </div>
+                        {#if currentSongSelections.includes(song)}
+                            <div class="heart-badge-song">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                </svg>
+                                <span class="heart-number-song">{currentSongSelections.indexOf(song) + 1}</span>
+                            </div>
+                        {/if}
+                    </button>
+                {/each}
+            </div>
+        </main>
+    {/snippet}
+
+    {#snippet footer()}
+        <Footer variant="nav" >
+            <Button variant="secondary" on:click={handleBack}>
+                {currentAlbumIndex > 0 ? 'Previous Album' : 'Back'}
+            </Button>
+            <Button 
+                variant="primary"
+                disabled={currentSongSelections.length < 3}
+                on:click={handleContinue}
+            >
+                {currentAlbumIndex < 2 ? 'Next Album' : 'See Results'}
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .albums-stack {
+        position: relative;
+        width: 4rem;
+        height: 4rem;
+        margin-right: 1rem;
+    }
+
+    .selected-album {
+        position: absolute;
+        transition: all 0.3s ease-out;
+    }
+
+    .selected-album.active {
+        z-index: 3;
+    }
+
+    .vinyl-mini {
+        width: 4rem;
+        height: 4rem;
+        position: relative;
+        border-radius: 50%;
+        background: #000;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .vinyl-art-mini {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+    }
+
+    .vinyl-grooves-mini {
+        position: absolute;
+        inset: 0;
+        background: repeating-radial-gradient(
+            circle at center,
+            transparent 0,
+            transparent 2px,
+            rgba(255, 255, 255, 0.05) 2.5px,
+            rgba(0, 0, 0, 0.15) 3px
+        );
+        mix-blend-mode: overlay;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.85;
+    }
+
+    .vinyl-center-mini {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20%;
+        height: 20%;
+        background: #000;
+        border-radius: 50%;
+        z-index: 3;
+    }
+
+    .heart-badge-mini {
+        position: absolute;
+        top: -0.3rem;
+        left: -0.3rem;
+        width: 1.8rem;
+        height: 1.8rem;
+        color: rgb(244, 63, 94);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .heart-number-mini {
+        position: absolute;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .songs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.2rem;
+        width: 100%;
+        max-width: var(--container-max-width);
+    }
+
+    .song-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.3rem 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        transition: all 0.2s ease-out;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1),
+                   0 1px 2px rgba(0, 0, 0, 0.15);
+        text-align: left;
+        width: 100%;
+    }
+
+    .song-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .song-card.selected {
+        background: rgba(244, 63, 94, 0.2);
+    }
+
+    .song-info {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        flex: 1;
+    }
+
+    .song-number {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        min-width: 1.2rem;
+        text-align: right;
+    }
+
+    .song-title {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .heart-badge-song {
+        width: 1.2rem;
+        height: 1.2rem;
+        color: rgb(244, 63, 94);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .heart-number-song {
+        position: absolute;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+</style>
+
+================
+File: src/routes/games/+page.svelte
+================
+<script lang="ts">
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Footer from '$lib/components/layout/Footer.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+
+    function startGame() {
+        // TODO: Implement game start logic
+        console.log('Starting game...');
+    }
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            title="Taylor Swift Games"
+            subtitle="Test your Swiftie knowledge" />
+    {/snippet}
+
+    {#snippet main()}
+        <main  class="container-responsive">
+            <div class="grid-responsive gap-dynamic">
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">🎵</div>
+                        <div class="game-info">
+                            <h3>Song Match</h3>
+                            <p>Match lyrics with the correct song title</p>
+                        </div>
+                    </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Play Now
+                    </Button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">🎸</div>
+                        <div class="game-info">
+                            <h3>Era Quiz</h3>
+                            <p>Test your knowledge of Taylor's eras</p>
+                        </div>
+                    </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Start Game
+                    </Button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">📝</div>
+                        <div class="game-info">
+                            <h3>Lyric Challenge</h3>
+                            <p>Complete the missing lyrics</p>
+                        </div>
+                    </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Begin
+                    </Button>
+                </div>
+            </div>
+        </main>
+    {/snippet}
+
+    {#snippet footer()}
+        <Footer  variant="button">
+            <Button variant="primary" on:click={() => startGame()}>
+                Start Game
+            </Button>
+        </Footer>
+    {/snippet}
+</StandardLayout>
+
+<style>
+    .game-card {
+        background: var(--bg-overlay);
+        border-radius: var(--radius-card);
+        padding: var(--spacing-card);
+        backdrop-filter: var(--blur-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--dynamic-spacing-sm);
+    }
+
+    .game-content {
+        display: flex;
+        align-items: center;
+        gap: var(--dynamic-spacing-sm);
+        padding-bottom: var(--dynamic-spacing-sm);
+    }
+
+    .game-icon {
+        background: var(--bg-gradient-start);
+        width: clamp(3rem, 8vw, 3.5rem);
+        height: clamp(3rem, 8vw, 3.5rem);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(1.5rem, 4vw, 1.75rem);
+    }
+
+    .game-info {
+        flex: 1;
+    }
+
+    .game-info h3 {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .game-info p {
+        color: var(--text-secondary);
+        margin: var(--dynamic-spacing-sm) 0 0 0;
+        font-size: clamp(0.75rem, 2vw, 0.875rem);
+    }
+</style>
+
+================
+File: src/routes/profile/+page.svelte
+================
+<script lang="ts">
+    import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import Header from '$lib/components/layout/Header.svelte';
+    import Button from '$lib/components/Button/Button.svelte';
+</script>
+
+<StandardLayout>
+    {#snippet header()}
+        <Header 
+            
+            title="Your Profile"
+            subtitle="Customize your Swiftie experience"
+        />
+    {/snippet}
+
+    <div class="px-4 space-y-6">
+        <div class="flex items-center justify-center">
+            <div class="w-24 h-24 bg-rose-200 rounded-full flex items-center justify-center">
+                <span class="text-3xl text-rose-600">🎵</span>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
+                <h3 class="text-lg font-semibold text-rose-800 mb-2">Stats</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-rose-600">Albums Rated</span>
+                        <span class="font-medium">3</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-rose-600">Songs Matched</span>
+                        <span class="font-medium">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
+                <h3 class="text-lg font-semibold text-rose-800 mb-2">Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="form-checkbox text-rose-500">
+                            <span class="text-rose-600">Enable Notifications</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="form-checkbox text-rose-500" checked>
+                            <span class="text-rose-600">Haptic Feedback</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</StandardLayout>
+
+================
+File: src/stories/assets/accessibility.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48"><title>Accessibility</title><circle cx="24.334" cy="24" r="24" fill="#A849FF" fill-opacity=".3"/><path fill="#A470D5" fill-rule="evenodd" d="M27.8609 11.585C27.8609 9.59506 26.2497 7.99023 24.2519 7.99023C22.254 7.99023 20.6429 9.65925 20.6429 11.585C20.6429 13.575 22.254 15.1799 24.2519 15.1799C26.2497 15.1799 27.8609 13.575 27.8609 11.585ZM21.8922 22.6473C21.8467 23.9096 21.7901 25.4788 21.5897 26.2771C20.9853 29.0462 17.7348 36.3314 17.3325 37.2275C17.1891 37.4923 17.1077 37.7955 17.1077 38.1178C17.1077 39.1519 17.946 39.9902 18.9802 39.9902C19.6587 39.9902 20.253 39.6293 20.5814 39.0889L20.6429 38.9874L24.2841 31.22C24.2841 31.22 27.5529 37.9214 27.9238 38.6591C28.2948 39.3967 28.8709 39.9902 29.7168 39.9902C30.751 39.9902 31.5893 39.1519 31.5893 38.1178C31.5893 37.7951 31.3639 37.2265 31.3639 37.2265C30.9581 36.3258 27.698 29.0452 27.0938 26.2771C26.8975 25.4948 26.847 23.9722 26.8056 22.7236C26.7927 22.333 26.7806 21.9693 26.7653 21.6634C26.7008 21.214 27.0231 20.8289 27.4097 20.7005L35.3366 18.3253C36.3033 18.0685 36.8834 16.9773 36.6256 16.0144C36.3678 15.0515 35.2722 14.4737 34.3055 14.7305C34.3055 14.7305 26.8619 17.1057 24.2841 17.1057C21.7062 17.1057 14.456 14.7947 14.456 14.7947C13.4893 14.5379 12.3937 14.9873 12.0715 15.9502C11.7493 16.9131 12.3293 18.0044 13.3604 18.3253L21.2873 20.7005C21.674 20.8289 21.9318 21.214 21.9318 21.6634C21.9174 21.9493 21.9053 22.2857 21.8922 22.6473Z" clip-rule="evenodd"/></svg>
+
+================
+File: src/stories/assets/discord.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="32" fill="none" viewBox="0 0 33 32"><g clip-path="url(#clip0_10031_177575)"><mask id="mask0_10031_177575" style="mask-type:luminance" width="33" height="25" x="0" y="4" maskUnits="userSpaceOnUse"><path fill="#fff" d="M32.5034 4.00195H0.503906V28.7758H32.5034V4.00195Z"/></mask><g mask="url(#mask0_10031_177575)"><path fill="#5865F2" d="M27.5928 6.20817C25.5533 5.27289 23.3662 4.58382 21.0794 4.18916C21.0378 4.18154 20.9962 4.20057 20.9747 4.23864C20.6935 4.73863 20.3819 5.3909 20.1637 5.90358C17.7042 5.53558 15.2573 5.53558 12.8481 5.90358C12.6299 5.37951 12.307 4.73863 12.0245 4.23864C12.003 4.20184 11.9614 4.18281 11.9198 4.18916C9.63431 4.58255 7.44721 5.27163 5.40641 6.20817C5.38874 6.21578 5.3736 6.22848 5.36355 6.24497C1.21508 12.439 0.078646 18.4809 0.636144 24.4478C0.638667 24.477 0.655064 24.5049 0.677768 24.5227C3.41481 26.5315 6.06609 27.7511 8.66815 28.5594C8.70979 28.5721 8.75392 28.5569 8.78042 28.5226C9.39594 27.6826 9.94461 26.7968 10.4151 25.8653C10.4428 25.8107 10.4163 25.746 10.3596 25.7244C9.48927 25.3945 8.66058 24.9922 7.86343 24.5354C7.80038 24.4986 7.79533 24.4084 7.85333 24.3653C8.02108 24.2397 8.18888 24.109 8.34906 23.977C8.37804 23.9529 8.41842 23.9478 8.45249 23.963C13.6894 26.3526 19.359 26.3526 24.5341 23.963C24.5682 23.9465 24.6086 23.9516 24.6388 23.9757C24.799 24.1077 24.9668 24.2397 25.1358 24.3653C25.1938 24.4084 25.19 24.4986 25.127 24.5354C24.3298 25.0011 23.5011 25.3945 22.6296 25.7232C22.5728 25.7447 22.5476 25.8107 22.5754 25.8653C23.0559 26.7955 23.6046 27.6812 24.2087 28.5213C24.234 28.5569 24.2794 28.5721 24.321 28.5594C26.9357 27.7511 29.5869 26.5315 32.324 24.5227C32.348 24.5049 32.3631 24.4783 32.3656 24.4491C33.0328 17.5506 31.2481 11.5584 27.6344 6.24623C27.6256 6.22848 27.6105 6.21578 27.5928 6.20817ZM11.1971 20.8146C9.62043 20.8146 8.32129 19.3679 8.32129 17.5913C8.32129 15.8146 9.59523 14.368 11.1971 14.368C12.8115 14.368 14.0981 15.8273 14.0729 17.5913C14.0729 19.3679 12.7989 20.8146 11.1971 20.8146ZM21.8299 20.8146C20.2533 20.8146 18.9541 19.3679 18.9541 17.5913C18.9541 15.8146 20.228 14.368 21.8299 14.368C23.4444 14.368 24.7309 15.8273 24.7057 17.5913C24.7057 19.3679 23.4444 20.8146 21.8299 20.8146Z"/></g></g><defs><clipPath id="clip0_10031_177575"><rect width="32" height="32" fill="#fff" transform="translate(0.5)"/></clipPath></defs></svg>
+
+================
+File: src/stories/assets/github.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 32 32"><path fill="#161614" d="M16.0001 0C7.16466 0 0 7.17472 0 16.0256C0 23.1061 4.58452 29.1131 10.9419 31.2322C11.7415 31.3805 12.0351 30.8845 12.0351 30.4613C12.0351 30.0791 12.0202 28.8167 12.0133 27.4776C7.56209 28.447 6.62283 25.5868 6.62283 25.5868C5.89499 23.7345 4.8463 23.2419 4.8463 23.2419C3.39461 22.2473 4.95573 22.2678 4.95573 22.2678C6.56242 22.3808 7.40842 23.9192 7.40842 23.9192C8.83547 26.3691 11.1514 25.6609 12.0645 25.2514C12.2081 24.2156 12.6227 23.5087 13.0803 23.1085C9.52648 22.7032 5.7906 21.3291 5.7906 15.1886C5.7906 13.4389 6.41563 12.0094 7.43916 10.8871C7.27303 10.4834 6.72537 8.85349 7.59415 6.64609C7.59415 6.64609 8.93774 6.21539 11.9953 8.28877C13.2716 7.9337 14.6404 7.75563 16.0001 7.74953C17.3599 7.75563 18.7297 7.9337 20.0084 8.28877C23.0623 6.21539 24.404 6.64609 24.404 6.64609C25.2749 8.85349 24.727 10.4834 24.5608 10.8871C25.5868 12.0094 26.2075 13.4389 26.2075 15.1886C26.2075 21.3437 22.4645 22.699 18.9017 23.0957C19.4756 23.593 19.9869 24.5683 19.9869 26.0634C19.9869 28.2077 19.9684 29.9334 19.9684 30.4613C19.9684 30.8877 20.2564 31.3874 21.0674 31.2301C27.4213 29.1086 32 23.1037 32 16.0256C32 7.17472 24.8364 0 16.0001 0ZM5.99257 22.8288C5.95733 22.9084 5.83227 22.9322 5.71834 22.8776C5.60229 22.8253 5.53711 22.7168 5.57474 22.6369C5.60918 22.5549 5.7345 22.5321 5.85029 22.587C5.9666 22.6393 6.03284 22.7489 5.99257 22.8288ZM6.7796 23.5321C6.70329 23.603 6.55412 23.5701 6.45291 23.4581C6.34825 23.3464 6.32864 23.197 6.40601 23.125C6.4847 23.0542 6.62937 23.0874 6.73429 23.1991C6.83895 23.3121 6.85935 23.4605 6.7796 23.5321ZM7.31953 24.4321C7.2215 24.5003 7.0612 24.4363 6.96211 24.2938C6.86407 24.1513 6.86407 23.9804 6.96422 23.9119C7.06358 23.8435 7.2215 23.905 7.32191 24.0465C7.41968 24.1914 7.41968 24.3623 7.31953 24.4321ZM8.23267 25.4743C8.14497 25.5712 7.95818 25.5452 7.82146 25.413C7.68156 25.2838 7.64261 25.1004 7.73058 25.0035C7.81934 24.9064 8.00719 24.9337 8.14497 25.0648C8.28381 25.1938 8.3262 25.3785 8.23267 25.4743ZM9.41281 25.8262C9.37413 25.9517 9.19423 26.0088 9.013 25.9554C8.83203 25.9005 8.7136 25.7535 8.75016 25.6266C8.78778 25.5003 8.96848 25.4408 9.15104 25.4979C9.33174 25.5526 9.45044 25.6985 9.41281 25.8262ZM10.7559 25.9754C10.7604 26.1076 10.6067 26.2172 10.4165 26.2196C10.2252 26.2238 10.0704 26.1169 10.0683 25.9868C10.0683 25.8534 10.2185 25.7448 10.4098 25.7416C10.6001 25.7379 10.7559 25.8441 10.7559 25.9754ZM12.0753 25.9248C12.0981 26.0537 11.9658 26.1862 11.7769 26.2215C11.5912 26.2554 11.4192 26.1758 11.3957 26.0479C11.3726 25.9157 11.5072 25.7833 11.6927 25.7491C11.8819 25.7162 12.0512 25.7937 12.0753 25.9248Z"/></svg>
+
+================
+File: src/stories/assets/tutorials.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="32" fill="none" viewBox="0 0 33 32"><g clip-path="url(#clip0_10031_177597)"><path fill="#B7F0EF" fill-rule="evenodd" d="M17 7.87059C17 6.48214 17.9812 5.28722 19.3431 5.01709L29.5249 2.99755C31.3238 2.64076 33 4.01717 33 5.85105V22.1344C33 23.5229 32.0188 24.7178 30.6569 24.9879L20.4751 27.0074C18.6762 27.3642 17 25.9878 17 24.1539L17 7.87059Z" clip-rule="evenodd" opacity=".7"/><path fill="#87E6E5" fill-rule="evenodd" d="M1 5.85245C1 4.01857 2.67623 2.64215 4.47507 2.99895L14.6569 5.01848C16.0188 5.28861 17 6.48354 17 7.87198V24.1553C17 25.9892 15.3238 27.3656 13.5249 27.0088L3.34311 24.9893C1.98119 24.7192 1 23.5242 1 22.1358V5.85245Z" clip-rule="evenodd"/><path fill="#61C1FD" fill-rule="evenodd" d="M15.543 5.71289C15.543 5.71289 16.8157 5.96289 17.4002 6.57653C17.9847 7.19016 18.4521 9.03107 18.4521 9.03107C18.4521 9.03107 18.4521 25.1106 18.4521 26.9629C18.4521 28.8152 19.3775 31.4174 19.3775 31.4174L17.4002 28.8947L16.2575 31.4174C16.2575 31.4174 15.543 29.0765 15.543 27.122C15.543 25.1674 15.543 5.71289 15.543 5.71289Z" clip-rule="evenodd"/></g><defs><clipPath id="clip0_10031_177597"><rect width="32" height="32" fill="#fff" transform="translate(0.5)"/></clipPath></defs></svg>
+
+================
+File: src/stories/assets/youtube.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 32 32"><path fill="#ED1D24" d="M31.3313 8.44657C30.9633 7.08998 29.8791 6.02172 28.5022 5.65916C26.0067 5.00026 16 5.00026 16 5.00026C16 5.00026 5.99333 5.00026 3.4978 5.65916C2.12102 6.02172 1.03665 7.08998 0.668678 8.44657C0 10.9053 0 16.0353 0 16.0353C0 16.0353 0 21.1652 0.668678 23.6242C1.03665 24.9806 2.12102 26.0489 3.4978 26.4116C5.99333 27.0703 16 27.0703 16 27.0703C16 27.0703 26.0067 27.0703 28.5022 26.4116C29.8791 26.0489 30.9633 24.9806 31.3313 23.6242C32 21.1652 32 16.0353 32 16.0353C32 16.0353 32 10.9053 31.3313 8.44657Z"/><path fill="#fff" d="M12.7266 20.6934L21.0902 16.036L12.7266 11.3781V20.6934Z"/></svg>
+
+================
+File: src/stories/button.css
+================
+.storybook-button {
+  display: inline-block;
+  cursor: pointer;
+  border: 0;
+  border-radius: 3em;
+  font-weight: 700;
+  line-height: 1;
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.storybook-button--primary {
+  background-color: #555ab9;
+  color: white;
+}
+.storybook-button--secondary {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+  background-color: transparent;
+  color: #333;
+}
+.storybook-button--small {
+  padding: 10px 16px;
+  font-size: 12px;
+}
+.storybook-button--medium {
+  padding: 11px 20px;
+  font-size: 14px;
+}
+.storybook-button--large {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+================
+File: src/stories/Configure.mdx
+================
+import { Meta } from "@storybook/blocks";
+
+import Github from "./assets/github.svg";
+import Discord from "./assets/discord.svg";
+import Youtube from "./assets/youtube.svg";
+import Tutorials from "./assets/tutorials.svg";
+import Styling from "./assets/styling.png";
+import Context from "./assets/context.png";
+import Assets from "./assets/assets.png";
+import Docs from "./assets/docs.png";
+import Share from "./assets/share.png";
+import FigmaPlugin from "./assets/figma-plugin.png";
+import Testing from "./assets/testing.png";
+import Accessibility from "./assets/accessibility.png";
+import Theming from "./assets/theming.png";
+import AddonLibrary from "./assets/addon-library.png";
+
+export const RightArrow = () => <svg 
+    viewBox="0 0 14 14" 
+    width="8px" 
+    height="14px" 
+    style={{ 
+      marginLeft: '4px',
+      display: 'inline-block',
+      shapeRendering: 'inherit',
+      verticalAlign: 'middle',
+      fill: 'currentColor',
+      'path fill': 'currentColor'
+    }}
+>
+  <path d="m11.1 7.35-5.5 5.5a.5.5 0 0 1-.7-.7L10.04 7 4.9 1.85a.5.5 0 1 1 .7-.7l5.5 5.5c.2.2.2.5 0 .7Z" />
+</svg>
+
+<Meta title="Configure your project" />
+
+<div className="sb-container">
+  <div className='sb-section-title'>
+    # Configure your project
+
+    Because Storybook works separately from your app, you'll need to configure it for your specific stack and setup. Below, explore guides for configuring Storybook with popular frameworks and tools. If you get stuck, learn how you can ask for help from our community.
+  </div>
+  <div className="sb-section">
+    <div className="sb-section-item">
+      <img
+        src={Styling}
+        alt="A wall of logos representing different styling technologies"
+      />
+      <h4 className="sb-section-item-heading">Add styling and CSS</h4>
+      <p className="sb-section-item-paragraph">Like with web applications, there are many ways to include CSS within Storybook. Learn more about setting up styling within Storybook.</p>
+      <a
+        href="https://storybook.js.org/docs/configure/styling-and-css/?renderer=svelte"
+        target="_blank"
+      >Learn more<RightArrow /></a>
+    </div>
+    <div className="sb-section-item">
+      <img
+        src={Context}
+        alt="An abstraction representing the composition of data for a component"
+      />
+      <h4 className="sb-section-item-heading">Provide context and mocking</h4>
+      <p className="sb-section-item-paragraph">Often when a story doesn't render, it's because your component is expecting a specific environment or context (like a theme provider) to be available.</p>
+      <a
+        href="https://storybook.js.org/docs/writing-stories/decorators/?renderer=svelte#context-for-mocking"
+        target="_blank"
+      >Learn more<RightArrow /></a>
+    </div>
+    <div className="sb-section-item">
+      <img src={Assets} alt="A representation of typography and image assets" />
+      <div>
+        <h4 className="sb-section-item-heading">Load assets and resources</h4>
+        <p className="sb-section-item-paragraph">To link static files (like fonts) to your projects and stories, use the
+        `staticDirs` configuration option to specify folders to load when
+        starting Storybook.</p>
+        <a
+          href="https://storybook.js.org/docs/configure/images-and-assets/?renderer=svelte"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div className="sb-container">
+  <div className='sb-section-title'>
+    # Do more with Storybook
+
+    Now that you know the basics, let's explore other parts of Storybook that will improve your experience. This list is just to get you started. You can customise Storybook in many ways to fit your needs.
+  </div>
+
+  <div className="sb-section">
+    <div className="sb-features-grid">
+      <div className="sb-grid-item">
+        <img src={Docs} alt="A screenshot showing the autodocs tag being set, pointing a docs page being generated" />
+        <h4 className="sb-section-item-heading">Autodocs</h4>
+        <p className="sb-section-item-paragraph">Auto-generate living,
+          interactive reference documentation from your components and stories.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-docs/autodocs/?renderer=svelte"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="sb-grid-item">
+        <img src={Share} alt="A browser window showing a Storybook being published to a chromatic.com URL" />
+        <h4 className="sb-section-item-heading">Publish to Chromatic</h4>
+        <p className="sb-section-item-paragraph">Publish your Storybook to review and collaborate with your entire team.</p>
+        <a
+          href="https://storybook.js.org/docs/sharing/publish-storybook/?renderer=svelte#publish-storybook-with-chromatic"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="sb-grid-item">
+        <img src={FigmaPlugin} alt="Windows showing the Storybook plugin in Figma" />
+        <h4 className="sb-section-item-heading">Figma Plugin</h4>
+        <p className="sb-section-item-paragraph">Embed your stories into Figma to cross-reference the design and live
+          implementation in one place.</p>
+        <a
+          href="https://storybook.js.org/docs/sharing/design-integrations/?renderer=svelte#embed-storybook-in-figma-with-the-plugin"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="sb-grid-item">
+        <img src={Testing} alt="Screenshot of tests passing and failing" />
+        <h4 className="sb-section-item-heading">Testing</h4>
+        <p className="sb-section-item-paragraph">Use stories to test a component in all its variations, no matter how
+          complex.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-tests/?renderer=svelte"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="sb-grid-item">
+        <img src={Accessibility} alt="Screenshot of accessibility tests passing and failing" />
+        <h4 className="sb-section-item-heading">Accessibility</h4>
+        <p className="sb-section-item-paragraph">Automatically test your components for a11y issues as you develop.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-tests/accessibility-testing/?renderer=svelte"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="sb-grid-item">
+        <img src={Theming} alt="Screenshot of Storybook in light and dark mode" />
+        <h4 className="sb-section-item-heading">Theming</h4>
+        <p className="sb-section-item-paragraph">Theme Storybook's UI to personalize it to your project.</p>
+        <a
+          href="https://storybook.js.org/docs/configure/theming/?renderer=svelte"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div className='sb-addon'>
+  <div className='sb-addon-text'>
+    <h4>Addons</h4>
+    <p className="sb-section-item-paragraph">Integrate your tools with Storybook to connect workflows.</p>
+    <a
+        href="https://storybook.js.org/addons/"
+        target="_blank"
+      >Discover all addons<RightArrow /></a>
+  </div>
+  <div className='sb-addon-img'>
+    <img src={AddonLibrary} alt="Integrate your tools with Storybook to connect workflows." />
+  </div>
+</div>
+
+<div className="sb-section sb-socials">
+    <div className="sb-section-item">
+      <img src={Github} alt="Github logo" className="sb-explore-image"/>
+      Join our contributors building the future of UI development.
+
+      <a
+        href="https://github.com/storybookjs/storybook"
+        target="_blank"
+      >Star on GitHub<RightArrow /></a>
+    </div>
+    <div className="sb-section-item">
+      <img src={Discord} alt="Discord logo" className="sb-explore-image"/>
+      <div>
+        Get support and chat with frontend developers.
+
+        <a
+          href="https://discord.gg/storybook"
+          target="_blank"
+        >Join Discord server<RightArrow /></a>
+      </div>
+    </div>
+    <div className="sb-section-item">
+      <img src={Youtube} alt="Youtube logo" className="sb-explore-image"/>
+      <div>
+        Watch tutorials, feature previews and interviews.
+
+        <a
+          href="https://www.youtube.com/@chromaticui"
+          target="_blank"
+        >Watch on YouTube<RightArrow /></a>
+      </div>
+    </div>
+    <div className="sb-section-item">
+      <img src={Tutorials} alt="A book" className="sb-explore-image"/>
+      <p>Follow guided walkthroughs on for key workflows.</p>
+
+      <a
+          href="https://storybook.js.org/tutorials/"
+          target="_blank"
+        >Discover tutorials<RightArrow /></a>
+    </div>
+</div>
+
+<style>
+  {`
+  .sb-container {
+    margin-bottom: 48px;
+  }
+
+  .sb-section {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  img {
+    object-fit: cover;
+  }
+
+  .sb-section-title {
+    margin-bottom: 32px;
+  }
+
+  .sb-section a:not(h1 a, h2 a, h3 a) {
+    font-size: 14px;
+  }
+
+  .sb-section-item, .sb-grid-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sb-section-item-heading {
+    padding-top: 20px !important;
+    padding-bottom: 5px !important;
+    margin: 0 !important;
+  }
+  .sb-section-item-paragraph {
+    margin: 0;
+    padding-bottom: 10px;
+  }
+
+  .sb-chevron {
+    margin-left: 5px;
+  }
+
+  .sb-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 32px 20px;
+  }
+
+  .sb-socials {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .sb-socials p {
+    margin-bottom: 10px;
+  }
+
+  .sb-explore-image {
+    max-height: 32px;
+    align-self: flex-start;
+  }
+
+  .sb-addon {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: #EEF3F8;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: #EEF3F8;
+    height: 180px;
+    margin-bottom: 48px;
+    overflow: hidden;
+  }
+
+  .sb-addon-text {
+    padding-left: 48px;
+    max-width: 240px;
+  }
+
+  .sb-addon-text h4 {
+    padding-top: 0px;
+  }
+
+  .sb-addon-img {
+    position: absolute;
+    left: 345px;
+    top: 0;
+    height: 100%;
+    width: 200%;
+    overflow: hidden;
+  }
+
+  .sb-addon-img img {
+    width: 650px;
+    transform: rotate(-15deg);
+    margin-left: 40px;
+    margin-top: -72px;
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0);
+    backface-visibility: hidden;
+  }
+
+  @media screen and (max-width: 800px) {
+    .sb-addon-img {
+      left: 300px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .sb-section {
+      flex-direction: column;
+    }
+
+    .sb-features-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    .sb-socials {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sb-addon {
+      height: 280px;
+      align-items: flex-start;
+      padding-top: 32px;
+      overflow: hidden;
+    }
+
+    .sb-addon-text {
+      padding-left: 24px;
+    }
+
+    .sb-addon-img {
+      right: 0;
+      left: 0;
+      top: 130px;
+      bottom: 0;
+      overflow: hidden;
+      height: auto;
+      width: 124%;
+    }
+
+    .sb-addon-img img {
+      width: 1200px;
+      transform: rotate(-12deg);
+      margin-left: 0;
+      margin-top: 48px;
+      margin-bottom: -40px;
+      margin-left: -24px;
+    }
+  }
+  `}
+</style>
+
+================
+File: src/stories/header.css
+================
+.storybook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.storybook-header svg {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.storybook-header h1 {
+  display: inline-block;
+  vertical-align: top;
+  margin: 6px 0 6px 10px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.storybook-header button + button {
+  margin-left: 10px;
+}
+
+.storybook-header .welcome {
+  margin-right: 10px;
+  color: #333;
+  font-size: 14px;
+}
+
+================
+File: src/stories/Header.stories.svelte
+================
+<script module>
+  import { defineMeta } from '@storybook/addon-svelte-csf';
+  import Header from './Header.svelte';
+  import { fn } from '@storybook/test';
+
+  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
+  const { Story } = defineMeta({
+    title: 'Example/Header',
+    component: Header,
+    // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
+    tags: ['autodocs'],
+    parameters: {
+      // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
+      layout: 'fullscreen',
+    },
+    args: {
+      onLogin: fn(),
+      onLogout: fn(),
+      onCreateAccount: fn(),
+    }
+  });
+</script>
+
+<Story name="Logged In" args={{ user: { name: 'Jane Doe' } }} />
+
+<Story name="Logged Out" />
+
+================
+File: src/stories/Header.svelte
+================
+<script lang="ts">
+  import './header.css';
+  import Button from './Button.svelte';
+
+  interface Props {
+    user?: { name: string };
+    onLogin?: () => void;
+    onLogout?: () => void;
+    onCreateAccount?: () => void;
+  }
+
+  const { user, onLogin, onLogout, onCreateAccount }: Props = $props();
+</script>
+
+<header>
+  <div class="storybook-header">
+    <div>
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <path
+            d="M10 0h12a10 10 0 0110 10v12a10 10 0 01-10 10H10A10 10 0 010 22V10A10 10 0 0110 0z"
+            fill="#FFF"
+          />
+          <path
+            d="M5.3 10.6l10.4 6v11.1l-10.4-6v-11zm11.4-6.2l9.7 5.5-9.7 5.6V4.4z"
+            fill="#555AB9"
+          />
+          <path d="M27.2 10.6v11.2l-10.5 6V16.5l10.5-6zM15.7 4.4v11L6 10l9.7-5.5z" fill="#91BAF8" />
+        </g>
+      </svg>
+      <h1>Acme</h1>
+    </div>
+    <div>
+      {#if user}
+        <span class="welcome">
+          Welcome, <b>{user.name}</b>!
+        </span>
+        <Button size="small" onClick={onLogout} label="Log out" />
+      {:else}
+        <Button size="small" onClick={onLogin} label="Log in" />
+        <Button primary size="small" onClick={onCreateAccount} label="Sign up" />
+      {/if}
+    </div>
+  </div>
+</header>
+
+================
+File: src/stories/page.css
+================
+.storybook-page {
+  margin: 0 auto;
+  padding: 48px 20px;
+  max-width: 600px;
+  color: #333;
+  font-size: 14px;
+  line-height: 24px;
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.storybook-page h2 {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.storybook-page p {
+  margin: 1em 0;
+}
+
+.storybook-page a {
+  color: inherit;
+}
+
+.storybook-page ul {
+  margin: 1em 0;
+  padding-left: 30px;
+}
+
+.storybook-page li {
+  margin-bottom: 8px;
+}
+
+.storybook-page .tip {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 10px;
+  border-radius: 1em;
+  background: #e7fdd8;
+  padding: 4px 12px;
+  color: #357a14;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 12px;
+}
+
+.storybook-page .tip-wrapper {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.storybook-page .tip-wrapper svg {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 3px;
+  margin-right: 4px;
+  width: 12px;
+  height: 12px;
+}
+
+.storybook-page .tip-wrapper svg path {
+  fill: #1ea7fd;
+}
+
+================
+File: src/stories/Page.stories.svelte
+================
+<script module>
+  import { defineMeta } from '@storybook/addon-svelte-csf';
+  import { expect, userEvent, waitFor, within } from '@storybook/test';
+  import Page from './Page.svelte';
+  import { fn } from '@storybook/test';
+
+  // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
+  const { Story } = defineMeta({
+    title: 'Example/Page',
+    component: Page,
+    parameters: {
+      // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
+      layout: 'fullscreen',
+    },
+  });
+</script>
+
+<Story name="Logged In" play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const loginButton = canvas.getByRole('button', { name: /Log in/i });
+    await expect(loginButton).toBeInTheDocument();
+    await userEvent.click(loginButton);
+    await waitFor(() => expect(loginButton).not.toBeInTheDocument());
+
+    const logoutButton = canvas.getByRole('button', { name: /Log out/i });
+    await expect(logoutButton).toBeInTheDocument();
+  }}
+/>
+
+<Story name="Logged Out" />
+
+================
+File: src/stories/Page.svelte
+================
+<script lang="ts">
+  import './page.css';
+  import Header from './Header.svelte';
+
+  let user = $state<{ name: string }>();
+</script>
+
+<article>
+  <Header
+    {user}
+    onLogin={() => (user = { name: 'Jane Doe' })}
+    onLogout={() => (user = undefined)}
+    onCreateAccount={() => (user = { name: 'Jane Doe' })}
+  />
+
+  <section class="storybook-page">
+    <h2>Pages in Storybook</h2>
+    <p>
+      We recommend building UIs with a
+      <a
+        href="https://blog.hichroma.com/component-driven-development-ce1109d56c8e"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <strong>component-driven</strong>
+      </a>
+      process starting with atomic components and ending with pages.
+    </p>
+    <p>
+      Render pages with mock data. This makes it easy to build and review page states without
+      needing to navigate to them in your app. Here are some handy patterns for managing page data
+      in Storybook:
+    </p>
+    <ul>
+      <li>
+        Use a higher-level connected component. Storybook helps you compose such data from the
+        "args" of child component stories
+      </li>
+      <li>
+        Assemble data in the page component from your services. You can mock these services out
+        using Storybook.
+      </li>
+    </ul>
+    <p>
+      Get a guided tutorial on component-driven development at
+      <a href="https://storybook.js.org/tutorials/" target="_blank" rel="noopener noreferrer">
+        Storybook tutorials
+      </a>
+      . Read more in the
+      <a href="https://storybook.js.org/docs" target="_blank" rel="noopener noreferrer">docs</a>
+      .
+    </p>
+    <div class="tip-wrapper">
+      <span class="tip">Tip</span>
+      Adjust the width of the canvas with the
+      <svg width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <path
+            d="M1.5 5.2h4.8c.3 0 .5.2.5.4v5.1c-.1.2-.3.3-.4.3H1.4a.5.5 0
+            01-.5-.4V5.7c0-.3.2-.5.5-.5zm0-2.1h6.9c.3 0 .5.2.5.4v7a.5.5 0 01-1 0V4H1.5a.5.5 0
+            010-1zm0-2.1h9c.3 0 .5.2.5.4v9.1a.5.5 0 01-1 0V2H1.5a.5.5 0 010-1zm4.3 5.2H2V10h3.8V6.2z"
+            id="a"
+            fill="#999"
+          />
+        </g>
+      </svg>
+      Viewports addon in the toolbar
+    </div>
+  </section>
+</article>
+
+================
+File: svelte.config.js
+================
+import adapter from '@sveltejs/adapter-static';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+	kit: {
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: '404.html',
+			precompress: false,
+			strict: false
+		}),
+		paths: {
+			base: process.env.BASE_PATH || ''
+		},
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				// ignore deliberate link to shiny 404 page
+				if (path === '/404') {
+					return;
+				}
+
+				// otherwise fail the build
+				throw new Error(message);
+			}
+		}
+	},
+	preprocess: vitePreprocess()
+};
+
+export default config;
+
+================
+File: tailwind.config.ts
+================
+import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
+import type { Config } from 'tailwindcss';
+
+export default {
+	content: ['./src/**/*.{html,js,svelte,ts}'],
+
+	theme: {
+		extend: {}
+	},
+
+	plugins: [typography, forms]
+} satisfies Config;
+
+================
+File: tsconfig.json
+================
+{
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"moduleResolution": "bundler"
+	}
+	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
+	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
+	//
+	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
+	// from the referenced tsconfig.json - TypeScript does not merge them in
+}
+
+================
+File: vite.config.ts
+================
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+	plugins: [sveltekit()],
+	base: process.env.BASE_PATH || '',
+	build: {
+		target: 'esnext',
+		assetsInlineLimit: 0
+	}
+});
+
+
+
+================================================================
+End of Codebase
+================================================================
