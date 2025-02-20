@@ -1,1 +1,0 @@
-import{w as n}from"./at2JBewP.js";const i=n([]);function f(t){i.update(e=>e.length>=3||e.find(r=>r.id===t.id)?e:[...e,t])}function o(t){i.update(e=>e.filter(r=>r.id!==t))}export{f as a,o as r,i as s};
