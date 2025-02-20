@@ -79,7 +79,7 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 0.5rem;
         width: 100%;
-        max-width: 24rem;
+        max-width: 100%;
         min-width: 16rem;
         margin: 0 auto;
     }
