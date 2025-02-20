@@ -8,8 +8,8 @@
         { path: `${base}/profile`, label: 'Profile', icon: '👤' }
     ];
 
-    $: currentPath = $page.url.pathname;
-    $: currentPathWithoutBase = currentPath.replace(base, '');
+    let currentPath = $derived($page.url.pathname);
+    let currentPathWithoutBase = $derived(currentPath.replace(base, ''));
 </script>
 
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4" style="display: none;">

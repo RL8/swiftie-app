@@ -5,11 +5,13 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        title="Your Profile"
-        subtitle="Customize your Swiftie experience"
-    />
+    {#snippet header()}
+        <Header 
+            
+            title="Your Profile"
+            subtitle="Customize your Swiftie experience"
+        />
+    {/snippet}
 
     <div class="px-4 space-y-6">
         <div class="flex items-center justify-center">

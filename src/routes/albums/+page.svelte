@@ -27,44 +27,50 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        variant="progress"
-        title="Pick Your Top 3"
-        subtitle="Choose your favorite Taylor Swift albums"
-        progress={music.selectedAlbums.length}
-        maxProgress={3} />
+    {#snippet header()}
+        <Header 
+            
+            variant="progress"
+            title="Pick Your Top 3"
+            subtitle="Choose your favorite Taylor Swift albums"
+            progress={music.selectedAlbums.length}
+            maxProgress={3} />
+    {/snippet}
 
-    <main slot="main" class="flex flex-col items-center justify-center h-full p-4">
-        <div class="album-grid">
-            {#each music.albums as album}
-                {@const isSelected = music.selectedAlbums.some(a => a.id === album.id)}
-                {@const selectionIndex = music.selectedAlbums.findIndex(a => a.id === album.id)}
-                <div class="album-wrapper">
-                    <VinylRecord
-                        coverArt={album.coverArt}
-                        title={album.title}
-                        selected={isSelected}
-                        selectionNumber={isSelected ? selectionIndex + 1 : null}
-                        badgePosition="image"
-                        showSelectionOverlay={true}
-                        showGrooves={true}
-                        on:click={() => handleAlbumClick(album)}
-                    />
-                </div>
-            {/each}
-        </div>
-    </main>
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-center h-full p-4">
+            <div class="album-grid">
+                {#each music.albums as album}
+                    {@const isSelected = music.selectedAlbums.some(a => a.id === album.id)}
+                    {@const selectionIndex = music.selectedAlbums.findIndex(a => a.id === album.id)}
+                    <div class="album-wrapper">
+                        <VinylRecord
+                            coverArt={album.coverArt}
+                            title={album.title}
+                            selected={isSelected}
+                            selectionNumber={isSelected ? selectionIndex + 1 : null}
+                            badgePosition="image"
+                            showSelectionOverlay={true}
+                            showGrooves={true}
+                            on:click={() => handleAlbumClick(album)}
+                        />
+                    </div>
+                {/each}
+            </div>
+        </main>
+    {/snippet}
 
-    <Footer variant="button" slot="footer">
-        <Button 
-            variant="primary"
-            disabled={music.selectedAlbums.length < 3}
-            on:click={handleContinue}
-        >
-            Continue
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                disabled={music.selectedAlbums.length < 3}
+                on:click={handleContinue}
+            >
+                Continue
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

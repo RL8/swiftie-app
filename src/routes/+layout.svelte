@@ -5,6 +5,11 @@
     import { createMusicContext } from '$lib/context/music.svelte';
     import BottomNav from '$lib/components/BottomNav.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 
     // Create and provide the music context
     const musicContext = createMusicContext();
@@ -13,7 +18,7 @@
 
 <StandardLayout>
     <div class:pb-16={!$page.url.pathname.includes('/albums')}>
-        <slot />
+        {@render children?.()}
     </div>
     {#if !$page.url.pathname.includes('/albums')}
         <BottomNav />

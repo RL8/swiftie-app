@@ -28,10 +28,10 @@
         return brightness > 155;
     }
 
-    let mounted = false;
-    let showAlbum1 = false;
-    let showAlbum2 = false;
-    let showAlbum3 = false;
+    let mounted = $state(false);
+    let showAlbum1 = $state(false);
+    let showAlbum2 = $state(false);
+    let showAlbum3 = $state(false);
 
     onMount(() => {
         mounted = true;
@@ -60,10 +60,12 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        title="Your Top 3"
-        subtitle="Your favorite albums and songs" />
+    {#snippet header()}
+        <Header 
+            
+            title="Your Top 3"
+            subtitle="Your favorite albums and songs" />
+    {/snippet}
 
     <div class="flex-1 p-6">
         {#if mounted}
@@ -182,14 +184,16 @@
         {/if}
     </div>
 
-    <Footer variant="button" slot="footer">
-        <Button 
-            variant="primary"
-            on:click={handleStartOver}
-        >
-            Start Over
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                on:click={handleStartOver}
+            >
+                Start Over
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

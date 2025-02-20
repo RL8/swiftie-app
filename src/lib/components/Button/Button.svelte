@@ -4,11 +4,25 @@
 
     const dispatch = createEventDispatcher();
 
-    export let variant: ButtonProps['variant'] = 'primary';
-    export let size: ButtonProps['size'] = 'default';
-    export let disabled: ButtonProps['disabled'] = false;
-    export let fullWidth: ButtonProps['fullWidth'] = false;
-    export let type: ButtonProps['type'] = 'button';
+    interface Props {
+        variant?: ButtonProps['variant'];
+        size?: ButtonProps['size'];
+        disabled?: ButtonProps['disabled'];
+        fullWidth?: ButtonProps['fullWidth'];
+        type?: ButtonProps['type'];
+        children?: import('svelte').Snippet;
+        [key: string]: any
+    }
+
+    let {
+        variant = 'primary',
+        size = 'default',
+        disabled = false,
+        fullWidth = false,
+        type = 'button',
+        children,
+        ...rest
+    }: Props = $props();
 
     function handleTap(event: CustomEvent) {
         if (!disabled) {
@@ -29,11 +43,11 @@
     class="btn btn-{variant} {fullWidth ? 'btn-full' : ''} {size === 'compact' ? 'btn-compact' : ''}"
     class:btn-disabled={disabled}
     use:tap
-    on:tap={handleTap}
-    on:touchstart={handleTouchStart}
-    {...$$restProps}
+    ontap={handleTap}
+    ontouchstart={handleTouchStart}
+    {...rest}
 >
-    <slot />
+    {@render children?.()}
 </button>
 
 <style>

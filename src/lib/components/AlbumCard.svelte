@@ -5,13 +5,22 @@
 
     const music = getContext<MusicContext>('music');
 
-    export let album: Album;
-    export let index: number;
-    export let onClick: () => void = () => {};
-    export let showBorder = true;
+    interface Props {
+        album: Album;
+        index: number;
+        onClick?: () => void;
+        showBorder?: boolean;
+    }
 
-    $: isSelected = music.selectedAlbums.some(a => a.id === album.id);
-    $: selectionIndex = music.selectedAlbums.findIndex(a => a.id === album.id) + 1;
+    let {
+        album,
+        index,
+        onClick = () => {},
+        showBorder = true
+    }: Props = $props();
+
+    let isSelected = $derived(music.selectedAlbums.some(a => a.id === album.id));
+    let selectionIndex = $derived(music.selectedAlbums.findIndex(a => a.id === album.id) + 1);
 </script>
 
 <button
@@ -19,7 +28,7 @@
     class:selected={isSelected}
     class:show-border={showBorder}
     style="animation-delay: {index * 50}ms"
-    on:click={onClick}
+    onclick={onClick}
 >
     <div class="album-content">
         <img

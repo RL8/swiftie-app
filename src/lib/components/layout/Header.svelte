@@ -1,18 +1,30 @@
 <script lang="ts">
     import type { HeaderProps } from '$lib/types/components';
     
-    export let variant: HeaderProps['variant'] = 'base';
-    export let title: string;
-    export let subtitle: string | undefined = undefined;
-    export let progress: number | undefined = undefined;
-    export let maxProgress: number | undefined = undefined;
+    interface Props {
+        variant?: HeaderProps['variant'];
+        title: string;
+        subtitle?: string | undefined;
+        progress?: number | undefined;
+        maxProgress?: number | undefined;
+        left?: import('svelte').Snippet;
+    }
+
+    let {
+        variant = 'base',
+        title,
+        subtitle = undefined,
+        progress = undefined,
+        maxProgress = undefined,
+        left
+    }: Props = $props();
 </script>
 
 <div class="header {variant}">
     {#if variant === "progress"}
         <div class="progress-header">
             <div class="left-content">
-                <slot name="left" />
+                {@render left?.()}
             </div>
             <div class="center-content">
                 <h1>{title}</h1>
@@ -21,7 +33,7 @@
                 {/if}
                 <div class="progress-dots">
                     {#each Array(maxProgress) as _, i}
-                        <div class="dot" class:active={i < progress} />
+                        <div class="dot" class:active={i < progress}></div>
                     {/each}
                 </div>
             </div>

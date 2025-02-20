@@ -1,13 +1,18 @@
 <script lang="ts">
     import type { FooterProps } from '$lib/types/components';
     
-    export let variant: FooterProps['variant'] = 'base';
-    export let hasBorder: FooterProps['hasBorder'] = true;
+    interface Props {
+        variant?: FooterProps['variant'];
+        hasBorder?: FooterProps['hasBorder'];
+        children?: import('svelte').Snippet;
+    }
+
+    let { variant = 'base', hasBorder = true, children }: Props = $props();
 </script>
 
 <footer class="footer" class:with-border={hasBorder}>
     <div class="footer-content" class:footer-button={variant === 'button'}>
-        <slot />
+        {@render children?.()}
     </div>
 </footer>
 

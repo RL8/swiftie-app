@@ -7,11 +7,13 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        title="Page Not Found"
-        subtitle="Sorry, we couldn't find what you're looking for"
-    />
+    {#snippet header()}
+        <Header 
+            
+            title="Page Not Found"
+            subtitle="Sorry, we couldn't find what you're looking for"
+        />
+    {/snippet}
 
     <div class="flex flex-col items-center justify-center flex-1 p-4 text-center">
         <div class="text-6xl mb-4">🎵</div>
@@ -20,9 +22,11 @@
         </p>
     </div>
 
-    <Footer variant="button" slot="footer">
-        <Button variant="primary" on:click={() => goto(base)}>
-            Go Home
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button variant="primary" on:click={() => goto(base)}>
+                Go Home
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>

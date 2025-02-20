@@ -51,80 +51,88 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        variant="progress"
-        title="Now, select your 3 top bangers from {currentAlbum?.title}"
-        subtitle="Choose your favorite songs"
-        progress={currentSongSelections.length}
-        maxProgress={3}>
-        
-        <!-- Selected Albums Stack in Header -->
-        <div class="albums-stack" slot="left">
-            {#each music.selectedAlbums as album, i}
-                <div 
-                    class="selected-album"
-                    class:active={i === currentAlbumIndex}
-                    style="transform: translate({i * -4}px, {i * -4}px)">
-                    <div class="vinyl-mini">
-                        <img
-                            src={album.coverArt}
-                            alt={album.title}
-                            class="vinyl-art-mini"
-                        />
-                        <div class="vinyl-grooves-mini"></div>
-                        <div class="vinyl-center-mini"></div>
-                        <div class="heart-badge-mini">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
-                                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                            </svg>
-                            <span class="heart-number-mini">{i + 1}</span>
+    {#snippet header()}
+        <Header 
+            
+            variant="progress"
+            title="Now, select your 3 top bangers from {currentAlbum?.title}"
+            subtitle="Choose your favorite songs"
+            progress={currentSongSelections.length}
+            maxProgress={3}>
+            
+            <!-- Selected Albums Stack in Header -->
+            {#snippet left()}
+                <div class="albums-stack" >
+                    {#each music.selectedAlbums as album, i}
+                        <div 
+                            class="selected-album"
+                            class:active={i === currentAlbumIndex}
+                            style="transform: translate({i * -4}px, {i * -4}px)">
+                            <div class="vinyl-mini">
+                                <img
+                                    src={album.coverArt}
+                                    alt={album.title}
+                                    class="vinyl-art-mini"
+                                />
+                                <div class="vinyl-grooves-mini"></div>
+                                <div class="vinyl-center-mini"></div>
+                                <div class="heart-badge-mini">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
+                                    <span class="heart-number-mini">{i + 1}</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    {/each}
                 </div>
-            {/each}
-        </div>
-    </Header>
+            {/snippet}
+        </Header>
+    {/snippet}
 
-    <main slot="main" class="flex flex-col items-center justify-start h-full p-4">
-        <!-- Songs List -->
-        <div class="songs-container" in:fade>
-            {#each currentAlbum?.songs || [] as song, i}
-                <button
-                    class="song-card"
-                    class:selected={currentSongSelections.includes(song)}
-                    on:click={() => handleSongSelect(song)}
-                    use:tapAnimation
-                >
-                    <div class="song-info">
-                        <span class="song-number" style="text-align: right;">{i + 1}.</span>
-                        <span class="song-title">{song}</span>
-                    </div>
-                    {#if currentSongSelections.includes(song)}
-                        <div class="heart-badge-song">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
-                                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                            </svg>
-                            <span class="heart-number-song">{currentSongSelections.indexOf(song) + 1}</span>
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-start h-full p-4">
+            <!-- Songs List -->
+            <div class="songs-container" in:fade>
+                {#each currentAlbum?.songs || [] as song, i}
+                    <button
+                        class="song-card"
+                        class:selected={currentSongSelections.includes(song)}
+                        onclick={() => handleSongSelect(song)}
+                        use:tapAnimation
+                    >
+                        <div class="song-info">
+                            <span class="song-number" style="text-align: right;">{i + 1}.</span>
+                            <span class="song-title">{song}</span>
                         </div>
-                    {/if}
-                </button>
-            {/each}
-        </div>
-    </main>
+                        {#if currentSongSelections.includes(song)}
+                            <div class="heart-badge-song">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                </svg>
+                                <span class="heart-number-song">{currentSongSelections.indexOf(song) + 1}</span>
+                            </div>
+                        {/if}
+                    </button>
+                {/each}
+            </div>
+        </main>
+    {/snippet}
 
-    <Footer variant="nav" slot="footer">
-        <Button variant="secondary" on:click={handleBack}>
-            {currentAlbumIndex > 0 ? 'Previous Album' : 'Back'}
-        </Button>
-        <Button 
-            variant="primary"
-            disabled={currentSongSelections.length < 3}
-            on:click={handleContinue}
-        >
-            {currentAlbumIndex < 2 ? 'Next Album' : 'See Results'}
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="nav" >
+            <Button variant="secondary" on:click={handleBack}>
+                {currentAlbumIndex > 0 ? 'Previous Album' : 'Back'}
+            </Button>
+            <Button 
+                variant="primary"
+                disabled={currentSongSelections.length < 3}
+                on:click={handleContinue}
+            >
+                {currentAlbumIndex < 2 ? 'Next Album' : 'See Results'}
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

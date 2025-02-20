@@ -1,13 +1,32 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
     
-    export let showHeader = true;
-    export let showFooter = true;
-    export let customGradient = 'bg-gradient-to-br from-rose-50 to-rose-100';
-    export let hasFooterNav = false;
+    interface Props {
+        showHeader?: boolean;
+        showFooter?: boolean;
+        customGradient?: string;
+        hasFooterNav?: boolean;
+        header?: import('svelte').Snippet;
+        main?: import('svelte').Snippet;
+        children?: import('svelte').Snippet;
+        footer?: import('svelte').Snippet;
+    }
+
+    let {
+        showHeader = true,
+        showFooter = true,
+        customGradient = 'bg-gradient-to-br from-rose-50 to-rose-100',
+        hasFooterNav = $bindable(false),
+        header,
+        main,
+        children,
+        footer
+    }: Props = $props();
     
-    let footerSlot: HTMLElement;
+    let footerSlot: HTMLElement = $state();
     
     function checkFooterNav() {
         if (footerSlot) {
@@ -17,9 +36,11 @@
         }
     }
     
-    $: if (footerSlot) {
-        checkFooterNav();
-    }
+    run(() => {
+        if (footerSlot) {
+            checkFooterNav();
+        }
+    });
     
     onMount(() => {
         checkFooterNav();
@@ -29,18 +50,18 @@
 <div class="fixed inset-0 bg-slate-200 flex justify-center items-center p-4">
     <div class="app-frame {customGradient} flex flex-col w-full max-w-md h-[800px] rounded-3xl overflow-hidden shadow-2xl">
         {#if showHeader}
-            <slot name="header" />
+            {@render header?.()}
         {/if}
 
         <div class="flex-1 overflow-y-auto relative scrollbar-taylor">
-            <slot name="main">
-                <slot />
-            </slot>
+            {#if main}{@render main()}{:else}
+                {@render children?.()}
+            {/if}
         </div>
 
         {#if showFooter}
             <footer bind:this={footerSlot}>
-                <slot name="footer" />
+                {@render footer?.()}
             </footer>
         {/if}
     </div>

@@ -1,0 +1,28 @@
+{
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/.git/**",
+    "**/package-lock.json"
+  ],
+  "filePatterns": [
+    "**/*.{js,ts,svelte,css,html,json,md,mdx}"
+  ],
+  "analysis": {
+    "showTopFiles": 10,
+    "showFileTypes": true,
+    "showDirectoryStructure": true
+  },
+  "security": {
+    "enabled": true,
+    "patterns": [
+      "**/*.env*",
+      "**/config.*.json",
+      "**/credentials.*"
+    ]
+  },
+  "output": {
+    "directory": "C:/Users/Bravo/Downloads"
+  }
+}

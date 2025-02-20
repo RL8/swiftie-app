@@ -11,74 +11,80 @@
 </script>
 
 <StandardLayout>
-    <Header 
-        slot="header"
-        title="Taylor Swift Games"
-        subtitle="Test your Swiftie knowledge" />
+    {#snippet header()}
+        <Header 
+            
+            title="Taylor Swift Games"
+            subtitle="Test your Swiftie knowledge" />
+    {/snippet}
 
-    <main slot="main" class="container-responsive">
-        <div class="grid-responsive gap-dynamic">
-            <div class="game-card">
-                <div class="game-content">
-                    <div class="game-icon">🎵</div>
-                    <div class="game-info">
-                        <h3>Song Match</h3>
-                        <p>Match lyrics with the correct song title</p>
+    {#snippet main()}
+        <main  class="container-responsive">
+            <div class="grid-responsive gap-dynamic">
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">🎵</div>
+                        <div class="game-info">
+                            <h3>Song Match</h3>
+                            <p>Match lyrics with the correct song title</p>
+                        </div>
                     </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Play Now
+                    </Button>
                 </div>
-                <Button 
-                    variant="secondary"
-                    size="compact"
-                    fullWidth={true}
-                    on:click={() => startGame()}
-                >
-                    Play Now
-                </Button>
-            </div>
 
-            <div class="game-card">
-                <div class="game-content">
-                    <div class="game-icon">🎸</div>
-                    <div class="game-info">
-                        <h3>Era Quiz</h3>
-                        <p>Test your knowledge of Taylor's eras</p>
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">🎸</div>
+                        <div class="game-info">
+                            <h3>Era Quiz</h3>
+                            <p>Test your knowledge of Taylor's eras</p>
+                        </div>
                     </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Start Game
+                    </Button>
                 </div>
-                <Button 
-                    variant="secondary"
-                    size="compact"
-                    fullWidth={true}
-                    on:click={() => startGame()}
-                >
-                    Start Game
-                </Button>
-            </div>
 
-            <div class="game-card">
-                <div class="game-content">
-                    <div class="game-icon">📝</div>
-                    <div class="game-info">
-                        <h3>Lyric Challenge</h3>
-                        <p>Complete the missing lyrics</p>
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">📝</div>
+                        <div class="game-info">
+                            <h3>Lyric Challenge</h3>
+                            <p>Complete the missing lyrics</p>
+                        </div>
                     </div>
+                    <Button 
+                        variant="secondary"
+                        size="compact"
+                        fullWidth={true}
+                        on:click={() => startGame()}
+                    >
+                        Begin
+                    </Button>
                 </div>
-                <Button 
-                    variant="secondary"
-                    size="compact"
-                    fullWidth={true}
-                    on:click={() => startGame()}
-                >
-                    Begin
-                </Button>
             </div>
-        </div>
-    </main>
+        </main>
+    {/snippet}
 
-    <Footer slot="footer" variant="button">
-        <Button variant="primary" on:click={() => startGame()}>
-            Start Game
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer  variant="button">
+            <Button variant="primary" on:click={() => startGame()}>
+                Start Game
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

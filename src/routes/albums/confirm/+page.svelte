@@ -29,10 +29,10 @@
         }
     }
 
-    let mounted = false;
-    let showAlbum3 = false;
-    let showAlbum2 = false;
-    let showAlbum1 = false;
+    let mounted = $state(false);
+    let showAlbum3 = $state(false);
+    let showAlbum2 = $state(false);
+    let showAlbum1 = $state(false);
 
     onMount(() => {
         mounted = true;
@@ -61,17 +61,19 @@
 </script>
 
 <StandardLayout>
-    <Header
-        slot="header"
-        title="Amazing Choices! 🎉"
-        subtitle="Your top 3 Taylor Swift albums" />
+    {#snippet header()}
+        <Header
+            
+            title="Amazing Choices! 🎉"
+            subtitle="Your top 3 Taylor Swift albums" />
+    {/snippet}
 
     <div class="flex-1 p-6">
         <div class="vinyl-container mx-auto">
             {#if mounted}
                 {#if showAlbum3}
                     <div class="vinyl-card vinyl-3"
-                        on:touchstart={vibrate}>
+                        ontouchstart={vibrate}>
                         <div class="vinyl-content">
                             <span class="rank-number" style="color: {music.selectedAlbums[2].color}">3</span>
                             <VinylRecord
@@ -90,7 +92,7 @@
                 
                 {#if showAlbum2}
                     <div class="vinyl-card vinyl-2"
-                        on:touchstart={vibrate}>
+                        ontouchstart={vibrate}>
                         <div class="vinyl-content">
                             <span class="rank-number" style="color: {music.selectedAlbums[1].color}">2</span>
                             <VinylRecord
@@ -109,7 +111,7 @@
                 
                 {#if showAlbum1}
                     <div class="vinyl-card vinyl-1"
-                        on:touchstart={vibrate}>
+                        ontouchstart={vibrate}>
                         <div class="vinyl-content">
                             <span class="rank-number" style="color: {music.selectedAlbums[0].color}">1</span>
                             <VinylRecord
@@ -129,22 +131,24 @@
         </div>
     </div>
 
-    <Footer variant="button" slot="footer">
-        {#if mounted}
-            <Button 
-                variant="secondary"
-                on:click={handleEdit}
-                fullWidth={true}>
-                Edit Selection
-            </Button>
-            <Button 
-                variant="primary"
-                on:click={handleContinue}
-                fullWidth={true}>
-                Continue to Songs
-            </Button>
-        {/if}
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="button" >
+            {#if mounted}
+                <Button 
+                    variant="secondary"
+                    on:click={handleEdit}
+                    fullWidth={true}>
+                    Edit Selection
+                </Button>
+                <Button 
+                    variant="primary"
+                    on:click={handleContinue}
+                    fullWidth={true}>
+                    Continue to Songs
+                </Button>
+            {/if}
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

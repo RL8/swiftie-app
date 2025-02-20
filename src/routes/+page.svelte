@@ -16,28 +16,34 @@
 </script>
 
 <StandardLayout>
-    <Header
-        slot="header"
-        title="Taylor Swift Game"
-        subtitle="Find your favorite Taylor's songs" />
+    {#snippet header()}
+        <Header
+            
+            title="Taylor Swift Game"
+            subtitle="Find your favorite Taylor's songs" />
+    {/snippet}
 
-    <main slot="main" class="flex flex-col items-center justify-center h-full p-4">
-        <div class="text-center">
-            <h2 class="text-2xl font-bold mb-4">Ready to play?</h2>
-            <p class="text-lg mb-8">
-                We'll help you discover your favorite Taylor Swift songs by exploring her albums together.
-            </p>
-        </div>
-    </main>
+    {#snippet main()}
+        <main  class="flex flex-col items-center justify-center h-full p-4">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold mb-4">Ready to play?</h2>
+                <p class="text-lg mb-8">
+                    We'll help you discover your favorite Taylor Swift songs by exploring her albums together.
+                </p>
+            </div>
+        </main>
+    {/snippet}
 
-    <Footer variant="button" slot="footer">
-        <Button 
-            variant="primary"
-            on:click={handleGetStarted}
-            fullWidth={true}>
-            Get Started
-        </Button>
-    </Footer>
+    {#snippet footer()}
+        <Footer variant="button" >
+            <Button 
+                variant="primary"
+                on:click={handleGetStarted}
+                fullWidth={true}>
+                Get Started
+            </Button>
+        </Footer>
+    {/snippet}
 </StandardLayout>
 
 <style>

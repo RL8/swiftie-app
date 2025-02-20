@@ -5,24 +5,36 @@
 
     const dispatch = createEventDispatcher();
 
-    /** The source URL for the album cover art */
-    export let coverArt: string;
-    /** The album title for alt text */
-    export let title: string;
-    /** Whether the record is currently selected */
-    export let selected: boolean = false;
-    /** Whether to animate the record */
-    export let animate: boolean = true;
-    /** Custom CSS class to apply to the container */
-    export let class_: string = '';
-    /** Position of the heart badge. Can be 'image', 'container', or 'none' */
-    export let badgePosition: 'image' | 'container' | 'none' = 'image';
-    /** Whether to show the selection overlay when selected */
-    export let showSelectionOverlay: boolean = true;
-    /** Whether to show the vinyl grooves effect */
-    export let showGrooves: boolean = true;
-    /** Configuration for the vinyl record's visual appearance */
-    export let config: {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    interface Props {
+        /** The source URL for the album cover art */
+        coverArt: string;
+        /** The album title for alt text */
+        title: string;
+        /** Whether the record is currently selected */
+        selected?: boolean;
+        /** Whether to animate the record */
+        animate?: boolean;
+        /** Custom CSS class to apply to the container */
+        class_?: string;
+        /** Position of the heart badge. Can be 'image', 'container', or 'none' */
+        badgePosition?: 'image' | 'container' | 'none';
+        /** Whether to show the selection overlay when selected */
+        showSelectionOverlay?: boolean;
+        /** Whether to show the vinyl grooves effect */
+        showGrooves?: boolean;
+        /** Configuration for the vinyl record's visual appearance */
+        config?: {
         /** The color of the vinyl record's center */
         centerColor: string;
         /** The color of the vinyl record's grooves */
@@ -31,15 +43,28 @@
         selectionColor: string;
         /** The color of the heart badge */
         badgeColor: string;
-    } = {
+    };
+        /** The selection number (1-3) to show when selected */
+        selectionNumber?: number | null;
+    }
+
+    let {
+        coverArt,
+        title,
+        selected = false,
+        animate = true,
+        class_ = '',
+        badgePosition = 'image',
+        showSelectionOverlay = true,
+        showGrooves = true,
+        config = {
         centerColor: 'rgba(0, 0, 0, 0.8)',
         grooveColor: 'rgba(255, 255, 255, 0.2)',
         selectionColor: 'rgba(244, 63, 94, 0.2)',
         badgeColor: 'rgb(244, 63, 94)',
-    };
-
-    /** The selection number (1-3) to show when selected */
-    export let selectionNumber: number | null = null;
+    },
+        selectionNumber = null
+    }: Props = $props();
 
     // Random initial rotation for subtle animation
     const randomRotation = Math.random() * 5 - 2.5;
@@ -54,7 +79,7 @@
     class:selected
     style="--random-rotation: {randomRotation};"
     use:tap
-    on:tap={handleTap}
+    ontap={handleTap}
 >
     {#if selected && badgePosition === 'container'}
         <div class="heart-badge container-badge">
