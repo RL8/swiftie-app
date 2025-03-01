@@ -15,6 +15,7 @@
     const music = getContext<() => MusicContext>('music')();
 
     function handleProceed() {
+        handleOrientationComplete();
         goto(`/feed`);
     }
 
@@ -56,6 +57,12 @@
             }, 600);
         }, 300);
     });
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+
+    function handleOrientationComplete() {
+        dispatch('orientationComplete');
+    }
 </script>
 
 <StandardLayout>
