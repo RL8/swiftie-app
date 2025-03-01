@@ -5,7 +5,7 @@
     import { base } from '$app/paths';
     import { onMount } from 'svelte';
     import confetti from 'canvas-confetti';
-    import { fade } from 'svelte/transition';
+    import { fade, fly } from 'svelte/transition';
     import Header from '$lib/components/layout/Header.svelte';
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
@@ -15,8 +15,7 @@
     const music = getContext<() => MusicContext>('music')();
 
     function handleProceed() {
-        handleOrientationComplete();
-        goto(`/feed`);
+        goto(`${base}/feed`);
     }
 
     function isColorLight(color: string) {
@@ -57,12 +56,6 @@
             }, 600);
         }, 300);
     });
-    import { createEventDispatcher } from 'svelte';
-    const dispatch = createEventDispatcher();
-
-    function handleOrientationComplete() {
-        dispatch('orientationComplete');
-    }
 </script>
 
 <StandardLayout>
@@ -76,7 +69,7 @@
         {#if mounted}
             <div class="results-container">
                 {#if showAlbum1}
-                    <div class="album-result">
+                    <div class="album-result" in:fly={{y: 20, duration: 400, delay: 100}}>
                         <div class="heart-badge">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
                                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
@@ -113,7 +106,7 @@
                 {/if}
 
                 {#if showAlbum2}
-                    <div class="album-result">
+                    <div class="album-result" in:fly={{y: 20, duration: 400, delay: 300}}>
                         <div class="heart-badge">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
                                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
@@ -150,7 +143,7 @@
                 {/if}
 
                 {#if showAlbum3}
-                    <div class="album-result">
+                    <div class="album-result" in:fly={{y: 20, duration: 400, delay: 500}}>
                         <div class="heart-badge">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
                                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
