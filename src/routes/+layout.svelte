@@ -30,13 +30,15 @@
         }
     });
 
-    $: if (hasCompletedOrientation && $page.url.pathname.includes('/albums')) {
-        transitioning = true; // Start the transition
-        setTimeout(() => {
-            transitioning = false; // End the transition
-            goto('/feed');
-        }, 300); // Match the transition duration in CSS
-    }
+    $effect(() => {
+        if (hasCompletedOrientation && $page.url.pathname.includes('/albums')) {
+            transitioning = true; // Start the transition
+            setTimeout(() => {
+                transitioning = false; // End the transition
+                goto('/feed');
+            }, 300); // Match the transition duration in CSS
+        }
+    });
     
     function handleOrientationComplete() {
         hasCompletedOrientation = true;
