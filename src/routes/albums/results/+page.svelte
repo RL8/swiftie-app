@@ -14,9 +14,8 @@
 
     const music = getContext<() => MusicContext>('music')();
 
-    function handleStartOver() {
-        music.clearSelections();
-        goto(`${base}/albums`);
+    function handleProceed() {
+        goto(`/feed`);
     }
 
     function isColorLight(color: string) {
@@ -62,7 +61,6 @@
 <StandardLayout>
     {#snippet header()}
         <Header 
-            
             title="Your Top 3"
             subtitle="Your favorite albums and songs" />
     {/snippet}
@@ -78,7 +76,7 @@
                             </svg>
                             <span class="heart-number">1</span>
                         </div>
-                        <div class="album-container" transition:fade>
+                        <div class="album-container" transition:fade={{duration: 300}}>
                             <div class="album-display">
                                 <VinylRecord
                                     coverArt={music.selectedAlbums[0].coverArt}
@@ -115,7 +113,7 @@
                             </svg>
                             <span class="heart-number">2</span>
                         </div>
-                        <div class="album-container" transition:fade>
+                        <div class="album-container" transition:fade={{duration: 300}}>
                             <div class="album-display">
                                 <VinylRecord
                                     coverArt={music.selectedAlbums[1].coverArt}
@@ -152,7 +150,7 @@
                             </svg>
                             <span class="heart-number">3</span>
                         </div>
-                        <div class="album-container" transition:fade>
+                        <div class="album-container" transition:fade={{duration: 300}}>
                             <div class="album-display">
                                 <VinylRecord
                                     coverArt={music.selectedAlbums[2].coverArt}
@@ -188,9 +186,9 @@
         <Footer variant="button" >
             <Button 
                 variant="primary"
-                on:click={handleStartOver}
+                on:click={handleProceed}
             >
-                Start Over
+                Proceed
             </Button>
         </Footer>
     {/snippet}
@@ -200,17 +198,17 @@
     .results-container {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        max-width: 32rem;
+        gap: var(--grid-gap-sm, 1rem);
+        max-width: var(--container-max-width, 32rem);
         margin: 0 auto;
     }
 
     .album-container {
         background: white;
-        border-radius: 1rem;
+        border-radius: var(--radius-lg, 1rem);
         padding: 0.75rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        transition: transform 0.15s;
+        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06));
+        transition: transform var(--duration-fast, 0.15s) var(--timing-function, ease-out);
         touch-action: manipulation;
     }
 
@@ -240,7 +238,7 @@
     .song-wrapper {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: var(--space-1, 0.25rem);
         margin-bottom: 0.125rem;
     }
 
@@ -251,10 +249,10 @@
     }
 
     .song-item {
-        padding: 0.2rem 0.375rem;
-        border-radius: 0.5rem;
+        padding: var(--space-1, 0.2rem) var(--space-2, 0.375rem);
+        border-radius: var(--radius-md, 0.5rem);
         font-size: 0.9rem;
-        transition: transform 0.15s;
+        transition: transform var(--duration-fast, 0.15s) var(--timing-function, ease-out);
         touch-action: manipulation;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
         white-space: nowrap;
@@ -290,21 +288,21 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 30;
+        z-index: var(--z-overlay, 30);
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        animation: heartbeat 2s ease-in-out infinite;
+        animation: heartbeat var(--duration-medium, 2s) ease-in-out infinite;
     }
 
     .heart-icon {
         position: absolute;
         width: 100%;
         height: 100%;
-        color: rgb(244, 63, 94);
+        color: var(--color-primary, rgb(244, 63, 94));
     }
 
     .heart-number {
         position: relative;
-        color: white;
+        color: var(--text-light, white);
         font-weight: bold;
         font-size: 1.25rem;
         z-index: 11;

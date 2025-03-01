@@ -53,7 +53,6 @@
 <StandardLayout>
     {#snippet header()}
         <Header 
-            
             variant="progress"
             title="Now, select your 3 top bangers from {currentAlbum?.title}"
             subtitle="Choose your favorite songs"
@@ -91,9 +90,9 @@
     {/snippet}
 
     {#snippet main()}
-        <main  class="flex flex-col items-center justify-start h-full p-4">
+        <main class="flex flex-col items-center justify-start h-full p-4">
             <!-- Songs List -->
-            <div class="songs-container" in:fade>
+            <div class="songs-container" in:fade={{duration: 300}}>
                 {#each currentAlbum?.songs || [] as song, i}
                     <button
                         class="song-card"
@@ -145,11 +144,11 @@
 
     .selected-album {
         position: absolute;
-        transition: all 0.3s ease-out;
+        transition: all var(--duration-fast, 0.3s) var(--timing-function, ease-out);
     }
 
     .selected-album.active {
-        z-index: 3;
+        z-index: var(--z-overlay, 3);
     }
 
     .vinyl-mini {
@@ -159,7 +158,7 @@
         border-radius: 50%;
         background: #000;
         overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-sm, 0 2px 4px) rgba(0, 0, 0, 0.2);
     }
 
     .vinyl-art-mini {
@@ -205,7 +204,7 @@
         left: -0.3rem;
         width: 1.8rem;
         height: 1.8rem;
-        color: rgb(244, 63, 94);
+        color: var(--color-primary, rgb(244, 63, 94));
         z-index: 10;
         display: flex;
         align-items: center;
@@ -214,7 +213,7 @@
 
     .heart-number-mini {
         position: absolute;
-        color: white;
+        color: var(--text-light, white);
         font-size: 0.8rem;
         font-weight: bold;
     }
@@ -222,8 +221,8 @@
     .songs-container {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
-        padding: 0.2rem;
+        gap: var(--space-1, 0.2rem);
+        padding: var(--space-1, 0.2rem);
         width: 100%;
         max-width: var(--container-max-width);
     }
@@ -234,9 +233,9 @@
         align-items: center;
         padding: 0.3rem 0.5rem;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 0.5rem;
-        transition: all 0.2s ease-out;
-        backdrop-filter: blur(8px);
+        border-radius: var(--radius-md, 0.5rem);
+        transition: all var(--duration-fast, 0.2s) var(--timing-function, ease-out);
+        backdrop-filter: var(--blur-md, blur(8px));
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1),
                    0 1px 2px rgba(0, 0, 0, 0.15);
         text-align: left;
@@ -248,25 +247,25 @@
     }
 
     .song-card.selected {
-        background: rgba(244, 63, 94, 0.2);
+        background: var(--color-primary-alpha, rgba(244, 63, 94, 0.2));
     }
 
     .song-info {
         display: flex;
         align-items: center;
-        gap: 0.2rem;
+        gap: var(--space-1, 0.2rem);
         flex: 1;
     }
 
     .song-number {
-        color: var(--text-secondary);
+        color: var(--text-secondary, #9f1239);
         font-size: 0.8rem;
         min-width: 1.2rem;
         text-align: right;
     }
 
     .song-title {
-        color: var(--text-primary);
+        color: var(--text-primary, #881337);
         font-size: 0.9rem;
         font-weight: 500;
     }
@@ -274,7 +273,7 @@
     .heart-badge-song {
         width: 1.2rem;
         height: 1.2rem;
-        color: rgb(244, 63, 94);
+        color: var(--color-primary, rgb(244, 63, 94));
         position: relative;
         display: flex;
         align-items: center;
@@ -284,7 +283,7 @@
 
     .heart-number-song {
         position: absolute;
-        color: white;
+        color: var(--text-light, white);
         font-size: 0.7rem;
         font-weight: bold;
     }
