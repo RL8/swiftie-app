@@ -10,6 +10,7 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    import { page } from '$app/stores';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -49,13 +50,20 @@
                     // Trigger confetti when album 1 appears
                     confetti({
                         particleCount: 150,
-                        spread: 100,
-                        origin: { x: 0.5, y: 0.5 },
-                        colors: ['#FFB6C1', '#FF69B4', '#FF1493'],
-                        disableForReducedMotion: true
+                        spread: 70,
+                        origin: { y: 0.6, x: 0.5 },
                     });
-                }, 600);
-            }, 600);
+                    
+                    // Check if this is a quick share flow
+                    const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
+                    if (isQuickShare) {
+                        // If quick share, automatically continue to songs page after animation
+                        setTimeout(() => {
+                            goto(`${base}/albums/songs?quick-share=true`);
+                        }, 1500);
+                    }
+                }, 300);
+            }, 300);
         }, 300);
     });
 </script>

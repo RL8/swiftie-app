@@ -32,6 +32,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.16",
+		"@types/d3": "^7.4.3",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
@@ -52,8 +53,12 @@
 		"@sveltejs/gestures": "^0.0.1",
 		"canvas-confetti": "^1.9.3",
 		"chalk": "^5.4.1",
+		"d3": "^7.9.0",
+		"d3-hierarchy": "^3.1.2",
+		"d3-shape": "^3.2.0",
 		"fs-extra": "^11.3.0",
 		"inquirer": "^12.4.2",
+		"layerchart": "^1.0.7",
 		"ora": "^8.2.0"
 	}
 }

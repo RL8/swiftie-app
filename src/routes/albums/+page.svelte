@@ -3,6 +3,8 @@
     import type { MusicContext } from '$lib/context/music.svelte';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import Header from '$lib/components/layout/Header.svelte';
     import Footer from '$lib/components/layout/Footer.svelte';
@@ -24,6 +26,31 @@
             goto(`${base}/albums/confirm`);
         }
     }
+
+    // Automatic selection for Quick Share
+    function performQuickShareSelection() {
+        // Clear any previous selections
+        music.clearSelections();
+        
+        // Shuffle albums and select 3 random ones
+        const shuffledAlbums = [...music.albums].sort(() => Math.random() - 0.5).slice(0, 3);
+        
+        // Select each album
+        for (const album of shuffledAlbums) {
+            music.selectAlbum(album);
+        }
+        
+        // Navigate to confirmation page
+        goto(`${base}/albums/confirm?quick-share=true`);
+    }
+    
+    // Check if automatic selection should be performed
+    onMount(() => {
+        const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
+        if (isQuickShare) {
+            performQuickShareSelection();
+        }
+    });
 </script>
 
 <StandardLayout>

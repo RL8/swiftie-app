@@ -7,11 +7,17 @@
     import Header from '$lib/components/layout/Header.svelte';
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
+    import { albums } from '$lib/data/albums';
 
     const music = getContext<MusicContext>('music');
 
     function handleGetStarted() {
         goto(`${base}/albums`);
+    }
+
+    function handleQuickShare() {
+        // Navigate to albums page with quick-share parameter
+        goto(`${base}/albums?quick-share=true`);
     }
 </script>
 
@@ -36,12 +42,19 @@
 
     {#snippet footer()}
         <Footer variant="button" >
-            <Button 
-                variant="primary"
-                on:click={handleGetStarted}
-                fullWidth={true}>
-                Get Started
-            </Button>
+            <div class="button-container">
+                <Button 
+                    variant="secondary"
+                    on:click={handleQuickShare}>
+                    Quick Share
+                </Button>
+                <Button 
+                    variant="primary"
+                    on:click={handleGetStarted}
+                    fullWidth={false}>
+                    Get Started
+                </Button>
+            </div>
         </Footer>
     {/snippet}
 </StandardLayout>
@@ -72,5 +85,12 @@
 
     :global(.animate-shine) {
         animation: shine 3s linear infinite;
+    }
+
+    .button-container {
+        display: flex;
+        gap: 0.75rem;
+        width: 100%;
+        justify-content: center;
     }
 </style>

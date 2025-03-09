@@ -11,11 +11,16 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    import { page } from '$app/stores';
 
     const music = getContext<() => MusicContext>('music')();
 
     function handleProceed() {
         goto(`${base}/feed`);
+    }
+
+    function handleShare() {
+        goto(`${base}/albums/share`);
     }
 
     function isColorLight(color: string) {
@@ -55,6 +60,17 @@
                 }, 600);
             }, 600);
         }, 300);
+    });
+
+    // Check if this is a quick share flow and handle automatic navigation to share
+    onMount(() => {
+        const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
+        if (isQuickShare) {
+            // Delay to allow the animations on the results page to play
+            setTimeout(() => {
+                handleShare();
+            }, 2000);
+        }
     });
 </script>
 
@@ -184,12 +200,20 @@
 
     {#snippet footer()}
         <Footer variant="button" >
-            <Button 
-                variant="primary"
-                on:click={handleProceed}
-            >
-                Proceed
-            </Button>
+            <div class="button-container">
+                <Button 
+                    variant="secondary"
+                    on:click={handleShare}
+                >
+                    Share
+                </Button>
+                <Button 
+                    variant="primary"
+                    on:click={handleProceed}
+                >
+                    Proceed
+                </Button>
+            </div>
         </Footer>
     {/snippet}
 </StandardLayout>
@@ -311,5 +335,12 @@
 
     .album-result {
         position: relative;
+    }
+
+    .button-container {
+        display: flex;
+        gap: 0.75rem;
+        width: 100%;
+        justify-content: center;
     }
 </style>

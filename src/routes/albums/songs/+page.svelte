@@ -9,6 +9,8 @@
     import Button from '$lib/components/Button/Button.svelte';
     import { fade } from 'svelte/transition';
     import { tapAnimation } from '$lib/actions/tapAnimation';
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
     
     const music = getContext<() => MusicContext>('music')();
     let currentSongSelections = $state<string[]>([]);
@@ -44,10 +46,39 @@
                 currentAlbumIndex++;
                 currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
             } else {
-                goto(`${base}/albums/results`);
+                goto(`${base}/albums/results?quick-share=true`);
             }
         }
     }
+
+    // Function to handle automatic song selection for Quick Share
+    function performQuickShareSongSelection() {
+        // Select 3 random songs for each selected album
+        music.selectedAlbums.forEach((album, index) => {
+            // Shuffle songs and pick 3 random ones
+            const shuffledSongs = [...album.songs].sort(() => Math.random() - 0.5).slice(0, 3);
+            
+            // Update the music context with the selected songs
+            music.updateSelectedSongs(album.id, shuffledSongs);
+        });
+        
+        // Set current album to the last one (index 2)
+        currentAlbumIndex = 2;
+        currentSongSelections = music.selectedSongsByAlbum.get(music.selectedAlbums[currentAlbumIndex].id) || [];
+        
+        // Wait a bit then navigate to results
+        setTimeout(() => {
+            goto(`${base}/albums/results?quick-share=true`);
+        }, 800);
+    }
+    
+    // Check if this is a quick share flow and handle automatic selection
+    onMount(() => {
+        const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
+        if (isQuickShare) {
+            performQuickShareSongSelection();
+        }
+    });
 </script>
 
 <StandardLayout>
@@ -119,7 +150,8 @@
     {/snippet}
 
     {#snippet footer()}
-        <Footer variant="nav" >
+        <Footer 
+            variant="button">
             <Button variant="secondary" on:click={handleBack}>
                 {currentAlbumIndex > 0 ? 'Previous Album' : 'Back'}
             </Button>
