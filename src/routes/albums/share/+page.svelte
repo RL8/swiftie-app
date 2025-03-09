@@ -17,7 +17,7 @@
     // Initialize with default display option
     let selectedDisplayOption = $state(1);
     const displayOptions = [
-        { id: 1, name: 'Default' },
+        { id: 1, name: 'List' },
         { id: 2, name: 'Grid' },
         { id: 3, name: 'Sunburst' }
     ];
@@ -264,28 +264,6 @@
                         {option.name}
                     </button>
                 {/each}
-                <button 
-                    class="option-button quick-share"
-                    onclick={() => {
-                        music.quickShare();
-                        // Reset animation sequence
-                        showAlbum1 = false;
-                        showAlbum2 = false;
-                        showAlbum3 = false;
-                        // Trigger new animation sequence
-                        setTimeout(() => {
-                            showAlbum1 = true;
-                            setTimeout(() => showAlbum2 = true, 200);
-                            setTimeout(() => showAlbum3 = true, 400);
-                        }, 100);
-                        // Update sunburst if that's the current view
-                        if (selectedDisplayOption === 3) {
-                            sunburstNeedsUpdate = true;
-                        }
-                    }}
-                >
-                    Quick Share
-                </button>
             </div>
         </div>
 
@@ -654,13 +632,6 @@
         background-color: var(--color-primary, rgb(244, 63, 94));
         color: white;
         border-color: var(--color-primary, rgb(244, 63, 94));
-    }
-
-    .quick-share {
-        background-color: var(--color-secondary);
-        color: white;
-        font-weight: bold;
-        margin-left: auto;
     }
 
     .grid-view {
