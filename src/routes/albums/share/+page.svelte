@@ -3,14 +3,13 @@
     import type { MusicContext } from '$lib/context/music.svelte';
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { fade, fly } from 'svelte/transition';
     import Header from '$lib/components/layout/Header.svelte';
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
-    import * as d3 from 'd3';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -19,188 +18,57 @@
     const displayOptions = [
         { id: 1, name: 'List' },
         { id: 2, name: 'Grid' },
-        { id: 3, name: 'Sunburst' }
+        { id: 3, name: 'Free Style' }
     ];
 
     function handleBack() {
         goto(`${base}/albums/results`);
     }
 
+    function handleDisplayOptionChange(id: number) {
+        selectedDisplayOption = id;
+    }
+
     function isColorLight(color: string) {
-        const hex = color.replace('#', '');
-        const r = parseInt(hex.substr(0, 2), 16);
-        const g = parseInt(hex.substr(2, 2), 16);
-        const b = parseInt(hex.substr(4, 2), 16);
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        return brightness > 155;
+        // Handle empty or undefined values
+        if (!color) return true;
+        
+        // Remove the hash if it exists
+        color = color.replace('#', '');
+        
+        // Convert to RGB
+        const r = parseInt(color.substr(0, 2), 16);
+        const g = parseInt(color.substr(2, 2), 16);
+        const b = parseInt(color.substr(4, 2), 16);
+        
+        // Calculate brightness (using the formula for relative luminance)
+        const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        
+        // Return true if the color is light (brightness > 0.6)
+        return brightness > 0.6;
     }
 
     let mounted = $state(false);
     let showAlbum1 = $state(false);
     let showAlbum2 = $state(false);
     let showAlbum3 = $state(false);
+
+    let username = "User";
+    let personalMessage = "Thanks for checking out my top Taylor Swift picks! These are the songs that mean the most to me.";
+
+    // Grid view toggle for alternative layouts
+    let gridViewAlternative = $state(false);
     
-    // D3 Sunburst visualization
-    let sunburstContainer = $state<HTMLElement | null>(null);
-    let tooltipInfo = $state({ 
-        visible: false, 
-        text: '', 
-        subtext: '',
-        x: 0, 
-        y: 0 
-    });
-    let sunburstNeedsUpdate = $state(false);
+    // Free style form
+    let freeStyleSuggestion = $state("");
+    let pastSuggestions: string[] = $state([]);
     
-    // Prepare hierarchical data for Sunburst
-    function prepareSunburstData() {
-        interface TreeNode {
-            name: string;
-            color: string;
-            children?: TreeNode[];
-            value?: number;
+    function submitSuggestion() {
+        if (freeStyleSuggestion.trim()) {
+            pastSuggestions = [freeStyleSuggestion, ...pastSuggestions];
+            freeStyleSuggestion = "";
         }
-        
-        const root: TreeNode = {
-            name: music.userName,
-            color: "#F43F5E",
-            children: []
-        };
-        
-        music.selectedAlbums.forEach(album => {
-            const albumNode: TreeNode = {
-                name: album.title,
-                color: album.color,
-                children: []
-            };
-            
-            const songs = music.selectedSongsByAlbum.get(album.id) || [];
-            songs.forEach(song => {
-                albumNode.children?.push({
-                    name: song,
-                    color: album.color,
-                    value: 1
-                });
-            });
-            
-            root.children?.push(albumNode);
-        });
-        
-        return root;
     }
-    
-    // Create the Sunburst visualization
-    function createSunburst() {
-        if (!sunburstContainer || selectedDisplayOption !== 3) return;
-        
-        // Clear any existing visualization
-        d3.select(sunburstContainer).selectAll("*").remove();
-        
-        const width = 400;
-        const height = 400;
-        const radius = Math.min(width, height) / 2;
-        
-        // Create SVG
-        const svg = d3.select(sunburstContainer)
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", `translate(${width / 2},${height / 2})`);
-        
-        // Create hierarchical data
-        const data = prepareSunburstData();
-        const hierarchyRoot = d3.hierarchy(data)
-            .sum(d => (d as any).value || 0);
-        
-        // Create partition layout
-        const partition = d3.partition<typeof data>()
-            .size([2 * Math.PI, radius]);
-        
-        // Set up arc generator with explicit typing
-        const arc = d3.arc<d3.HierarchyRectangularNode<any>>()
-            .startAngle(d => d.x0)
-            .endAngle(d => d.x1)
-            .innerRadius(d => Math.max(0, d.y0))
-            .outerRadius(d => Math.max(0, d.y1));
-        
-        // Calculate the root
-        const root = partition(hierarchyRoot);
-        
-        // Draw arcs
-        const path = svg.selectAll("path")
-            .data(root.descendants())
-            .enter()
-            .append("path")
-            .attr("d", d => arc(d as any))
-            .style("fill", d => (d.data as any).color || "#F43F5E")
-            .style("opacity", d => d.depth === 0 ? 1 : 0.9)
-            .style("stroke", "white")
-            .style("stroke-width", 1)
-            .style("cursor", "pointer")
-            .on("mouseover", (event: MouseEvent, d: any) => {
-                d3.select(event.currentTarget as Element)
-                    .style("opacity", 1)
-                    .style("stroke-width", 2);
-                
-                // Show tooltip
-                tooltipInfo = {
-                    visible: true,
-                    text: d.data.name,
-                    subtext: d.depth === 2 ? `from ${d.parent.data.name}` : (d.depth === 0 ? "Artist" : "Album"),
-                    x: event.clientX,
-                    y: event.clientY
-                };
-            })
-            .on("mousemove", (event: MouseEvent) => {
-                tooltipInfo = { ...tooltipInfo, x: event.clientX, y: event.clientY };
-            })
-            .on("mouseout", (event: MouseEvent) => {
-                d3.select(event.currentTarget as Element)
-                    .style("opacity", (d: any) => d.depth === 0 ? 1 : 0.9)
-                    .style("stroke-width", 1);
-                
-                // Hide tooltip
-                tooltipInfo = { ...tooltipInfo, visible: false };
-            });
-        
-        // Add labels for larger sections
-        svg.selectAll("text")
-            .data(root.descendants().filter(d => d.depth === 0 || d.depth === 1))
-            .enter()
-            .append("text")
-            .attr("transform", (d: any) => {
-                // For the root node (depth 0), position at center
-                if (d.depth === 0) {
-                    return "translate(0,0)";
-                }
-                
-                // For album nodes (depth 1), position in the middle of the arc
-                const x = (d.x0 + d.x1) / 2;
-                const y = (d.y0 + d.y1) / 2;
-                const angle = (x - Math.PI / 2);
-                const rotation = angle * (180 / Math.PI);
-                
-                // Adjust text positioning based on angle
-                return `translate(${Math.cos(angle) * y},${Math.sin(angle) * y}) rotate(${rotation})`;
-            })
-            .style("text-anchor", (d: any) => d.depth === 0 ? "middle" : ((d.x0 + d.x1) / 2 > Math.PI ? "end" : "start"))
-            .style("font-size", (d: any) => d.depth === 0 ? "14px" : "10px")
-            .style("font-weight", "bold")
-            .style("fill", (d: any) => isColorLight((d.data as any).color) ? "#000" : "#fff")
-            .style("pointer-events", "none")
-            .style("user-select", "none")
-            .text((d: any) => d.depth === 0 ? d.data.name : (d.data.name.length > 12 ? d.data.name.substring(0, 10) + "..." : d.data.name));
-            
-        sunburstNeedsUpdate = false;
-    }
-    
-    // Using $effect instead of $: for runes mode
-    $effect(() => {
-        if (mounted && selectedDisplayOption === 3 && sunburstContainer) {
-            // Use setTimeout to ensure DOM is ready
-            setTimeout(() => createSunburst(), 0);
-        }
-    });
 
     onMount(() => {
         mounted = true;
@@ -217,31 +85,9 @@
                 // Then third album (with delay)
                 setTimeout(() => {
                     showAlbum3 = true;
-                    
-                    // Initialize sunburst if that's the selected view
-                    if (selectedDisplayOption === 3) {
-                        createSunburst();
-                    }
                 }, 200);
             }, 200);
         }, 300);
-    });
-    
-    // Update Sunburst when the display option changes
-    $effect(() => {
-        if (selectedDisplayOption === 3 && mounted) {
-            // Use setTimeout to ensure the DOM is ready
-            setTimeout(() => createSunburst(), 100);
-        }
-    });
-    
-    // Update Sunburst when data changes
-    $effect(() => {
-        if (sunburstNeedsUpdate && selectedDisplayOption === 3 && mounted) {
-            // Use setTimeout to ensure the DOM is ready
-            setTimeout(() => createSunburst(), 100);
-            sunburstNeedsUpdate = false;
-        }
     });
 </script>
 
@@ -252,26 +98,22 @@
             subtitle="Choose how to display your favorites" />
     {/snippet}
 
-    <div class="flex-1 p-6">
-        <div class="display-options">
-            <h3 class="options-title">Display Options</h3>
-            <div class="options-container">
-                {#each displayOptions as option}
-                    <button 
-                        class="option-button {selectedDisplayOption === option.id ? 'active' : ''}"
-                        onclick={() => selectedDisplayOption = option.id}
-                    >
-                        {option.name}
-                    </button>
-                {/each}
-            </div>
-        </div>
+    <div class="display-options">
+        {#each displayOptions as option}
+            <button 
+                class="option-button {selectedDisplayOption === option.id ? 'active' : ''}"
+                onclick={() => handleDisplayOptionChange(option.id)}
+            >
+                {option.name}
+            </button>
+        {/each}
+    </div>
 
+    <div class="flex-1 p-6">
         {#if selectedDisplayOption === 1}
             <!-- Default View (Same as results page) -->
             {#if mounted}
                 <div class="results-container">
-                    <h2 class="personal-header">{music.userName}'s Taylor Swift Favorites</h2>
                     {#if showAlbum1}
                         <div class="album-result" in:fly={{y: 20, duration: 400, delay: 100}}>
                             <div class="heart-badge">
@@ -308,7 +150,6 @@
                             </div>
                         </div>
                     {/if}
-
                     {#if showAlbum2}
                         <div class="album-result" in:fly={{y: 20, duration: 400, delay: 300}}>
                             <div class="heart-badge">
@@ -345,7 +186,6 @@
                             </div>
                         </div>
                     {/if}
-
                     {#if showAlbum3}
                         <div class="album-result" in:fly={{y: 20, duration: 400, delay: 500}}>
                             <div class="heart-badge">
@@ -382,70 +222,186 @@
                             </div>
                         </div>
                     {/if}
-                    <div class="share-info">
-                        <span class="shared-by">Shared by: {music.userName}</span>
-                    </div>
                 </div>
             {/if}
         {:else if selectedDisplayOption === 2}
-            <div class="grid-view" in:fade={{duration: 300}}>
-                <div class="grid-header">
-                    <h2 class="grid-title">{music.userName}'s Taylor Swift Favorites</h2>
+            <!-- Grid View with toggle between versions -->
+            <div class="flex justify-center mb-4">
+                <div class="grid-toggle">
+                    <span class="grid-toggle-label {!gridViewAlternative ? 'active' : ''}">Style 1</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" bind:checked={gridViewAlternative}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="grid-toggle-label {gridViewAlternative ? 'active' : ''}">Style 2</span>
                 </div>
-                <div class="albums-grid">
-                    {#each music.selectedAlbums as album, albumIndex}
-                        <div class="grid-album-card" style="border-color: {album.color}">
-                            <div class="grid-album-header" style="background-color: {album.color}; color: {isColorLight(album.color) ? '#000' : '#fff'}">
-                                <div class="grid-album-number">{albumIndex + 1}</div>
-                                <h3 class="grid-album-title">{album.title}</h3>
-                            </div>
-                            <div class="grid-album-content">
-                                <img src={album.coverArt} alt="{album.title} cover art" class="grid-album-image" />
-                                <div class="grid-songs">
-                                    <h4 class="grid-songs-title">My Top 3 Songs:</h4>
-                                    <ul class="grid-songs-list">
-                                        {#each music.selectedSongsByAlbum.get(album.id) || [] as song, i}
-                                            <li class="grid-song-item" style="border-left: 3px solid {album.color};">
-                                                <span class="grid-song-number">{i + 1}</span> {song}
-                                            </li>
-                                        {/each}
-                                    </ul>
+            </div>
+            
+            {#if !gridViewAlternative}
+                <!-- Grid View Style 1 -->
+                <div class="grid-view" in:fade={{duration: 300}}>
+                    <div class="grid-container">
+                        <!-- Top Left: Top 3 Albums -->
+                        <div class="grid-cell albums-cell" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                            <div class="albums-proportional">
+                                <!-- Show albums with sizes proportional to rank -->
+                                <div class="album-item album-rank-1">
+                                    <img src={music.selectedAlbums[0].coverArt} alt={music.selectedAlbums[0].title} class="album-img" />
+                                    <div class="album-rank">1</div>
+                                </div>
+                                <div class="album-row-2-3">
+                                    <div class="album-item album-rank-2">
+                                        <img src={music.selectedAlbums[1].coverArt} alt={music.selectedAlbums[1].title} class="album-img" />
+                                        <div class="album-rank">2</div>
+                                    </div>
+                                    <div class="album-item album-rank-3">
+                                        <img src={music.selectedAlbums[2].coverArt} alt={music.selectedAlbums[2].title} class="album-img" />
+                                        <div class="album-rank">3</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    {/each}
-                </div>
-                <div class="grid-footer">
-                    <p class="shared-by-text">Curated by {music.userName}</p>
-                </div>
-            </div>
-        {:else if selectedDisplayOption === 3}
-            <div class="sunburst-view" in:fade={{duration: 300}}>
-                <h2 class="personal-header">{music.userName}'s Taylor Swift Collection</h2>
-                <div class="sunburst-container">
-                    <div class="d3-sunburst" bind:this={sunburstContainer}></div>
-                    {#if tooltipInfo.visible}
-                        <div class="tooltip" 
-                             style="left: {tooltipInfo.x + 15}px; top: {tooltipInfo.y + 15}px;">
-                            <div class="tooltip-text">{tooltipInfo.text}</div>
-                            {#if tooltipInfo.subtext}
-                                <div class="tooltip-subtext">{tooltipInfo.subtext}</div>
-                            {/if}
+                        
+                        <!-- Top Right: Top 3 Songs on Album 1 -->
+                        <div class="grid-cell songs-cell" style="color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                            <div class="songs-content songs-content-full" style="background-color: {music.selectedAlbums[0].color};">
+                                <ul class="songs-list songs-list-spaced">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || []).slice(0, 3) as song, i}
+                                        <li class="song-item-grid">
+                                            <span class="song-number">{i + 1}</span>
+                                            <span class="song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
                         </div>
-                    {/if}
+                        
+                        <!-- Bottom Left: Top 3 Songs on Album 2 -->
+                        <div class="grid-cell songs-cell" style="color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">
+                            <div class="songs-content songs-content-full" style="background-color: {music.selectedAlbums[1].color};">
+                                <ul class="songs-list songs-list-spaced">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || []).slice(0, 3) as song, i}
+                                        <li class="song-item-grid">
+                                            <span class="song-number">{i + 1}</span>
+                                            <span class="song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom Right: Top 3 Songs on Album 3 -->
+                        <div class="grid-cell songs-cell" style="color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">
+                            <div class="songs-content songs-content-full" style="background-color: {music.selectedAlbums[2].color};">
+                                <ul class="songs-list songs-list-spaced">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || []).slice(0, 3) as song, i}
+                                        <li class="song-item-grid">
+                                            <span class="song-number">{i + 1}</span>
+                                            <span class="song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {:else}
+                <!-- Grid View Style 2 (Alternative) -->
+                <div class="grid-view alt-grid-view" in:fade={{duration: 300}}>
+                    <div class="grid-container">
+                        <!-- Top Left: User Message -->
+                        <div class="grid-cell user-message-cell" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                            <h3 class="grid-cell-title" style="color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{username}'s Top 3×3</h3>
+                            <div class="user-message">
+                                <p style="color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{personalMessage}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Top Right: Top 3 Songs on Album 1 with album as background -->
+                        <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[0].coverArt})">
+                            <div class="songs-overlay">
+                                <div class="album-badge" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{music.selectedAlbums[0].title}</div>
+                                <ul class="bg-songs-list">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || []).slice(0, 3) as song, i}
+                                        <li class="bg-song-item">
+                                            <span class="bg-song-number">{i + 1}</span>
+                                            <span class="bg-song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom Left: Top 3 Songs on Album 2 with album as background -->
+                        <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[1].coverArt})">
+                            <div class="songs-overlay">
+                                <div class="album-badge" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">{music.selectedAlbums[1].title}</div>
+                                <ul class="bg-songs-list">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || []).slice(0, 3) as song, i}
+                                        <li class="bg-song-item">
+                                            <span class="bg-song-number">{i + 1}</span>
+                                            <span class="bg-song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom Right: Top 3 Songs on Album 3 with album as background -->
+                        <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[2].coverArt})">
+                            <div class="songs-overlay">
+                                <div class="album-badge" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">{music.selectedAlbums[2].title}</div>
+                                <ul class="bg-songs-list">
+                                    {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || []).slice(0, 3) as song, i}
+                                        <li class="bg-song-item">
+                                            <span class="bg-song-number">{i + 1}</span>
+                                            <span class="bg-song-name">{song}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {/if}
+        {:else if selectedDisplayOption === 3}
+            <!-- Free Style Suggestion Form -->
+            <div class="free-style-container" in:fade={{duration: 300}}>
+                <div class="free-style-form">
+                    <h3 class="text-xl font-bold mb-2">Share Your Design Ideas</h3>
+                    <p class="mb-4">We'd love to hear your ideas on how to present your top songs and albums! Your suggestions could be implemented in future updates.</p>
+                    
+                    <div class="mb-4">
+                        <textarea 
+                            class="w-full p-3 border rounded-lg"
+                            rows="5"
+                            placeholder="Describe your ideal way to display your favorite Taylor Swift songs and albums..."
+                            bind:value={freeStyleSuggestion}
+                        ></textarea>
+                    </div>
+                    
+                    <button 
+                        class="btn btn-primary"
+                        onclick={submitSuggestion}
+                        disabled={!freeStyleSuggestion.trim()}
+                    >
+                        Submit Suggestion
+                    </button>
                 </div>
                 
-                <div class="sunburst-legend">
-                    {#each music.selectedAlbums as album, i}
-                        <div class="legend-item">
-                            <div class="legend-color" style="background-color: {album.color};"></div>
-                            <div class="legend-label">{album.title}</div>
+                {#if pastSuggestions.length > 0}
+                    <div class="past-suggestions mt-8">
+                        <h4 class="text-lg font-semibold mb-2">Your Past Suggestions</h4>
+                        <div class="suggestions-list">
+                            {#each pastSuggestions as suggestion, i}
+                                <div class="suggestion-card">
+                                    <div class="suggestion-number">{i + 1}</div>
+                                    <p class="suggestion-text">{suggestion}</p>
+                                </div>
+                            {/each}
                         </div>
-                    {/each}
-                </div>
-                <div class="share-info">
-                    <span class="shared-by">Shared by: {music.userName}</span>
-                </div>
+                    </div>
+                {/if}
             </div>
         {/if}
     </div>
@@ -477,15 +433,69 @@
         gap: var(--grid-gap-sm, 1rem);
         max-width: var(--container-max-width, 32rem);
         margin: 0 auto;
-        padding: 1rem;
     }
-
-    .album-result {
+    
+    .display-options {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
         background-color: white;
-        border-radius: 0.75rem;
-        box-shadow: var(--shadow-md);
-        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .option-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .option-button.active {
+        background-color: #f43f5e;
+        color: white;
+    }
+    
+    .option-button:hover:not(.active) {
+        background-color: #e5e7eb;
+    }
+    
+    .album-result {
         position: relative;
+    }
+    
+    .heart-badge {
+        position: absolute;
+        top: -1rem;
+        left: -1rem;
+        width: 3.6rem;
+        height: 3.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: var(--z-overlay, 30);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        animation: heartbeat var(--duration-medium, 2s) ease-in-out infinite;
+    }
+    
+    .heart-icon {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        color: var(--color-primary, rgb(244, 63, 94));
+    }
+    
+    .heart-number {
+        position: relative;
+        color: var(--text-light, white);
+        font-weight: bold;
+        font-size: 1.25rem;
+        z-index: 11;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     }
 
     .album-container {
@@ -563,286 +573,358 @@
         42% { transform: scale(1.1); }
         70% { transform: scale(1); }
     }
-
-    .heart-badge {
-        position: absolute;
-        top: -1rem;
-        left: -1rem;
-        width: 3.6rem;
-        height: 3.6rem;
+    
+    /* Grid View */
+    .grid-view {
+        padding: 1rem 0;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 1rem;
+        aspect-ratio: 1/1;
+    }
+    
+    .grid-cell {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06));
         display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: var(--z-overlay, 30);
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        animation: heartbeat var(--duration-medium, 2s) ease-in-out infinite;
+        flex-direction: column;
     }
-
-    .heart-icon {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        color: var(--color-primary, rgb(244, 63, 94));
-    }
-
-    .heart-number {
-        position: relative;
-        color: var(--text-light, white);
-        font-weight: bold;
-        font-size: 1.25rem;
-        z-index: 11;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    }
-
-    .button-container {
-        display: flex;
-        gap: 0.75rem;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .display-options {
-        margin-bottom: 1.5rem;
-    }
-
-    .options-title {
+    
+    .grid-cell-title {
         font-size: 1rem;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        margin: 0;
+        padding: 0.75rem;
         text-align: center;
     }
-
-    .options-container {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .option-button {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md, 0.5rem);
-        background-color: var(--bg-button-secondary, rgb(248, 250, 252));
-        border: 1px solid var(--border-color, rgb(226, 232, 240));
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-
-    .option-button.active {
-        background-color: var(--color-primary, rgb(244, 63, 94));
-        color: white;
-        border-color: var(--color-primary, rgb(244, 63, 94));
-    }
-
-    .grid-view {
+    
+    /* Albums Display (Style 1) */
+    .albums-cell {
+        padding: 0.75rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-        background-color: white;
-        border-radius: var(--radius-lg, 1rem);
-        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06));
     }
-
-    .grid-header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0.5rem;
-        background-color: var(--color-primary, rgb(244, 63, 94));
-        color: white;
-        border-radius: var(--radius-md, 0.5rem) var(--radius-md, 0.5rem) 0 0;
-    }
-
-    .grid-title {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .albums-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    .grid-album-card {
+    
+    .albums-proportional {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        padding: 1rem;
-        border: 1px solid var(--border-color, rgb(226, 232, 240));
-        border-radius: var(--radius-md, 0.5rem);
-        box-shadow: var(--shadow-sm, 0 2px 4px -1px rgba(0, 0, 0, 0.06));
+        flex: 1;
+        height: 100%;
     }
-
-    .grid-album-header {
+    
+    .album-row-2-3 {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem;
-        border-radius: var(--radius-md, 0.5rem) var(--radius-md, 0.5rem) 0 0;
-    }
-
-    .grid-album-number {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .grid-album-title {
-        font-size: 1rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .grid-album-content {
-        display: flex;
-        flex-direction: column;
         gap: 0.5rem;
-        padding: 0.5rem;
+        flex: 0.4;
     }
-
-    .grid-album-image {
+    
+    .album-rank-1 {
+        flex: 0.6;
+        position: relative;
+        aspect-ratio: 1/1;
         width: 100%;
-        height: 150px;
-        object-fit: cover;
-        border-radius: var(--radius-md, 0.5rem);
     }
-
-    .grid-songs {
+    
+    .album-rank-2 {
+        flex: 0.6;
+        position: relative;
+        aspect-ratio: 1/1;
+    }
+    
+    .album-rank-3 {
+        flex: 0.4;
+        position: relative;
+        aspect-ratio: 1/1;
+    }
+    
+    .album-item {
+        border-radius: 0.25rem;
+        overflow: hidden;
+    }
+    
+    .album-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .album-rank {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background-color: #ec4899;
+        color: white;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+    }
+    
+    /* Songs Display (Style 1) */
+    .songs-cell {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
     }
-
-    .grid-songs-title {
-        font-size: 0.9rem;
-        font-weight: bold;
-        margin: 0;
+    
+    .songs-content {
+        flex: 1;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
     }
-
-    .grid-songs-list {
+    
+    .songs-content-full {
+        height: 100%;
+    }
+    
+    .songs-list {
         list-style: none;
         padding: 0;
         margin: 0;
     }
-
-    .grid-song-item {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem;
-        border-radius: var(--radius-sm, 0.25rem);
-    }
-
-    .grid-song-number {
-        font-size: 0.8rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .sunburst-view {
+    
+    .songs-list-spaced {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        margin: 1rem auto;
-        max-width: var(--container-max-width, 32rem);
+        justify-content: space-around;
+        height: 100%;
     }
-
-    .sunburst-container {
-        position: relative;
-        width: 100%;
+    
+    .song-item-grid {
         display: flex;
-        justify-content: center;
-        margin-top: 1rem;
+        align-items: center;
+        padding: 0.375rem 0;
+        gap: 0.5rem;
     }
-
-    .d3-sunburst {
-        width: 100%;
-        height: 400px;
+    
+    .song-number {
+        background-color: rgba(255, 255, 255, 0.2);
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+    }
+    
+    .song-name {
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Alt Grid View Styles */
+    .alt-grid-view {
+        padding: 1rem 0;
+        max-width: 600px;
         margin: 0 auto;
     }
-
-    .tooltip {
-        position: fixed;
-        padding: 0.5rem 0.75rem;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        border-radius: var(--radius-sm, 0.25rem);
-        font-size: 0.875rem;
-        pointer-events: none;
-        z-index: 100;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
     
-    .tooltip-text {
-        font-weight: bold;
-    }
-    
-    .tooltip-subtext {
-        font-size: 0.75rem;
-        opacity: 0.8;
-        margin-top: 0.25rem;
-    }
-
-    .sunburst-legend {
+    .user-message-cell {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 1rem;
+        flex-direction: column;
     }
-
-    .legend-item {
+    
+    .user-message {
+        flex: 1;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    .bg-image-cell {
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    
+    .songs-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.65);
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .album-badge {
+        background-color: rgba(244, 63, 94, 0.9);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        align-self: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    
+    .bg-songs-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .bg-song-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        color: white;
     }
-
-    .legend-color {
-        width: 1rem;
-        height: 1rem;
-        border-radius: var(--radius-sm, 0.25rem);
-    }
-
-    .legend-label {
-        font-size: 0.875rem;
-    }
-
-    .personal-header {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        text-align: center;
-        color: var(--color-primary);
-    }
-
-    .share-info {
+    
+    .bg-song-number {
+        background-color: rgba(255, 255, 255, 0.2);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
         display: flex;
-        justify-content: flex-end;
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        font-style: italic;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+        flex-shrink: 0;
     }
     
-    .shared-by {
-        padding: 0.25rem 0.5rem;
-        background-color: var(--color-background-light);
-        border-radius: 1rem;
-    }
-
-    .grid-footer {
-        margin-top: 1rem;
-        text-align: center;
-        color: var(--color-text-muted);
-        font-style: italic;
+    .bg-song-name {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
     
-    .shared-by-text {
-        font-size: 0.9rem;
+    /* Grid Toggle Styles */
+    .grid-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #f3f4f6;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+    }
+    
+    .grid-toggle-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+    
+    .grid-toggle-label.active {
+        color: #ec4899;
+        font-weight: 600;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+        background-color: #ec4899;
+    }
+    
+    input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+    }
+    
+    /* Free Style Form Styles */
+    .free-style-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .free-style-form {
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .past-suggestions {
+        padding: 1rem;
+    }
+    
+    .suggestions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .suggestion-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .suggestion-number {
+        background-color: #ec4899;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    
+    .suggestion-text {
         margin: 0;
+        line-height: 1.5;
     }
 </style>
