@@ -55,10 +55,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.75rem 1.5rem;
-        border-radius: 9999px;
+        padding: var(--space-3) var(--space-6);
+        border-radius: var(--radius-button);
         font-weight: 600;
-        transition: transform 0.15s ease-out;
+        transition: transform var(--duration-fast) var(--timing-function);
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
     }
@@ -68,21 +68,22 @@
     }
 
     .btn-primary {
-        background-color: rgb(244, 63, 94);
-        color: white;
+        background-color: var(--color-primary);
+        color: var(--text-on-primary);
     }
 
     .btn-primary:active:not(.btn-disabled) {
-        background-color: rgb(225, 29, 72);
+        background-color: var(--color-primary-dark);
     }
 
     .btn-secondary {
-        background-color: rgb(226, 232, 240);
-        color: rgb(15, 23, 42);
+        background-color: var(--color-secondary);
+        color: var(--text-on-secondary);
+        border: 1px solid var(--color-secondary-dark);
     }
 
     .btn-secondary:active:not(.btn-disabled) {
-        background-color: rgb(203, 213, 225);
+        background-color: var(--color-secondary-dark);
     }
 
     .btn-disabled {
@@ -95,8 +96,8 @@
     }
 
     .btn-compact {
-        padding: 0.5rem;
-        font-size: 0.875rem;
+        padding: var(--space-2);
+        font-size: var(--text-sm);
         min-width: unset;
         opacity: 0.9;
     }

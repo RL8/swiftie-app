@@ -34,6 +34,12 @@
     --color-primary-dark: rgb(219, 39, 70);
     --color-primary-alpha: rgba(244, 63, 94, 0.4);
     
+    /* Secondary Colors */
+    --color-secondary: rgb(226, 232, 240);
+    --color-secondary-dark: rgb(203, 213, 225);
+    --color-secondary-light: rgb(241, 245, 249);
+    --text-on-secondary: rgb(15, 23, 42);
+    
     /* Background Colors */
     --bg-gradient-start: rgb(255, 241, 242);
     --bg-gradient-end: rgb(254, 205, 211);
@@ -46,6 +52,7 @@
     --text-secondary: #9f1239;
     --text-light: #ffffff;
     --text-dark: #1f2937;
+    --text-on-primary: #ffffff;
     
     /* Spacing Scale */
     --space-1: 0.25rem;

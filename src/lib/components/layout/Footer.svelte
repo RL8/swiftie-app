@@ -29,7 +29,7 @@
     }
 
     .with-border {
-        border-top: 1px solid rgb(254 205 211);
+        border-top: 1px solid var(--color-primary-alpha);
     }
 
     .footer-content {
@@ -37,7 +37,7 @@
         max-width: var(--container-max-width);
         display: flex;
         justify-content: center;
-        gap: var(--dynamic-spacing-sm);
+        gap: var(--space-3);
     }
 
     .footer-button {

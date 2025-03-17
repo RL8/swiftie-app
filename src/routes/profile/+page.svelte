@@ -21,8 +21,8 @@
         </div>
 
         <div class="space-y-4">
-            <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
-                <h3 class="text-lg font-semibold text-rose-800 mb-2">Stats</h3>
+            <div class="form-card">
+                <h3 class="form-card-title">Stats</h3>
                 <div class="space-y-2">
                     <div class="flex justify-between">
                         <span class="text-rose-600">Albums Rated</span>
@@ -35,18 +35,18 @@
                 </div>
             </div>
 
-            <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 shadow-md">
-                <h3 class="text-lg font-semibold text-rose-800 mb-2">Settings</h3>
+            <div class="form-card">
+                <h3 class="form-card-title">Settings</h3>
                 <div class="space-y-4">
                     <div>
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="form-checkbox text-rose-500">
+                            <input type="checkbox" class="form-checkbox">
                             <span class="text-rose-600">Enable Notifications</span>
                         </label>
                     </div>
                     <div>
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="form-checkbox text-rose-500" checked>
+                            <input type="checkbox" class="form-checkbox" checked>
                             <span class="text-rose-600">Haptic Feedback</span>
                         </label>
                     </div>

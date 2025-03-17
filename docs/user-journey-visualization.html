@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiftie App User Journey Map</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-light: #f8bbd0;
+            --primary-dark: #c2185b;
+            --secondary: #9c27b0;
+            --light: #f5f5f5;
+            --dark: #333;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --info: #2196f3;
+            --gray: #757575;
+            --light-gray: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        h3 {
+            color: var(--primary-dark);
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .user-types {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .user-type {
+            flex: 1;
+            min-width: 200px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .user-type:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-type h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .user-type p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .journey-map {
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .journey-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .journey-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .journey-steps {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .journey-step {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        
+        .journey-step::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        .journey-step::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            width: 1px;
+            height: calc(100% + 10px);
+            background-color: var(--light-gray);
+            z-index: 1;
+        }
+        
+        .journey-step:last-child::after {
+            display: none;
+        }
+        
+        .journey-step h4 {
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .journey-step p {
+            font-size: 0.95rem;
+        }
+        
+        .journey-step .actions {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .journey-step .action {
+            position: relative;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .journey-step .action::before {
+            content: '→';
+            position: absolute;
+            left: -15px;
+            color: var(--primary);
+        }
+        
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        
+        .feature-table th, .feature-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .feature-table th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        
+        .feature-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .feature-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .check {
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+        
+        .cross {
+            color: var(--danger);
+            font-size: 1.2rem;
+        }
+        
+        .flow-diagram {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .flow-diagram pre {
+            font-family: 'Consolas', monospace;
+            line-height: 1.4;
+            color: var(--dark);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .interaction-points {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .interaction-point {
+            flex: 1;
+            min-width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--info);
+        }
+        
+        .interaction-point h4 {
+            color: var(--info);
+            margin-bottom: 10px;
+        }
+        
+        .interaction-point ul {
+            padding-left: 20px;
+        }
+        
+        .interaction-point li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Swiftie App User Journey Map</h1>
+            <p>Interactive visualization of navigation paths for different user types</p>
+        </header>
+        
+        <section>
+            <h2>User Types</h2>
+            <div class="user-types">
+                <div class="user-type" onclick="showJourney('first-time')">
+                    <h3>First-time Visitor</h3>
+                    <p>New to the app, exploring features</p>
+                </div>
+                <div class="user-type" onclick="showJourney('unregistered')">
+                    <h3>Unregistered User</h3>
+                    <p>Using basic features without an account</p>
+                </div>
+                <div class="user-type" onclick="showJourney('free')">
+                    <h3>Free Tier User</h3>
+                    <p>Registered with basic access</p>
+                </div>
+                <div class="user-type" onclick="showJourney('premium')">
+                    <h3>Premium User</h3>
+                    <p>Subscribed with full access to all features</p>
+                </div>
+                <div class="user-type" onclick="showJourney('returning')">
+                    <h3>Returning User</h3>
+                    <p>Familiar with the app, has preferences saved</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="journey-map">
+            <h2>Navigation Journeys</h2>
+            <p>Click on a user type above to view their journey path</p>
+            
+            <!-- First-time Visitor Journey -->
+            <div id="first-time" class="journey-container">
+                <h3>First-time Visitor Journey</h3>
+                <p><strong>Entry Point:</strong> Home Page (<code>/</code>)</p>
+                
+                <div class="journey-steps">
+                    <div class="journey-step">
+                        <h4>Home Page</h4>
+                        <p>First impression and app overview</p>
+                        <div class="actions">
+                            <div class="action">Views welcome message and animations</div>
+                            <div class="action">Has two options: "Get Started" or "Quick Share"</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>If selects "Get Started"</h4>
+                        <div class="actions">
+                            <div class="action">Albums Selection (<code>/albums</code>)</div>
+                            <div class="action">Chooses 3 favorite Taylor Swift albums</div>
+                            <div class="action">Album Confirmation (<code>/albums/confirm</code>)</div>
+                            <div class="action">Song Selection (for each album)</div>
+                            <div class="action">Results Page (<code>/albums/results</code>)</div>
+                            <div class="action">Share Options (<code>/albums/share</code>)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>If selects "Quick Share"</h4>
+                        <div class="actions">
+                            <div class="action">Albums Selection with auto-selection (<code>/albums?quick-share=true</code>)</div>
+                            <div class="action">Album Confirmation (<code>/albums/confirm?quick-share=true</code>)</div>
+                            <div class="action">Results Page with pre-selected content</div>
+                            <div class="action">Share Options (<code>/albums/share</code>)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Conversion Opportunities</h4>
+                        <div class="actions">
+                            <div class="action">Sign Up prompt on Share page</div>
+                            <div class="action">Login option in navigation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Unregistered User Journey -->
+            <div id="unregistered" class="journey-container">
+                <h3>Unregistered User Journey</h3>
+                <p><strong>Entry Point:</strong> Home Page (<code>/</code>) or Share Link</p>
+                
+                <div class="journey-steps">
+                    <div class="journey-step">
+                        <h4>Limited Navigation</h4>
+                        <p>Access to:</p>
+                        <div class="actions">
+                            <div class="action">Home (<code>/</code>)</div>
+                            <div class="action">Albums selection and results (without saving)</div>
+                            <div class="action">Share page (temporary)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Navigation Bar Options</h4>
+                        <div class="actions">
+                            <div class="action">Home</div>
+                            <div class="action">Sign In</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Conversion Points</h4>
+                        <div class="actions">
+                            <div class="action">Login prompt when attempting to save preferences</div>
+                            <div class="action">Sign Up option on share page results</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Free Tier User Journey -->
+            <div id="free" class="journey-container">
+                <h3>Free Tier User Journey</h3>
+                <p><strong>Entry Point:</strong> Home Page after login (<code>/</code>) or direct login (<code>/login</code>)</p>
+                
+                <div class="journey-steps">
+                    <div class="journey-step">
+                        <h4>Authentication</h4>
+                        <div class="actions">
+                            <div class="action">Login Page (<code>/login</code>)</div>
+                            <div class="action">Reddit OAuth authentication</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Full Navigation Access</h4>
+                        <div class="actions">
+                            <div class="action">Home (<code>/</code>)</div>
+                            <div class="action">Feed (<code>/feed</code>) - Community content</div>
+                            <div class="action">Albums (<code>/albums</code>) - Selection process</div>
+                            <div class="action">Profile (<code>/profile</code>) - User details</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Album Journey</h4>
+                        <div class="actions">
+                            <div class="action">Albums selection → Confirmation → Song selection → Results → Share</div>
+                            <div class="action">Ability to save preferences</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Social Features</h4>
+                        <div class="actions">
+                            <div class="action">View community shares in Feed</div>
+                            <div class="action">Share own selections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Upgrade Opportunities</h4>
+                        <div class="actions">
+                            <div class="action">Premium features preview</div>
+                            <div class="action">Upgrade button in Profile</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Premium User Journey -->
+            <div id="premium" class="journey-container">
+                <h3>Premium User Journey</h3>
+                <p><strong>Entry Point:</strong> Home Page after login (<code>/</code>)</p>
+                
+                <div class="journey-steps">
+                    <div class="journey-step">
+                        <h4>Enhanced Navigation</h4>
+                        <div class="actions">
+                            <div class="action">All Free Tier navigation options</div>
+                            <div class="action">Additional premium-only sections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Extended Features</h4>
+                        <div class="actions">
+                            <div class="action">Advanced sharing options</div>
+                            <div class="action">Multiple saved lists</div>
+                            <div class="action">Personalized recommendations</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Premium Experience</h4>
+                        <div class="actions">
+                            <div class="action">No upgrade prompts</div>
+                            <div class="action">Access to all display options</div>
+                            <div class="action">Ability to create custom lists</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Returning User Journey -->
+            <div id="returning" class="journey-container">
+                <h3>Returning User Journey</h3>
+                <p><strong>Entry Point:</strong> Home Page (<code>/</code>) or deep link from previous session</p>
+                
+                <div class="journey-steps">
+                    <div class="journey-step">
+                        <h4>Personalized Welcome</h4>
+                        <div class="actions">
+                            <div class="action">Home page with saved preferences</div>
+                            <div class="action">Quick access to previous selections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Streamlined Navigation</h4>
+                        <div class="actions">
+                            <div class="action">Direct access to frequently used features</div>
+                            <div class="action">Suggested new content based on history</div>
+                        </div>
+                    </div>
+                    
+                    <div class="journey-step">
+                        <h4>Continued Engagement</h4>
+                        <div class="actions">
+                            <div class="action">Updates on new features</div>
+                            <div class="action">Community content in Feed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Feature Access by User Type</h2>
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>First-time</th>
+                        <th>Unregistered</th>
+                        <th>Free Tier</th>
+                        <th>Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Album Selection</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Song Selection</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Basic Sharing</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Save Preferences</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>View Feed</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Profile Management</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Multiple Lists</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Advanced Sharing</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section>
+            <h2>Key Interaction Points</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('share-options')">Share Page Options</div>
+                <div class="tab" onclick="showTab('auth-points')">Authentication Points</div>
+            </div>
+            
+            <div id="share-options" class="tab-content active">
+                <div class="interaction-points">
+                    <div class="interaction-point">
+                        <h4>List View</h4>
+                        <p>Traditional vertical list of albums and songs</p>
+                        <ul>
+                            <li>Sequential display of albums</li>
+                            <li>Song lists with album-colored backgrounds</li>
+                            <li>Heart badges for ranking</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="interaction-point">
+                        <h4>Grid View</h4>
+                        <p>Visual grid layout with proportional album sizes</p>
+                        <ul>
+                            <li>Proportional album sizes based on ranking</li>
+                            <li>Color matching with album themes</li>
+                            <li>Toggle between two grid styles</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="interaction-point">
+                        <h4>Free Style</h4>
+                        <p>User suggestion form for custom layouts</p>
+                        <ul>
+                            <li>Submit design ideas</li>
+                            <li>View past suggestions</li>
+                            <li>Community-driven design input</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="auth-points" class="tab-content">
+                <div class="interaction-points">
+                    <div class="interaction-point">
+                        <h4>Reddit OAuth</h4>
+                        <p>Primary authentication method</p>
+                        <ul>
+                            <li>Social login option</li>
+                            <li>Minimal friction for new users</li>
+                            <li>Community integration</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="interaction-point">
+                        <h4>Login Page</h4>
+                        <p>Entry point for returning users</p>
+                        <ul>
+                            <li>Direct access via navigation</li>
+                            <li>Prompted when accessing restricted features</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="interaction-point">
+                        <h4>Registration</h4>
+                        <p>New user signup process</p>
+                        <ul>
+                            <li>Available from share page</li>
+                            <li>Prompted after completing selection flow</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="interaction-point">
+                        <h4>Upgrade Flow</h4>
+                        <p>Conversion from Free to Premium</p>
+                        <ul>
+                            <li>Accessible from profile page</li>
+                            <li>Prompted when accessing premium features</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>User Flow Diagram</h2>
+            <div class="flow-diagram">
+                <pre>
+Home Page
+├── Quick Share → Auto-Selection → Results → Share Options
+└── Get Started → Manual Selection → Confirmation → Song Selection → Results → Share Options
+    └── [If Logged In] → Save Preferences
+        └── [If Premium] → Create Multiple Lists
+
+Navigation Bar
+├── Home → Welcome Screen
+├── Feed → Community Content [Requires Login]
+├── Albums → Selection Process
+└── Profile → User Details [Requires Login]
+    └── Upgrade Option [Free Tier Only]
+                </pre>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Swiftie App User Journey Map - Created on March 16, 2025</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Show journey for selected user type
+        function showJourney(journeyId) {
+            // Hide all journey containers
+            const journeys = document.querySelectorAll('.journey-container');
+            journeys.forEach(journey => {
+                journey.classList.remove('active');
+            });
+            
+            // Show selected journey
+            const selectedJourney = document.getElementById(journeyId);
+            if (selectedJourney) {
+                selectedJourney.classList.add('active');
+            }
+        }
+        
+        // Show tab content
+        function showTab(tabId) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Update tab content
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

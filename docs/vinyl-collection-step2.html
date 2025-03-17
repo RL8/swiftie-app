@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Swift Vinyl Collection - Step 2</title>
+    <!-- Load SVG.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.1.2/dist/svg.min.js"></script>
+    <!-- Google Fonts - Important for Taylor Swift aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Dancing+Script:wght@400..700&family=Poppins:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        #drawing-container {
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #9e2127;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f1f1;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .description h2 {
+            font-size: 16px;
+            margin-top: 0;
+            color: #9e2127;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Top Taylor Swift Picks</h1>
+        <div id="drawing-container"></div>
+        <div class="description">
+            <h2>Step 2: Detailed Vinyl Records with Album Artwork</h2>
+            <p>This step adds detailed vinyl records with realistic grooves, integrated album artwork, and proper album labels with era-specific styling. The vinyls include hover effects and careful attention to visual details like reflections, textures, and shadows.</p>
+        </div>
+    </div>
+
+    <script>
+        // Album data with artwork and colors
+        const albums = [
+            {
+                title: "Red (Taylor's Version)",
+                artwork: "https://upload.wikimedia.org/wikipedia/en/4/47/Taylor_Swift_-_Red_%28Taylor%27s_Version%29.png",
+                year: 2021,
+                vinylColor: "#9e2127",
+                labelColor: "#f8f0e8",
+                textColor: "#6a0f14",
+                songs: ["All Too Well (10 Min)", "State Of Grace", "Red"]
+            },
+            {
+                title: "1989 (Taylor's Version)",
+                artwork: "https://upload.wikimedia.org/wikipedia/en/1/1f/Taylor_Swift_-_1989_%28Taylor%27s_Version%29.png",
+                year: 2023,
+                vinylColor: "#4c7d97",
+                labelColor: "#e8f0f8",
+                textColor: "#2c5773",
+                songs: ["Blank Space", "Style", "Wildest Dreams"]
+            },
+            {
+                title: "Folklore",
+                artwork: "https://upload.wikimedia.org/wikipedia/en/f/f8/Taylor_Swift_-_Folklore.png",
+                year: 2020,
+                vinylColor: "#2c2c2c",
+                labelColor: "#e8e8e8",
+                textColor: "#1a1a1a",
+                songs: ["Cardigan", "August", "Betty"]
+            }
+        ];
+
+        // Wait for page to fully load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize SVG canvas
+            const draw = SVG().addTo('#drawing-container').size(600, 600);
+            
+            // Define Red (Taylor's Version) color palette - Base all styling on Red's palette
+            const colors = {
+                primaryRed: '#9e2127',
+                darkRed: '#7a191e',
+                lightRed: '#c85a5f',
+                cream: '#f8f0e8',
+                burgundy: '#6a0f14',
+                autumn: '#d98e73',
+                redFaded: 'rgba(158, 33, 39, 0.1)'
+            };
+            
+            // Create background gradient
+            const background = draw.rect(600, 600).fill({
+                type: 'linear',
+                x1: 0, y1: 0,
+                x2: 0, y2: 600,
+                stops: [
+                    { offset: 0, color: colors.darkRed, opacity: 0.9 },
+                    { offset: 0.7, color: colors.primaryRed, opacity: 0.95 },
+                    { offset: 1, color: colors.burgundy, opacity: 1 }
+                ]
+            });
+            
+            // Add texture overlay
+            const noisePattern = createNoisePattern(draw);
+            const textureOverlay = draw.rect(600, 600).fill(noisePattern).opacity(0.2);
+            
+            // Add scrapbook paper texture
+            const paperTexture = draw.rect(580, 580)
+                .move(10, 10)
+                .fill(colors.cream)
+                .opacity(0.05)
+                .radius(5);
+            
+            // Add decorative elements - autumn leaves (subtle in background)
+            addAutumnLeaves(draw, colors);
+            
+            // Add title and frame for collection
+            const titleBar = draw.rect(580, 60)
+                .move(10, 20)
+                .fill(colors.cream)
+                .opacity(0.95)
+                .radius(5);
+                
+            const title = draw.text('MY TOP ALBUMS & SONGS')
+                .move(300, 50)
+                .font({
+                    family: 'Playfair Display, serif',
+                    size: 22,
+                    weight: 700,
+                    anchor: 'middle',
+                    leading: 1.2
+                })
+                .fill(colors.primaryRed);
+                
+            // Add Red-inspired decorative line
+            const decorLine = draw.line(100, 85, 500, 85)
+                .stroke({ color: colors.primaryRed, width: 2, linecap: 'round' });
+                
+            // Add subtle scrapbook tape elements
+            addScrapbookTape(draw, 50, 20, colors.lightRed, -15);
+            addScrapbookTape(draw, 500, 20, colors.autumn, 15);
+            
+            // Create vinyl records for each album
+            // First album - positioned top left
+            createVinylRecord(draw, albums[0], 140, 200);
+            
+            // Second album - positioned bottom center 
+            createVinylRecord(draw, albums[1], 300, 340);
+            
+            // Third album - positioned top right
+            createVinylRecord(draw, albums[2], 460, 200);
+            
+            // Add user credit at bottom
+            const creditBox = draw.rect(580, 40)
+                .move(10, 540)
+                .fill(colors.cream)
+                .opacity(0.8)
+                .radius(5);
+                
+            const creditText = draw.text('Generated with Swiftie App • TS10')
+                .move(300, 560)
+                .font({
+                    family: 'Poppins',
+                    size: 12,
+                    weight: 300,
+                    anchor: 'middle'
+                })
+                .fill(colors.darkRed);
+                
+            // Helper function to create vinyl record
+            function createVinylRecord(draw, album, centerX, centerY) {
+                const vinylGroup = draw.group().addClass('vinyl-record');
+                const vinylSize = 160;
+                const vinylRadius = vinylSize / 2;
+                
+                // Create vinyl shadow for depth
+                vinylGroup.ellipse(vinylSize, vinylSize * 0.15)
+                    .fill('rgba(0,0,0,0.3)')
+                    .move(centerX - vinylRadius, centerY - vinylRadius * 0.15 + 70)
+                    .opacity(0.5);
+                
+                // Create base vinyl disc
+                const vinyl = vinylGroup.circle(vinylSize)
+                    .fill(album.vinylColor)
+                    .move(centerX - vinylRadius, centerY - vinylRadius);
+                
+                // Add vinyl texture and grooves
+                // Outer ring
+                vinylGroup.circle(vinylSize - 2)
+                    .fill('none')
+                    .stroke({ color: '#000', width: 1, opacity: 0.2 })
+                    .move(centerX - vinylRadius + 1, centerY - vinylRadius + 1);
+                
+                // Create vinyl grooves
+                for (let i = vinylRadius - 10; i > vinylRadius * 0.4; i -= 4) {
+                    vinylGroup.circle(i * 2)
+                        .fill('none')
+                        .stroke({ color: '#000', width: 0.5, opacity: 0.1 })
+                        .move(centerX - i, centerY - i);
+                }
+                
+                // Create highlight/reflection on vinyl
+                const reflectionPath = vinylGroup.ellipse(vinylSize * 0.7, vinylSize * 0.2)
+                    .fill('rgba(255,255,255,0.2)')
+                    .move(centerX - vinylRadius * 0.7 + 15, centerY - vinylRadius * 0.2 - 15)
+                    .rotate(-20, centerX, centerY);
+                
+                // Create label in center (with album art clipped to circle)
+                const labelSize = vinylSize * 0.4;
+                const labelRadius = labelSize / 2;
+                
+                // Album artwork in center (clipped to circle)
+                const clipPath = vinylGroup.clip().circle(labelSize)
+                    .move(centerX - labelRadius, centerY - labelRadius);
+                
+                const albumArt = vinylGroup.image(album.artwork, labelSize, labelSize)
+                    .move(centerX - labelRadius, centerY - labelRadius)
+                    .clipWith(clipPath);
+                
+                // Add Red-inspired border around artwork
+                vinylGroup.circle(labelSize)
+                    .fill('none')
+                    .stroke({ color: colors.cream, width: 2, opacity: 0.7 })
+                    .move(centerX - labelRadius, centerY - labelRadius);
+                
+                // Label overlay with faded edges
+                const labelOverlay = vinylGroup.circle(labelSize)
+                    .fill({ 
+                        type: 'radial',
+                        x1: 0.5, y1: 0.5, r1: 0.4, x2: 0.5, y2: 0.5, r2: 0.5,
+                        stops: [
+                            { offset: 0, color: 'rgba(255,255,255,0)' },
+                            { offset: 0.8, color: 'rgba(255,255,255,0.05)' },
+                            { offset: 1, color: 'rgba(255,255,255,0.1)' }
+                        ]
+                    })
+                    .move(centerX - labelRadius, centerY - labelRadius);
+                
+                // Add center hole
+                vinylGroup.circle(8)
+                    .fill('#000')
+                    .move(centerX - 4, centerY - 4);
+                
+                // Add album title underneath in Red-era styling
+                const titleText = vinylGroup.text(album.title)
+                    .font({
+                        family: 'Playfair Display',
+                        size: 14,
+                        weight: 600,
+                        anchor: 'middle'
+                    })
+                    .fill(colors.cream)
+                    .center(centerX, centerY + vinylRadius + 25);
+                
+                // Add year in smaller text
+                vinylGroup.text(album.year.toString())
+                    .font({
+                        family: 'Poppins',
+                        size: 10,
+                        weight: 300,
+                        style: 'italic',
+                        anchor: 'middle'
+                    })
+                    .fill(colors.cream)
+                    .opacity(0.7)
+                    .center(centerX, centerY + vinylRadius + 45);
+                
+                // Add interactivity - subtle rotation animation on hover
+                vinylGroup.on('mouseover', function() {
+                    vinyl.animate(10000).rotate(360, centerX, centerY).loop();
+                    albumArt.animate(10000).rotate(360, centerX, centerY).loop();
+                    reflectionPath.animate(10000).rotate(340, centerX, centerY).loop();
+                });
+                
+                vinylGroup.on('mouseout', function() {
+                    vinyl.timeline().pause();
+                    albumArt.timeline().pause();
+                    reflectionPath.timeline().pause();
+                });
+                
+                // Make it feel clickable
+                vinylGroup.css('cursor', 'pointer');
+                
+                return vinylGroup;
+            }
+            
+            // Helper function to create noise pattern for texture
+            function createNoisePattern(draw) {
+                const pattern = draw.pattern(20, 20, function(add) {
+                    for(let i = 0; i < 100; i++) {
+                        const x = Math.random() * 20;
+                        const y = Math.random() * 20;
+                        const size = Math.random() * 0.5 + 0.2;
+                        
+                        add.circle(size)
+                           .fill('#fff')
+                           .move(x, y)
+                           .opacity(Math.random() * 0.2);
+                    }
+                });
+                
+                return pattern;
+            }
+            
+            // Helper function to add scrapbook tape elements
+            function addScrapbookTape(draw, x, y, color, rotation) {
+                const tape = draw.rect(80, 20)
+                    .move(x, y)
+                    .fill(color)
+                    .opacity(0.6)
+                    .rotate(rotation);
+                    
+                // Add tape texture
+                for(let i = 0; i < 8; i++) {
+                    draw.line(x + (i * 10), y, x + (i * 10) + rotation, y + 20)
+                        .stroke({ color: '#fff', width: 0.5, opacity: 0.2 })
+                        .rotate(rotation, x, y);
+                }
+                
+                return tape;
+            }
+            
+            // Helper function to add autumn leaves
+            function addAutumnLeaves(draw, colors) {
+                // Create leaf path - simplified leaf shape
+                const leafPath = 'M0,0 C5,-10 15,-10 20,0 C25,10 15,20 0,15 C-15,20 -25,10 -20,0 C-15,-10 -5,-10 0,0 Z';
+                
+                // Add several leaves in the background
+                for(let i = 0; i < 12; i++) {
+                    const x = Math.random() * 580 + 10;
+                    const y = Math.random() * 580 + 10;
+                    const size = Math.random() * 0.3 + 0.2;
+                    const rotation = Math.random() * 360;
+                    const opacity = Math.random() * 0.15 + 0.05;
+                    
+                    // Alternate leaf colors between autumn tones
+                    const leafColor = i % 2 === 0 ? colors.autumn : colors.lightRed;
+                    
+                    draw.path(leafPath)
+                        .fill(leafColor)
+                        .move(x, y)
+                        .scale(size)
+                        .rotate(rotation)
+                        .opacity(opacity);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

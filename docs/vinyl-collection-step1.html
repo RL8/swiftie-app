@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Swift Vinyl Collection - Step 1</title>
+    <!-- Load SVG.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.1.2/dist/svg.min.js"></script>
+    <!-- Google Fonts - Important for Taylor Swift aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Dancing+Script:wght@400..700&family=Poppins:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        #drawing-container {
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #9e2127;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f1f1;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .description h2 {
+            font-size: 16px;
+            margin-top: 0;
+            color: #9e2127;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Top Taylor Swift Picks</h1>
+        <div id="drawing-container"></div>
+        <div class="description">
+            <h2>Step 1: Base Structure & Red Aesthetic Background</h2>
+            <p>This first step creates the square canvas (Instagram-style) with the Red (Taylor's Version) inspired background, featuring the signature burgundy color palette, subtle texture, and basic layout structure for the vinyl collection.</p>
+        </div>
+    </div>
+
+    <script>
+        // Wait for page to fully load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize SVG canvas
+            const draw = SVG().addTo('#drawing-container').size(600, 600);
+            
+            // Define Red (Taylor's Version) color palette
+            const colors = {
+                primaryRed: '#9e2127',
+                darkRed: '#7a191e',
+                lightRed: '#c85a5f',
+                cream: '#f8f0e8',
+                burgundy: '#6a0f14',
+                autumn: '#d98e73',
+                redFaded: 'rgba(158, 33, 39, 0.1)'
+            };
+            
+            // Create background gradient
+            const background = draw.rect(600, 600).fill({
+                type: 'linear',
+                x1: 0, y1: 0,
+                x2: 0, y2: 600,
+                stops: [
+                    { offset: 0, color: colors.darkRed, opacity: 0.9 },
+                    { offset: 0.7, color: colors.primaryRed, opacity: 0.95 },
+                    { offset: 1, color: colors.burgundy, opacity: 1 }
+                ]
+            });
+            
+            // Add texture overlay
+            const noisePattern = createNoisePattern(draw);
+            const textureOverlay = draw.rect(600, 600).fill(noisePattern).opacity(0.2);
+            
+            // Add scrapbook paper texture
+            const paperTexture = draw.rect(580, 580)
+                .move(10, 10)
+                .fill(colors.cream)
+                .opacity(0.05)
+                .radius(5);
+            
+            // Add decorative elements - autumn leaves (subtle in background)
+            addAutumnLeaves(draw, colors);
+            
+            // Add title and frame for collection
+            const titleBar = draw.rect(580, 60)
+                .move(10, 20)
+                .fill(colors.cream)
+                .opacity(0.95)
+                .radius(5);
+                
+            const title = draw.text('MY TOP ALBUMS & SONGS')
+                .move(300, 50)
+                .font({
+                    family: 'Playfair Display, serif',
+                    size: 22,
+                    weight: 700,
+                    anchor: 'middle',
+                    leading: 1.2
+                })
+                .fill(colors.primaryRed);
+                
+            // Add Red-inspired decorative line
+            const decorLine = draw.line(100, 85, 500, 85)
+                .stroke({ color: colors.primaryRed, width: 2, linecap: 'round' });
+                
+            // Add subtle scrapbook tape elements
+            addScrapbookTape(draw, 50, 20, colors.lightRed, -15);
+            addScrapbookTape(draw, 500, 20, colors.autumn, 15);
+            
+            // Create placeholders for the vinyl records (to be added in step 2)
+            const placeholdersGroup = draw.group();
+            
+            // First album placeholder
+            placeholdersGroup.circle(160)
+                .move(60, 120)
+                .fill(colors.darkRed)
+                .opacity(0.5);
+            
+            // Second album placeholder
+            placeholdersGroup.circle(160)
+                .move(220, 260)
+                .fill(colors.darkRed)
+                .opacity(0.5);
+                
+            // Third album placeholder
+            placeholdersGroup.circle(160)
+                .move(380, 120)
+                .fill(colors.darkRed)
+                .opacity(0.5);
+            
+            // Add user credit at bottom
+            const creditBox = draw.rect(580, 40)
+                .move(10, 540)
+                .fill(colors.cream)
+                .opacity(0.8)
+                .radius(5);
+                
+            const creditText = draw.text('Generated with Swiftie App • TS10')
+                .move(300, 560)
+                .font({
+                    family: 'Poppins',
+                    size: 12,
+                    weight: 300,
+                    anchor: 'middle'
+                })
+                .fill(colors.darkRed);
+                
+            // Helper function to create noise pattern for texture
+            function createNoisePattern(draw) {
+                const pattern = draw.pattern(20, 20, function(add) {
+                    for(let i = 0; i < 100; i++) {
+                        const x = Math.random() * 20;
+                        const y = Math.random() * 20;
+                        const size = Math.random() * 0.5 + 0.2;
+                        
+                        add.circle(size)
+                           .fill('#fff')
+                           .move(x, y)
+                           .opacity(Math.random() * 0.2);
+                    }
+                });
+                
+                return pattern;
+            }
+            
+            // Helper function to add scrapbook tape elements
+            function addScrapbookTape(draw, x, y, color, rotation) {
+                const tape = draw.rect(80, 20)
+                    .move(x, y)
+                    .fill(color)
+                    .opacity(0.6)
+                    .rotate(rotation);
+                    
+                // Add tape texture
+                for(let i = 0; i < 8; i++) {
+                    draw.line(x + (i * 10), y, x + (i * 10) + rotation, y + 20)
+                        .stroke({ color: '#fff', width: 0.5, opacity: 0.2 })
+                        .rotate(rotation, x, y);
+                }
+                
+                return tape;
+            }
+            
+            // Helper function to add autumn leaves
+            function addAutumnLeaves(draw, colors) {
+                // Create leaf path - simplified leaf shape
+                const leafPath = 'M0,0 C5,-10 15,-10 20,0 C25,10 15,20 0,15 C-15,20 -25,10 -20,0 C-15,-10 -5,-10 0,0 Z';
+                
+                // Add several leaves in the background
+                for(let i = 0; i < 12; i++) {
+                    const x = Math.random() * 580 + 10;
+                    const y = Math.random() * 580 + 10;
+                    const size = Math.random() * 0.3 + 0.2;
+                    const rotation = Math.random() * 360;
+                    const opacity = Math.random() * 0.15 + 0.05;
+                    
+                    // Alternate leaf colors between autumn tones
+                    const leafColor = i % 2 === 0 ? colors.autumn : colors.lightRed;
+                    
+                    draw.path(leafPath)
+                        .fill(leafColor)
+                        .move(x, y)
+                        .scale(size)
+                        .rotate(rotation)
+                        .opacity(opacity);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

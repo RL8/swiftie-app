@@ -337,10 +337,5 @@
         position: relative;
     }
 
-    .button-container {
-        display: flex;
-        gap: 0.75rem;
-        width: 100%;
-        justify-content: center;
-    }
+    /* Using the standardized button-container from forms.css */
 </style>

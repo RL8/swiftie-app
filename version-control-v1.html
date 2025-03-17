@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiftie App - Version Control Documentation</title>
+    <style>
+        :root {
+            --primary-color: #ff83a6;
+            --secondary-color: #64c4ed;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --border-color: #ddd;
+            --highlight-color: #ffc8dd;
+            --version1-color: #bde0fe;
+            --version2-color: #a2d2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .version-selector {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+
+        .version-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .version-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .version-btn.active {
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+        }
+
+        .version-btn.v1 {
+            background-color: var(--version1-color);
+        }
+
+        .version-btn.v2 {
+            background-color: var(--version2-color);
+        }
+
+        .version-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .version-content.active {
+            display: block;
+        }
+
+        .section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin: 15px 0 10px;
+            color: var(--secondary-color);
+        }
+
+        .page-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background-color: #f6f6f6;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .page-name {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .page-path {
+            color: #888;
+            font-size: 0.9em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            margin-bottom: 10px;
+        }
+
+        .page-content, .page-functionality, .page-update {
+            margin-top: 10px;
+        }
+
+        .navigation-path {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f6f6f6;
+            border-radius: 5px;
+        }
+
+        .nav-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .nav-steps {
+            list-style-type: none;
+        }
+
+        .nav-steps li {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .nav-steps li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        .orphaned-pages {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3f3;
+            border-radius: 5px;
+            border-left: 3px solid #ffcccc;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: #888;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Version 2 specific styles */
+        .version-highlights {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .update-note {
+            background-color: #fffde7;
+            padding: 10px;
+            border-left: 3px solid #ffd54f;
+            margin-bottom: 20px;
+        }
+
+        .code-pattern {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .pattern-before, .pattern-after {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+        }
+
+        code {
+            font-family: 'Consolas', monospace;
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #f8f8f2;
+            border-radius: 0;
+        }
+
+        .implementation-notes {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .component-list {
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Swiftie App - Version Control Documentation</h1>
+        <p class="subtitle">Tracking changes and features across different versions of the application</p>
+        
+        <div class="version-selector">
+            <button class="version-btn v1 active" onclick="showVersion('v1')">Version 1<br><small>Main Branch</small></button>
+            <button class="version-btn v2" onclick="showVersion('v2')">Version 2<br><small>Context API Fixes</small></button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Version 1 Content -->
+        <div id="v1-content" class="version-content active">
+            <div class="section">
+                <h2>🌟 Version 1 Overview</h2>
+                <p>Base implementation of the Swiftie App. This documents the main branch state before context API fixes.</p>
+                <p><strong>Last Updated:</strong> March 16, 2025</p>
+            </div>
+
+            <div class="section">
+                <h2>📱 App Pages</h2>
+                <div class="page-list">
+                    <div class="page-item">
+                        <span class="page-name">Home Page</span>
+                        <span class="page-path">/</span>
+                        <div class="page-description">
+                            <p>The main landing page for the Swiftie App, introducing users to the application and providing options to get started.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Welcome text and introduction to the app</li>
+                                <li>Decorative Taylor Swift-themed visuals</li>
+                                <li>Button to start the album selection process</li>
+                                <li>Quick Share option for faster experience</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>"Get Started" button navigates to Albums page</li>
+                                <li>"Quick Share" button navigates to Albums page with quick-share parameter</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Albums Selection Page</span>
+                        <span class="page-path">/albums</span>
+                        <div class="page-description">
+                            <p>Allows users to select their favorite Taylor Swift albums (up to 3) for further interaction.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Grid display of all Taylor Swift albums with cover art</li>
+                                <li>Selection indicators for chosen albums</li>
+                                <li>Counter showing how many albums have been selected (out of 3)</li>
+                                <li>Continue button to proceed to the next step</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Click to select/deselect albums (maximum 3)</li>
+                                <li>Continue button becomes active when 3 albums are selected</li>
+                                <li>Quick Share mode automatically selects 3 random albums</li>
+                                <li>Navigate to Album Confirmation page when Continue is clicked</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Album Confirmation Page</span>
+                        <span class="page-path">/albums/confirm</span>
+                        <div class="page-description">
+                            <p>Confirms the user's album selections and provides an option to continue to song selection.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Display of the 3 selected albums</li>
+                                <li>Brief confirmation message</li>
+                                <li>Continue button to proceed to song selection</li>
+                                <li>Option to go back and change album selections</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Continue button navigates to Songs page</li>
+                                <li>Back button returns to album selection</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Songs Selection Page</span>
+                        <span class="page-path">/albums/songs</span>
+                        <div class="page-description">
+                            <p>Allows users to select their favorite songs from each of the previously selected albums.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>List of songs from each selected album</li>
+                                <li>Song selection interface with checkboxes or toggles</li>
+                                <li>Progress indicator showing completion status</li>
+                                <li>Continue button to proceed to results</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Select/deselect songs from each album</li>
+                                <li>Must select at least 3 songs per album</li>
+                                <li>Continue button navigates to Results page when enough songs are selected</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Results Page</span>
+                        <span class="page-path">/albums/results</span>
+                        <div class="page-description">
+                            <p>Displays the results of the user's album and song selections, providing analysis and insights.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Visual representation of selected albums and songs</li>
+                                <li>Analysis of music preferences</li>
+                                <li>Personalized insights based on selections</li>
+                                <li>Options to share results or continue to feed</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>View personalized music analysis</li>
+                                <li>Option to share results (navigates to Share page)</li>
+                                <li>Option to view community feed (navigates to Feed page)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Share Page</span>
+                        <span class="page-path">/albums/share</span>
+                        <div class="page-description">
+                            <p>Provides options for sharing the user's album and song selections with others.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Shareable visualization of selected music</li>
+                                <li>Multiple display options for sharing (list, grid, carousel)</li>
+                                <li>Customization options for the shared content</li>
+                                <li>Social media sharing buttons</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Toggle between different display layouts</li>
+                                <li>Customize sharing message</li>
+                                <li>Generate shareable link or image</li>
+                                <li>Share directly to social platforms</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Feed Page</span>
+                        <span class="page-path">/feed</span>
+                        <div class="page-description">
+                            <p>Community feed showing activity from other users and Taylor Swift-related updates.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Timeline of user activities and shared content</li>
+                                <li>Welcome messages for new users</li>
+                                <li>Updates about Taylor Swift news and releases</li>
+                                <li>Community interactions and comments</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>View chronological feed of activity</li>
+                                <li>Interact with other users' shared content</li>
+                                <li>Receive personalized recommendations</li>
+                                <li>Mark orientation as complete when first accessing after selection process</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Profile Page</span>
+                        <span class="page-path">/profile</span>
+                        <div class="page-description">
+                            <p>User profile displaying personal information, preferences, and activity history.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>User details and profile picture</li>
+                                <li>Music preferences based on selections</li>
+                                <li>Activity history and shared content</li>
+                                <li>Account settings and customization options</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>View and edit profile information</li>
+                                <li>Review past music selections</li>
+                                <li>Manage account settings</li>
+                                <li>Access to preferences and personalization</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Login Page</span>
+                        <span class="page-path">/login</span>
+                        <div class="page-description">
+                            <p>Authentication page for existing users to sign in to their accounts.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Login form with email/username and password fields</li>
+                                <li>Social login options</li>
+                                <li>Forgot password link</li>
+                                <li>Link to signup page for new users</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Authenticate existing users</li>
+                                <li>Redirect to previous page or home after successful login</li>
+                                <li>Error handling for failed login attempts</li>
+                                <li>Password recovery options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Signup/Register Page</span>
+                        <span class="page-path">/signup or /register</span>
+                        <div class="page-description">
+                            <p>Registration page for new users to create an account.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Registration form with required fields</li>
+                                <li>Social signup options</li>
+                                <li>Terms and conditions acceptance</li>
+                                <li>Link to login page for existing users</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Create new user accounts</li>
+                                <li>Validate user input</li>
+                                <li>Store user information securely</li>
+                                <li>Redirect to orientation process after registration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Swiftivities Page</span>
+                        <span class="page-path">/swiftivities</span>
+                        <div class="page-description">
+                            <p>Interactive activities and games related to Taylor Swift for user engagement.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>List of available activities and games</li>
+                                <li>Description and preview of each activity</li>
+                                <li>Activity status (completed, new, popular)</li>
+                                <li>Rewards and achievements information</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Launch interactive games and activities</li>
+                                <li>Track completion and progress</li>
+                                <li>Earn rewards and achievements</li>
+                                <li>Share activity results with the community</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">404 Not Found Page</span>
+                        <span class="page-path">/404</span>
+                        <div class="page-description">
+                            <p>Custom error page displayed when users attempt to access non-existent routes.</p>
+                        </div>
+                        <div class="page-content">
+                            <h4>Content:</h4>
+                            <ul>
+                                <li>Error message with creative Taylor Swift theme</li>
+                                <li>Suggestions for valid pages to visit</li>
+                                <li>Navigation back to home page</li>
+                                <li>Possibly Taylor Swift lyrics related to being lost or confused</li>
+                            </ul>
+                        </div>
+                        <div class="page-functionality">
+                            <h4>Functionality:</h4>
+                            <ul>
+                                <li>Display friendly error message</li>
+                                <li>Provide navigation options to valid pages</li>
+                                <li>Report error analytics data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🧭 Navigation Paths</h2>
+                <div class="navigation-list">
+                    <div class="navigation-path">
+                        <div class="nav-title">New User Onboarding Path</div>
+                        <ol class="nav-steps">
+                            <li>Landing Page (/) → Click "Get Started"</li>
+                            <li>Albums Selection (/albums) → Select 3 albums → Click "Continue"</li>
+                            <li>Album Confirmation (/albums/confirm) → Click "Continue"</li>
+                            <li>Songs Selection (/albums/songs) → Select songs from each album → Click "Continue"</li>
+                            <li>Results Page (/albums/results) → View analysis → Click "View Feed"</li>
+                            <li>Feed Page (/feed) → App marks orientation as complete</li>
+                        </ol>
+                    </div>
+
+                    <div class="navigation-path">
+                        <div class="nav-title">Quick Share Path</div>
+                        <ol class="nav-steps">
+                            <li>Landing Page (/) → Click "Quick Share"</li>
+                            <li>Albums Selection (/albums?quick-share=true) → Albums automatically selected → Click "Continue"</li>
+                            <li>Album Confirmation (/albums/confirm) → Click "Continue"</li>
+                            <li>Songs Selection (/albums/songs) → Select songs from each album → Click "Continue"</li>
+                            <li>Results Page (/albums/results) → Click "Share Results"</li>
+                            <li>Share Page (/albums/share) → Customize and share content</li>
+                        </ol>
+                    </div>
+
+                    <div class="navigation-path">
+                        <div class="nav-title">Returning User Path</div>
+                        <ol class="nav-steps">
+                            <li>Landing Page (/) → User is recognized → Redirected to Feed</li>
+                            <li>Feed Page (/feed) → View community updates</li>
+                            <li>Navigate to Profile (/profile) to view/edit personal information</li>
+                            <li>Access Swiftivities (/swiftivities) for interactive games</li>
+                        </ol>
+                    </div>
+
+                    <div class="navigation-path">
+                        <div class="nav-title">Authentication Path</div>
+                        <ol class="nav-steps">
+                            <li>Access Login Page (/login) → Enter credentials → Submit</li>
+                            <li>Upon successful login → Redirected to Feed (/feed) or previous page</li>
+                            <li>New Users: Click "Sign Up" on Login Page → Registration Page (/signup or /register)</li>
+                            <li>Complete registration → Begin onboarding process</li>
+                        </ol>
+                    </div>
+
+                    <div class="orphaned-pages">
+                        <div class="nav-title">Orphaned/Isolated Pages</div>
+                        <ul>
+                            <li>Games (/games) - Appears to be an isolated or in-development section not linked from main navigation</li>
+                            <li>Auth (/auth) - Backend authentication handling, not directly accessed by users</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version 2 Content -->
+        <div id="v2-content" class="version-content">
+            <div class="section">
+                <h2>🌟 Version 2 Overview</h2>
+                <p>Swiftie App with Context API fixes for Svelte 5 compatibility. This documents the state after fixing context handling for proper operation in runes mode.</p>
+                <p><strong>Last Updated:</strong> March 16, 2025</p>
+                <div class="version-highlights">
+                    <h3>Major Changes</h3>
+                    <ul>
+                        <li>Fixed context API usage in multiple components for Svelte 5 runes mode compatibility</li>
+                        <li>Standardized approach to retrieving and using context across the application</li>
+                        <li>Resolved TypeErrors related to <code>getContext(...) is not a function</code></li>
+                        <li>Ensured proper rendering and functionality of all components using shared state</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📱 App Pages</h2>
+                <p class="update-note">All pages maintain the same visual appearance and user experience as Version 1. The changes are strictly related to internal implementation for context API usage.</p>
+                
+                <div class="page-list">
+                    <div class="page-item">
+                        <span class="page-name">Home Page</span>
+                        <span class="page-path">/</span>
+                        <div class="page-description">
+                            <p>The main landing page for the Swiftie App.</p>
+                        </div>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated context retrieval from <code>const music = getContext&lt;MusicContext&gt;('music')</code> to <code>const getMusicContext = getContext&lt;() => MusicContext&gt;('music')</code></li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Albums Selection Page</span>
+                        <span class="page-path">/albums</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage to properly retrieve the music context</li>
+                                <li>Updated event handlers to invoke the context function when needed</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Album Confirmation Page</span>
+                        <span class="page-path">/albums/confirm</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage to properly retrieve the music context</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Songs Selection Page</span>
+                        <span class="page-path">/albums/songs</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated context retrieval for proper operation in runes mode</li>
+                                <li>Modified song selection logic to use the updated context access pattern</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Results Page</span>
+                        <span class="page-path">/albums/results</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Extensive context API fixes for proper operation in runes mode</li>
+                                <li>Updated multiple instances of context access throughout the component</li>
+                                <li>Fixed reactive values that depend on context data</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Share Page</span>
+                        <span class="page-path">/albums/share</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage to properly retrieve both music and user contexts</li>
+                                <li>Added onMount initialization for context values</li>
+                                <li>Replaced $state variables with standard reactive variable declarations for better compatibility</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Feed Page</span>
+                        <span class="page-path">/feed</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated context retrieval for app and music contexts</li>
+                                <li>Fixed context usage in onMount lifecycle hook</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Profile Page</span>
+                        <span class="page-path">/profile</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage to properly retrieve user context</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Signup Page</span>
+                        <span class="page-path">/signup</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated context retrieval for proper operation in runes mode</li>
+                                <li>Fixed user context access in form submission handling</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Swiftivities Page</span>
+                        <span class="page-path">/swiftivities</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage to properly retrieve context</li>
+                                <li>All functionality remains identical to Version 1</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🛠️ Component Updates</h2>
+                <p>Several key components were updated to fix context API usage in Svelte 5's runes mode.</p>
+                
+                <div class="component-list">
+                    <div class="page-item">
+                        <span class="page-name">AlbumCard Component</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage from direct access to function-based access</li>
+                                <li>Updated derived values to use the context accessor function directly</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">DatabaseSync Component</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated context retrieval to work correctly in runes mode</li>
+                                <li>Fixed data syncing operations that depend on the music context</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">AuthSync Component</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Fixed context API usage for user context retrieval</li>
+                                <li>Updated authentication state management to work with the new context pattern</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-item">
+                        <span class="page-name">Navigation Component</span>
+                        <div class="page-update">
+                            <h4>Version 2 Changes:</h4>
+                            <ul>
+                                <li>Updated user context retrieval for proper operation in runes mode</li>
+                                <li>Fixed navigation logic dependent on user authentication state</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🧭 Navigation Paths</h2>
+                <p>All navigation paths remain identical to Version 1. No changes were made to the application's routing or user flow.</p>
+            </div>
+
+            <div class="section">
+                <h2>📝 Technical Implementation Details</h2>
+                <div class="code-pattern">
+                    <h3>Context API Pattern Changes</h3>
+                    <div class="pattern-before">
+                        <h4>Before (Version 1):</h4>
+                        <pre><code>// Direct context access - incompatible with Svelte 5 runes mode
+const music = getContext&lt;MusicContext&gt;('music');
+
+// Or incorrect function invocation
+const music = getContext&lt;() => MusicContext&gt;('music')();</code></pre>
+                    </div>
+                    <div class="pattern-after">
+                        <h4>After (Version 2):</h4>
+                        <pre><code>// Store the context accessor function
+const getMusicContext = getContext&lt;() => MusicContext&gt;('music');
+
+// Option 1: Use it directly in derived values
+let derived = $derived(getMusicContext().someProperty);
+
+// Option 2: Initialize in onMount
+let music: MusicContext;
+onMount(() => {
+  music = getMusicContext();
+});</code></pre>
+                    </div>
+                </div>
+                
+                <div class="implementation-notes">
+                    <h3>Implementation Notes</h3>
+                    <ul>
+                        <li>In Svelte 5's runes mode, <code>getContext</code> returns a function that must be invoked to access the context value</li>
+                        <li>The pattern fix was applied consistently across all components using context API</li>
+                        <li>Some components required additional updates to state management ($state variables)</li>
+                        <li>The fixes maintain full backward compatibility with existing functionality</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Version Control Documentation for Swiftie App 2025</p>
+    </footer>
+
+    <script>
+        function showVersion(version) {
+            // Hide all versions
+            document.querySelectorAll('.version-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.version-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected version
+            document.getElementById(version + '-content').classList.add('active');
+            
+            // Add active class to selected button
+            document.querySelector('.version-btn.' + version).classList.add('active');
+        }
+    </script>
+</body>
+</html>

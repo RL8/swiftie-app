@@ -1,0 +1,121 @@
+<div id="anychart-embed-src-sunburst-charts-radar-space-source-anychart-core" class="anychart-embed anychart-embed-src-sunburst-charts-radar-space-source-anychart-core">
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-sunburst.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-data-adapter.min.js"></script>
+<div id="ac_style_src-sunburst-charts-radar-space-source-anychart-core" style="display:none;">
+html,
+body,
+#container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+</div>
+<script>(function(){
+function ac_add_to_head(el){
+	var head = document.getElementsByTagName('head')[0];
+	head.insertBefore(el,head.firstChild);
+}
+function ac_add_link(url){
+	var el = document.createElement('link');
+	el.rel='stylesheet';el.type='text/css';el.media='all';el.href=url;
+	ac_add_to_head(el);
+}
+function ac_add_style(css){
+	var ac_style = document.createElement('style');
+	if (ac_style.styleSheet) ac_style.styleSheet.cssText = css;
+	else ac_style.appendChild(document.createTextNode(css));
+	ac_add_to_head(ac_style);
+}
+ac_add_link('https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css');
+ac_add_link('https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css');
+ac_add_style(document.getElementById("ac_style_src-sunburst-charts-radar-space-source-anychart-core").innerHTML);
+ac_add_style(".anychart-embed-src-sunburst-charts-radar-space-source-anychart-core{width:600px;height:450px;}");
+})();</script>
+<div id="container"></div>
+<script>
+anychart.onDocumentReady(function () {
+  // The data used in this sample can be obtained from the CDN
+  // https://cdn.anychart.com/samples/sunburst-charts/radar-space-source-anychart-core/data.json
+  anychart.data.loadJsonFile(
+    'https://cdn.anychart.com/samples/sunburst-charts/radar-space-source-anychart-core/data.json',
+    function (data) {
+      // makes tree from the data for the sample
+      var dataTree = anychart.data.tree(data);
+
+      // create sunburst chart
+      var chart = anychart.sunburst(dataTree);
+
+      // set calculation mode
+      chart.calculationMode('parent-independent');
+
+      // descending sort data
+      chart.sort('desc');
+
+      // set chart title
+      chart.title('Radar Space source AnyChart Core');
+
+      // set custom palette
+      chart.palette([
+        '#dbaaff',
+        '#ff9a32',
+        '#69d55e',
+        '#ff8470',
+        '#80c3ff',
+        '#355a85',
+        '#66a64a',
+        '#fab353',
+        '#aaa2d8',
+        '#6097ce',
+        '#ff715a',
+        '#eab8a8',
+        '#895070',
+        '#89b5ab',
+        '#8e4dbd'
+      ]);
+
+      // format chart labels
+      chart.labels().format('{%Name}');
+
+      // format tooltip
+      chart.tooltip().format(function () {
+        return this.name + ': ' + format(this.value);
+      });
+
+      // set container id for the chart
+      chart.container('container');
+      // initiate chart drawing
+      chart.draw();
+
+      function format(bytes) {
+        var kb = bytes / 1024;
+        var mb = bytes / 1024 / 1024;
+
+        var units = {
+          KB: kb,
+          MB: mb
+        };
+
+        var lastUnit = 'B';
+        var lastValue = bytes;
+
+        for (var u in units) {
+          if (units.hasOwnProperty(u)) {
+            if (units[u] < 1) {
+              return lastValue + ' ' + lastUnit;
+            }
+            lastUnit = u;
+            lastValue = units[u].toFixed(2);
+          }
+        }
+
+        return lastValue + ' ' + lastUnit;
+      }
+    }
+  );
+});
+</script>
+</div>
