@@ -1,19 +1,15 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: '404.html',
-			precompress: false,
-			strict: false
-		}),
+		// Adapter-auto will detect Vercel during deployment and use the proper adapter
+		adapter: adapter(),
 		paths: {
 			base: process.env.BASE_PATH || ''
 		},
+		// This ensures proper handling of 404 pages on Vercel
 		prerender: {
 			handleHttpError: ({ path, referrer, message }) => {
 				// ignore deliberate link to shiny 404 page

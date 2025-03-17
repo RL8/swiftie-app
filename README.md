@@ -36,3 +36,21 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Deployment with Vercel
+
+This project is configured for easy deployment with Vercel. 
+
+### Manual Deployment
+1. Install the Vercel CLI: `npm i -g vercel`
+2. Run `vercel` from the project directory to deploy to your Vercel account
+3. Follow the prompts to link to your Vercel account
+
+### GitHub Integration
+For automatic deployments with GitHub:
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically deploy when changes are pushed to the main branch
+3. The project includes a GitHub Actions workflow in `.github/workflows/vercel-deploy.yml`
+
+### Environment Variables
+If your application requires environment variables, set them in the Vercel dashboard under your project settings.
