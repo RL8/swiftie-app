@@ -1,5 +1,8 @@
 /** @type { import('@storybook/svelte').Preview } */
 
+// Import global styles
+import '../src/app.css';
+
 // Monkey patch the component API to handle Svelte 5 components
 // This ensures Storybook can properly destroy components
 if (typeof window !== 'undefined') {
@@ -25,6 +28,23 @@ const preview = {
         color: /(background|color)$/i,
         date: /Date$/,
       },
+    },
+    backgrounds: {
+      default: 'app',
+      values: [
+        {
+          name: 'app',
+          value: '#121212',
+        },
+        {
+          name: 'light',
+          value: '#ffffff',
+        },
+        {
+          name: 'dark',
+          value: '#333333',
+        },
+      ],
     },
   },
 };

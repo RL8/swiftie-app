@@ -1,40 +1,68 @@
-import Button from '../lib/components/demo/Button.svelte';
+import Button from '../lib/components/Button/Button.svelte';
 
 export default {
-  title: 'Demo/Button',
+  title: 'Components/Button',
   component: Button,
   argTypes: {
     label: { control: 'text' },
-    primary: { control: 'boolean' },
-    size: {
-      control: { type: 'select', options: ['small', 'medium', 'large'] },
+    variant: {
+      control: { type: 'select', options: ['primary', 'secondary'] },
     },
+    size: {
+      control: { type: 'select', options: ['default', 'compact'] },
+    },
+    fullWidth: { control: 'boolean' },
+    disabled: { control: 'boolean' },
+    onclick: { action: 'clicked' }
   },
 };
 
 export const Primary = {
   args: {
-    primary: true,
-    label: 'Button',
+    variant: 'primary',
+    label: 'Primary Button',
+    size: 'default',
+    fullWidth: false,
+    disabled: false
   },
 };
 
 export const Secondary = {
   args: {
-    label: 'Button',
+    variant: 'secondary',
+    label: 'Secondary Button',
+    size: 'default',
+    fullWidth: false,
+    disabled: false
   },
 };
 
-export const Large = {
+export const Compact = {
   args: {
-    size: 'large',
-    label: 'Button',
+    variant: 'primary',
+    label: 'Compact Button',
+    size: 'compact',
+    fullWidth: false,
+    disabled: false
   },
 };
 
-export const Small = {
+export const FullWidth = {
   args: {
-    size: 'small',
-    label: 'Button',
+    variant: 'primary',
+    label: 'Full Width Button',
+    size: 'default',
+    fullWidth: true,
+    disabled: false
+  },
+};
+
+export const Disabled = {
+  args: {
+    variant: 'primary',
+    label: 'Disabled Button',
+    size: 'default',
+    fullWidth: false,
+    disabled: true
   },
 };
