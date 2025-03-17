@@ -26,6 +26,11 @@ const config = {
 			}
 		}
 	},
+	compilerOptions: {
+		compatibility: {
+			componentApi: 4
+		}
+	},
 	preprocess: vitePreprocess()
 };
 
