@@ -1,10 +1,5 @@
 import SimpleSunburst from '../lib/components/visualizations/SimpleSunburst.svelte';
 
-// Import theme styles directly in the story
-import '../lib/styles/theme.css';
-import '../lib/styles/global.css';
-import '../lib/styles/forms.css';
-
 export default {
   title: 'Visualizations/SimpleSunburst',
   component: SimpleSunburst,
@@ -17,7 +12,7 @@ export default {
     backgrounds: {
       default: 'app',
       values: [
-        { name: 'app', value: '#fff1f2' }, // Using literal color values instead of CSS variables
+        { name: 'app', value: '#fff1f2' },
         { name: 'light', value: '#fecdd3' },
         { name: 'dark', value: '#1f2937' },
       ],
