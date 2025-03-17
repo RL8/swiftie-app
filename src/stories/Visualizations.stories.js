@@ -2,9 +2,24 @@ import MusicProfileDashboard from '$lib/components/visualizations/MusicProfileDa
 import SocialComparisonView from '$lib/components/visualizations/SocialComparisonView.svelte';
 import SunburstChart from '$lib/components/visualizations/SunburstChart.svelte';
 
+// Import theme styles directly in the story
+import '../lib/styles/theme.css';
+import '../lib/styles/global.css';
+import '../lib/styles/forms.css';
+
 export default {
   title: 'Visualizations/Sunburst Charts',
   component: SunburstChart,
+  parameters: {
+    backgrounds: {
+      default: 'app',
+      values: [
+        { name: 'app', value: '#fff1f2' }, 
+        { name: 'light', value: '#fecdd3' },
+        { name: 'dark', value: '#1f2937' },
+      ],
+    },
+  },
 };
 
 export const BasicSunburstChart = {

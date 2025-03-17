@@ -34,7 +34,7 @@ const preview = {
       values: [
         {
           name: 'app',
-          value: '#121212',
+          value: '#f4f4f4',
         },
         {
           name: 'light',

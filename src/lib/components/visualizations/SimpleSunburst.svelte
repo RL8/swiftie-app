@@ -10,20 +10,20 @@
       container.innerHTML = `
         <div style="position: relative; width: 100%; height: ${height};">
           <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-            <div style="font-size: 14px; color: #555;">${title}</div>
+            <div style="font-size: 14px; color: var(--text-primary);">${title}</div>
           </div>
           <svg width="100%" height="100%" viewBox="0 0 200 200">
             <!-- Outer ring -->
-            <circle cx="100" cy="100" r="80" fill="#E8C1E1" />
+            <circle cx="100" cy="100" r="80" fill="var(--color-primary-alpha)" />
             
             <!-- Middle ring -->
-            <circle cx="100" cy="100" r="60" fill="#8CD1E6" />
+            <circle cx="100" cy="100" r="60" fill="var(--color-primary-light)" />
             
             <!-- Inner ring -->
-            <circle cx="100" cy="100" r="40" fill="#B02428" />
+            <circle cx="100" cy="100" r="40" fill="var(--color-primary)" />
             
             <!-- Center -->
-            <circle cx="100" cy="100" r="20" fill="#ACA9A0" />
+            <circle cx="100" cy="100" r="20" fill="var(--color-primary-dark)" />
           </svg>
         </div>
       `;
@@ -44,5 +44,9 @@
   .sunburst-container {
     width: 100%;
     position: relative;
+    background-color: var(--bg-container);
+    border-radius: var(--radius-card);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
   }
 </style>
