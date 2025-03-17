@@ -70,6 +70,26 @@
         }
     }
 
+    // Album-specific fonts for Taylor Swift albums
+    const albumFonts = {
+        'Taylor Swift': "'Times New Roman', serif",
+        'Fearless': "'Georgia', serif",
+        'Speak Now': "'Brush Script MT', cursive",
+        'Red': "'Helvetica Neue', sans-serif",
+        '1989': "'Futura', sans-serif", 
+        'reputation': "'Helvetica Neue', sans-serif",
+        'Lover': "'Serif', serif",
+        'folklore': "'Garamond', serif",
+        'evermore': "'Garamond', serif",
+        'Midnights': "'Helvetica Neue', sans-serif",
+        'The Tortured Poets Department': "'Courier New', monospace"
+    };
+    
+    function getAlbumFont(albumTitle: string): string {
+        // Type assertion to fix TypeScript indexing error
+        return (albumFonts as Record<string, string>)[albumTitle] || "'Helvetica Neue', sans-serif";
+    }
+
     onMount(() => {
         mounted = true;
         
@@ -244,18 +264,18 @@
                         <!-- Top Left: Top 3 Albums -->
                         <div class="grid-cell albums-cell" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
                             <div class="albums-proportional">
-                                <!-- Show albums with sizes proportional to rank -->
-                                <div class="album-item album-rank-1">
-                                    <img src={music.selectedAlbums[0].coverArt} alt={music.selectedAlbums[0].title} class="album-img" />
-                                    <div class="album-rank">1</div>
-                                </div>
-                                <div class="album-row-2-3">
-                                    <div class="album-item album-rank-2">
-                                        <img src={music.selectedAlbums[1].coverArt} alt={music.selectedAlbums[1].title} class="album-img" />
+                                <!-- Show albums in horizontal layout with specified proportions (45%, 33%, 22%) -->
+                                <div class="albums-horizontal-container">
+                                    <div class="album-item album-rank-1-horizontal">
+                                        <img src={music.selectedAlbums[0].coverArt} alt={music.selectedAlbums[0].title} class="album-img" style="width: 100%; height: 100%; object-fit: cover; padding: 0;" />
+                                        <div class="album-rank">1</div>
+                                    </div>
+                                    <div class="album-item album-rank-2-horizontal">
+                                        <img src={music.selectedAlbums[1].coverArt} alt={music.selectedAlbums[1].title} class="album-img" style="width: 100%; height: 100%; object-fit: cover; padding: 0;" />
                                         <div class="album-rank">2</div>
                                     </div>
-                                    <div class="album-item album-rank-3">
-                                        <img src={music.selectedAlbums[2].coverArt} alt={music.selectedAlbums[2].title} class="album-img" />
+                                    <div class="album-item album-rank-3-horizontal">
+                                        <img src={music.selectedAlbums[2].coverArt} alt={music.selectedAlbums[2].title} class="album-img" style="width: 100%; height: 100%; object-fit: cover; padding: 0;" />
                                         <div class="album-rank">3</div>
                                     </div>
                                 </div>
@@ -309,9 +329,21 @@
                 <!-- Grid View Style 2 (Alternative) -->
                 <div class="grid-view alt-grid-view" in:fade={{duration: 300}}>
                     <div class="grid-container">
-                        <!-- Top Left: User Message -->
-                        <div class="grid-cell user-message-cell" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
-                            <h3 class="grid-cell-title" style="color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{username}'s Top 3×3</h3>
+                        <!-- Top Left: Album Names with proportional spacing -->
+                        <div class="grid-cell user-message-cell" style="padding: 0;">
+                            <!-- Album Names List with proportional spacing -->
+                            <div class="album-names-list-grid">
+                                <div class="album-name-item album-name-item-1" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">
+                                    <span class="album-name-text">{music.selectedAlbums[0].title}</span>
+                                </div>
+                                <div class="album-name-item album-name-item-2" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">
+                                    <span class="album-name-text">{music.selectedAlbums[1].title}</span>
+                                </div>
+                                <div class="album-name-item album-name-item-3" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">
+                                    <span class="album-name-text">{music.selectedAlbums[2].title}</span>
+                                </div>
+                            </div>
+                            
                             <div class="user-message">
                                 <p style="color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{personalMessage}</p>
                             </div>
@@ -319,12 +351,10 @@
                         
                         <!-- Top Right: Top 3 Songs on Album 1 with album as background -->
                         <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[0].coverArt})">
-                            <div class="songs-overlay">
-                                <div class="album-badge" style="background-color: {music.selectedAlbums[0].color}; color: {isColorLight(music.selectedAlbums[0].color) ? '#000' : '#fff'}">{music.selectedAlbums[0].title}</div>
+                            <div class="songs-overlay songs-overlay-1">
                                 <ul class="bg-songs-list">
                                     {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[0].id) || []).slice(0, 3) as song, i}
                                         <li class="bg-song-item">
-                                            <span class="bg-song-number">{i + 1}</span>
                                             <span class="bg-song-name">{song}</span>
                                         </li>
                                     {/each}
@@ -334,12 +364,10 @@
                         
                         <!-- Bottom Left: Top 3 Songs on Album 2 with album as background -->
                         <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[1].coverArt})">
-                            <div class="songs-overlay">
-                                <div class="album-badge" style="background-color: {music.selectedAlbums[1].color}; color: {isColorLight(music.selectedAlbums[1].color) ? '#000' : '#fff'}">{music.selectedAlbums[1].title}</div>
+                            <div class="songs-overlay songs-overlay-2">
                                 <ul class="bg-songs-list">
                                     {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[1].id) || []).slice(0, 3) as song, i}
                                         <li class="bg-song-item">
-                                            <span class="bg-song-number">{i + 1}</span>
                                             <span class="bg-song-name">{song}</span>
                                         </li>
                                     {/each}
@@ -349,12 +377,10 @@
                         
                         <!-- Bottom Right: Top 3 Songs on Album 3 with album as background -->
                         <div class="grid-cell bg-image-cell" style="background-image: url({music.selectedAlbums[2].coverArt})">
-                            <div class="songs-overlay">
-                                <div class="album-badge" style="background-color: {music.selectedAlbums[2].color}; color: {isColorLight(music.selectedAlbums[2].color) ? '#000' : '#fff'}">{music.selectedAlbums[2].title}</div>
+                            <div class="songs-overlay songs-overlay-3">
                                 <ul class="bg-songs-list">
                                     {#each (music.selectedSongsByAlbum.get(music.selectedAlbums[2].id) || []).slice(0, 3) as song, i}
                                         <li class="bg-song-item">
-                                            <span class="bg-song-number">{i + 1}</span>
                                             <span class="bg-song-name">{song}</span>
                                         </li>
                                     {/each}
@@ -447,9 +473,9 @@
     .option-button {
         padding: 0.5rem 1rem;
         border: none;
-        background-color: #f3f4f6;
-        color: #4b5563;
-        border-radius: 0.375rem;
+        background-color: var(--color-secondary-light);
+        color: var(--color-text-secondary);
+        border-radius: var(--rounded-md);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s;
@@ -461,7 +487,8 @@
     }
     
     .option-button:hover:not(.active) {
-        background-color: #e5e7eb;
+        background-color: var(--color-secondary-dark);
+        color: white;
     }
     
     .album-result {
@@ -597,17 +624,9 @@
         flex-direction: column;
     }
     
-    .grid-cell-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 0;
-        padding: 0.75rem;
-        text-align: center;
-    }
-    
     /* Albums Display (Style 1) */
     .albums-cell {
-        padding: 0.75rem;
+        padding: 0;
         display: flex;
         flex-direction: column;
     }
@@ -620,40 +639,43 @@
         height: 100%;
     }
     
-    .album-row-2-3 {
+    .albums-horizontal-container {
         display: flex;
-        gap: 0.5rem;
-        flex: 0.4;
+        flex-direction: row;
+        gap: 1px;
+        flex: 1;
+        height: 100%;
     }
     
-    .album-rank-1 {
-        flex: 0.6;
+    .album-item {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .album-rank-1-horizontal {
+        flex: 0.45;
         position: relative;
         aspect-ratio: 1/1;
         width: 100%;
     }
     
-    .album-rank-2 {
-        flex: 0.6;
+    .album-rank-2-horizontal {
+        flex: 0.33;
         position: relative;
         aspect-ratio: 1/1;
     }
     
-    .album-rank-3 {
-        flex: 0.4;
+    .album-rank-3-horizontal {
+        flex: 0.22;
         position: relative;
         aspect-ratio: 1/1;
-    }
-    
-    .album-item {
-        border-radius: 0.25rem;
-        overflow: hidden;
     }
     
     .album-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
     
     .album-rank {
@@ -736,6 +758,7 @@
     }
     
     .user-message-cell {
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
     }
@@ -760,60 +783,85 @@
     .songs-overlay {
         position: absolute;
         inset: 0;
-        background-color: rgba(0, 0, 0, 0.65);
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 1.5rem;
+        border-radius: 0.25rem;
+        height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        padding: 1rem;
     }
     
-    .album-badge {
-        background-color: rgba(244, 63, 94, 0.9);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.25rem;
-        font-weight: 600;
-        font-size: 0.875rem;
-        align-self: flex-start;
-        margin-bottom: 0.75rem;
+    .songs-overlay-1 {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.65);
+        padding: 1.5rem;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .songs-overlay-2 {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.65);
+        padding: 1.5rem;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .songs-overlay-3 {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.65);
+        padding: 1.5rem;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .bg-songs-list {
-        list-style: none;
+        list-style-type: none;
         padding: 0;
         margin: 0;
-        flex: 1;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 0.75rem;
     }
     
     .bg-song-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
         color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 0;
     }
     
-    .bg-song-number {
-        background-color: rgba(255, 255, 255, 0.2);
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 0.875rem;
-        flex-shrink: 0;
+    .songs-overlay-1 .bg-song-item {
+        flex: 0.45;
+        font-size: 1.7rem;
+    }
+    
+    .songs-overlay-2 .bg-song-item {
+        flex: 0.33;
+        font-size: 1.4rem;
+    }
+    
+    .songs-overlay-3 .bg-song-item {
+        flex: 0.22;
+        font-size: 1.2rem;
     }
     
     .bg-song-name {
-        font-size: 1rem;
-        white-space: nowrap;
+        font-weight: 500;
         overflow: hidden;
         text-overflow: ellipsis;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        white-space: nowrap;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
     
     /* Grid Toggle Styles */
@@ -926,5 +974,43 @@
     .suggestion-text {
         margin: 0;
         line-height: 1.5;
+    }
+    
+    .album-names-list-grid {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        flex: 1;
+    }
+    
+    .album-name-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        margin: 0;
+    }
+    
+    .album-name-item-1 {
+        flex: 0.45;
+        font-size: 1.7rem;
+    }
+    
+    .album-name-item-2 {
+        flex: 0.33;
+        font-size: 1.4rem;
+    }
+    
+    .album-name-item-3 {
+        flex: 0.22;
+        font-size: 1.2rem;
+    }
+    
+    .album-name-text {
+        font-weight: normal;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
