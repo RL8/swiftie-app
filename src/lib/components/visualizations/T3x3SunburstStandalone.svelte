@@ -1,4 +1,9 @@
 <script lang="ts">
+  /**
+   * T3x3SunburstStandalone Component - v1.0.0
+   * Displays a sunburst visualization of T3x3 data
+   * Interactive visualization of Taylor Swift albums and songs
+   */
   import Sunburst from 'sunburst-chart';
   import { generateT3x3SunburstData, type T3x3Category } from '$lib/utils/t3x3DataGenerator';
   import { albums } from '$lib/data/albums';
