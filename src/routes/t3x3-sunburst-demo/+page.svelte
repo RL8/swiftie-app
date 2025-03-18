@@ -18,9 +18,9 @@
     // Clear any existing selections first
     musicContext.clearSelections();
     
-    // Find the specified albums
-    const redAlbum = albums.find(a => a.title === "Red (Taylor's Version)");
-    const repAlbum = albums.find(a => a.title === "Reputation");
+    // Find the specified albums - using exact titles from albums.ts
+    const redAlbum = albums.find(a => a.title === "Red TV");
+    const repAlbum = albums.find(a => a.title === "reputation");
     const loverAlbum = albums.find(a => a.title === "Lover");
 
     console.log('Found albums for demo:', { redAlbum, repAlbum, loverAlbum });
@@ -59,7 +59,7 @@
     // Log the final selections
     console.log('Final selections:', {
       albums: musicContext.selectedAlbums.map(a => ({ id: a.id, title: a.title })),
-      songs: Object.fromEntries(musicContext.selectedSongsByAlbum)
+      songs: Object.fromEntries(Array.from(musicContext.selectedSongsByAlbum.entries()))
     });
   }
 
@@ -83,10 +83,10 @@
     <p>This demo uses the following fixed albums and songs for testing:</p>
     <ul>
       <li>
-        <strong>Red (Taylor's Version)</strong>: "All Too Well", "The Last Time", "Begin Again"
+        <strong>Red TV</strong>: "All Too Well", "The Last Time", "Begin Again"
       </li>
       <li>
-        <strong>Reputation</strong>: "...Ready For It?", "New Year's Day", "Dancing With Our Hands Tied"
+        <strong>reputation</strong>: "...Ready For It?", "New Year's Day", "Dancing With Our Hands Tied"
       </li>
       <li>
         <strong>Lover</strong>: "ME!", "I Think He Knows", "I Forgot That You Existed"
