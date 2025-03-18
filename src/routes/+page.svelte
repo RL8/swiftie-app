@@ -11,6 +11,9 @@
 
     const music = getContext<MusicContext>('music');
 
+    // State for dropdown menu
+    let showDropdown = $state(true);
+
     function handleGetStarted() {
         goto(`${base}/albums`);
     }
@@ -23,7 +26,41 @@
     function handleSunburst() {
         // Navigate to the T3x3 Sunburst demo page
         goto(`${base}/t3x3-sunburst-demo`);
+        showDropdown = false;
     }
+
+    function handleT11x3Sunburst() {
+        // Navigate to the T11x3 Sunburst demo page
+        goto(`${base}/t11x3-sunburst-demo`);
+        showDropdown = false;
+    }
+
+    function toggleDropdown() {
+        showDropdown = !showDropdown;
+    }
+
+    // Close dropdown when clicking outside
+    function handleClickOutside(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        const dropdown = document.querySelector('.dropdown-menu');
+        const buttonWrapper = document.querySelector('.button-wrapper');
+        
+        if (dropdown && buttonWrapper && 
+            !dropdown.contains(target) && 
+            !buttonWrapper.contains(target)) {
+            showDropdown = false;
+        }
+    }
+
+    // Add event listener when component mounts
+    $effect(() => {
+        document.addEventListener('click', handleClickOutside);
+        
+        // Cleanup when component unmounts
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    });
 </script>
 
 <StandardLayout>
@@ -48,16 +85,30 @@
     {#snippet footer()}
         <Footer variant="button" >
             <div class="button-container">
-                <Button 
-                    variant="secondary"
-                    on:click={handleQuickShare}>
-                    Quick Share
-                </Button>
-                <Button 
-                    variant="secondary"
-                    on:click={handleSunburst}>
-                    Sunburst
-                </Button>
+                <div class="dropdown-container">
+                    <div class="button-wrapper">
+                        <Button 
+                            variant="secondary"
+                            on:click={() => toggleDropdown()}>
+                            Features ▾
+                        </Button>
+                    </div>
+                    
+                    {#if showDropdown}
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" on:click={handleQuickShare}>
+                                Quick Share
+                            </div>
+                            <div class="dropdown-item" on:click={handleSunburst}>
+                                T3x3 Sunburst
+                            </div>
+                            <div class="dropdown-item" on:click={handleT11x3Sunburst}>
+                                T11x3 Sunburst
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+                
                 <Button 
                     variant="primary"
                     on:click={handleGetStarted}
@@ -103,5 +154,46 @@
         justify-content: space-between;
         gap: 0.5rem;
         width: 100%;
+    }
+
+    /* Dropdown menu styling */
+    .dropdown-container {
+        position: relative;
+    }
+
+    .button-wrapper {
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        margin-bottom: 0.5rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 10;
+        min-width: 180px;
+    }
+
+    .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        text-align: left;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .dropdown-item:not(:last-child) {
+        border-bottom: 1px solid #eee;
     }
 </style>

@@ -27,23 +27,105 @@
   
   // Generate some test data for the test chart
   const testData = {
-    name: 'Test Chart Root',
+    name: 'T11x3 Chart Root',
     children: [
       {
         name: 'Category A',
-        value: 225,
+        value: 300,
         children: [
-          { name: 'Item 1', value: 100 },
-          { name: 'Item 2', value: 75 },
-          { name: 'Item 3', value: 50 },
+          { name: 'Item A1', value: 100 },
+          { name: 'Item A2', value: 100 },
+          { name: 'Item A3', value: 100 },
         ]
       },
       {
         name: 'Category B',
-        value: 140,
+        value: 300,
         children: [
-          { name: 'Item 4', value: 80 },
-          { name: 'Item 5', value: 60 },
+          { name: 'Item B1', value: 100 },
+          { name: 'Item B2', value: 100 },
+          { name: 'Item B3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category C',
+        value: 300,
+        children: [
+          { name: 'Item C1', value: 100 },
+          { name: 'Item C2', value: 100 },
+          { name: 'Item C3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category D',
+        value: 300,
+        children: [
+          { name: 'Item D1', value: 100 },
+          { name: 'Item D2', value: 100 },
+          { name: 'Item D3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category E',
+        value: 300,
+        children: [
+          { name: 'Item E1', value: 100 },
+          { name: 'Item E2', value: 100 },
+          { name: 'Item E3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category F',
+        value: 300,
+        children: [
+          { name: 'Item F1', value: 100 },
+          { name: 'Item F2', value: 100 },
+          { name: 'Item F3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category G',
+        value: 300,
+        children: [
+          { name: 'Item G1', value: 100 },
+          { name: 'Item G2', value: 100 },
+          { name: 'Item G3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category H',
+        value: 300,
+        children: [
+          { name: 'Item H1', value: 100 },
+          { name: 'Item H2', value: 100 },
+          { name: 'Item H3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category I',
+        value: 300,
+        children: [
+          { name: 'Item I1', value: 100 },
+          { name: 'Item I2', value: 100 },
+          { name: 'Item I3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category J',
+        value: 300,
+        children: [
+          { name: 'Item J1', value: 100 },
+          { name: 'Item J2', value: 100 },
+          { name: 'Item J3', value: 100 },
+        ]
+      },
+      {
+        name: 'Category K',
+        value: 300,
+        children: [
+          { name: 'Item K1', value: 100 },
+          { name: 'Item K2', value: 100 },
+          { name: 'Item K3', value: 100 },
         ]
       }
     ]
@@ -165,7 +247,7 @@
           .height(200)
           .label('name')
           .size('value')
-          .centerLabel('Test')
+          .centerLabel('T11×3')
           .color(() => '#1DB954');
             
         console.log('T3x3SunburstStandalone: Test chart rendered');
@@ -315,8 +397,8 @@
   
   <!-- Test chart to verify library works -->
   <div class="test-section">
-    <h3>Test Chart</h3>
-    <p>This is a simple test chart to verify the sunburst library is working correctly.</p>
+    <h3>T11x3 Test Chart</h3>
+    <p>This is a visualization of 11 categories with 3 items each.</p>
     <div bind:this={testContainer} class="test-container"></div>
   </div>
   

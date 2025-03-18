@@ -7,7 +7,7 @@
   const musicContext = createMusicContext();
 
   // Debug: Log all available albums
-  console.log('T3x3 Demo: All available albums:', 
+  console.log('T11x3 Demo: All available albums:', 
     albums.map(a => ({ id: a.id, title: a.title }))
   );
 
@@ -65,39 +65,63 @@
 
   // Call the setup function when page loads
   $effect(() => {
-    console.log('T3x3 Sunburst Demo page loaded');
+    console.log('T11x3 Sunburst Demo page loaded');
     // Setup fixed selections for testing
     setupFixedSelections();
   });
 </script>
 
 <div class="container">
-  <h1>T3x3 Sunburst Demo</h1>
+  <h1>T11x3 Sunburst Demo</h1>
   <p class="description">
-    This is a demo of the T3x3 Sunburst visualization with fixed values
+    This is a demo of the T11x3 Sunburst visualization with fixed values
     for testing purposes.
   </p>
 
   <div class="demo-info">
-    <h2>Fixed Values</h2>
-    <p>This demo uses the following fixed albums and songs for testing:</p>
+    <h2>T11x3 Album Selection</h2>
+    <p>This visualization displays 11 albums with 3 songs from each:</p>
     <ul>
       <li>
-        <strong>Red TV</strong>: "All Too Well", "The Last Time", "Begin Again"
+        <strong>Debut</strong>: "Tim McGraw", "Should've Said No", "Our Song"
       </li>
       <li>
-        <strong>reputation</strong>: "...Ready For It?", "New Year's Day", "Dancing With Our Hands Tied"
+        <strong>Fearless TV</strong>: "Love Story", "You Belong With Me", "Fifteen"
       </li>
       <li>
-        <strong>Lover</strong>: "ME!", "I Think He Knows", "I Forgot That You Existed"
+        <strong>Speak Now TV</strong>: "Enchanted", "Sparks Fly", "Dear John"
+      </li>
+      <li>
+        <strong>Red TV</strong>: "All Too Well", "State Of Grace", "I Knew You Were Trouble"
+      </li>
+      <li>
+        <strong>1989 TV</strong>: "Blank Space", "Style", "Wildest Dreams"
+      </li>
+      <li>
+        <strong>reputation</strong>: "Delicate", "Getaway Car", "Don't Blame Me"
+      </li>
+      <li>
+        <strong>Lover</strong>: "Cruel Summer", "Cornelia Street", "Lover"
+      </li>
+      <li>
+        <strong>folklore</strong>: "august", "cardigan", "exile"
+      </li>
+      <li>
+        <strong>evermore</strong>: "champagne problems", "willow", "gold rush"
+      </li>
+      <li>
+        <strong>Midnights</strong>: "Anti-Hero", "Lavender Haze", "Bejeweled"
+      </li>
+      <li>
+        <strong>The Tortured Poets Department</strong>: "Fortnight", "The Alchemy", "So Long, London"
       </li>
     </ul>
   </div>
 
   <div class="visualization-container">
     <T3x3SunburstStandalone 
-      title="My Taylor Swift T3x3" 
-      centerLabel="Swiftie T3x3"
+      title="My Taylor Swift T11x3" 
+      centerLabel="Swiftie T11x3"
       height="600px"
       userSelectedAlbums={musicContext.selectedAlbums}
       userSelectedSongs={musicContext.selectedSongsByAlbum}
