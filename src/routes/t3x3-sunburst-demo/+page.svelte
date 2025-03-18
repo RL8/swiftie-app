@@ -2,6 +2,7 @@
   import { albums } from "$lib/data/albums";
   import { createMusicContext } from "$lib/context/music.svelte";
   import T3x3SunburstStandalone from "$lib/components/visualizations/T3x3SunburstStandalone.svelte";
+  import T11x3TestChart from "$lib/components/visualizations/T11x3TestChart.svelte";
 
   // Create a music context for this page
   const musicContext = createMusicContext();
@@ -138,15 +139,18 @@
       </div>
     </div>
 
-    <div class="visualization-container">
-      <!-- Test T11x3 Component - Using the same component with different props -->
-      <T3x3SunburstStandalone 
-        title="Taylor Swift T11×3 (Test)" 
-        centerLabel="T11×3"
-        height="600px"
-        userSelectedAlbums={musicContext.selectedAlbums}
-        userSelectedSongs={musicContext.selectedSongsByAlbum}
-      />
+    <div class="test-chart-container">
+      <div class="test-chart-header">
+        <h3>T11×3 Test Chart</h3>
+        <p>This test chart demonstrates the structure of 11 albums with 3 songs each using dummy data.</p>
+      </div>
+      <div class="visualization-container">
+        <T11x3TestChart 
+          title="T11×3 Test Visualization" 
+          centerLabel="T11×3 Test"
+          height="600px"
+        />
+      </div>
     </div>
   </section>
 </div>
@@ -236,6 +240,49 @@
     color: #ccc;
     font-size: 1.5rem;
     letter-spacing: 1rem;
+  }
+
+  .test-chart-container {
+    margin-top: 3rem;
+  }
+
+  .test-chart-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .test-chart-header h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  .test-chart-header p {
+    color: #666;
+    margin-top: 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .placeholder {
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 2px dashed #ddd;
+  }
+
+  .placeholder-content {
+    text-align: center;
+    padding: 2rem;
+    max-width: 500px;
+  }
+
+  .placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
 
   .albums-preview {
