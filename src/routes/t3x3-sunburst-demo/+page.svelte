@@ -71,89 +71,214 @@
   });
 </script>
 
-<div class="container">
-  <h1>T3x3 Sunburst Demo</h1>
-  <p class="description">
-    This is a demo of the T3x3 Sunburst visualization with fixed values
-    for testing purposes.
-  </p>
+<div class="page-container">
+  <header>
+    <h1>Taylor Swift Sunburst Visualizations</h1>
+    <p class="subtitle">Interactive visualizations of Taylor Swift's discography</p>
+  </header>
 
-  <div class="demo-info">
-    <h2>Fixed Values</h2>
-    <p>This demo uses the following fixed albums and songs for testing:</p>
-    <ul>
-      <li>
-        <strong>Red TV</strong>: "All Too Well", "The Last Time", "Begin Again"
-      </li>
-      <li>
-        <strong>reputation</strong>: "...Ready For It?", "New Year's Day", "Dancing With Our Hands Tied"
-      </li>
-      <li>
-        <strong>Lover</strong>: "ME!", "I Think He Knows", "I Forgot That You Existed"
-      </li>
-    </ul>
+  <section class="visualization-section t3x3-section">
+    <div class="section-header">
+      <h2>T3×3 Sunburst</h2>
+      <p>A visualization of 3 albums with 3 songs each</p>
+    </div>
+
+    <div class="info-card">
+      <h3>Selected Albums & Songs</h3>
+      <ul class="album-list">
+        <li>
+          <strong>Red TV</strong>: "All Too Well", "The Last Time", "Begin Again"
+        </li>
+        <li>
+          <strong>reputation</strong>: "...Ready For It?", "New Year's Day", "Dancing With Our Hands Tied"
+        </li>
+        <li>
+          <strong>Lover</strong>: "ME!", "I Think He Knows", "I Forgot That You Existed"
+        </li>
+      </ul>
+    </div>
+
+    <div class="visualization-container">
+      <T3x3SunburstStandalone 
+        title="Taylor Swift T3×3" 
+        centerLabel="T3×3"
+        height="600px"
+        userSelectedAlbums={musicContext.selectedAlbums}
+        userSelectedSongs={musicContext.selectedSongsByAlbum}
+      />
+    </div>
+  </section>
+
+  <div class="section-divider">
+    <span>•</span><span>•</span><span>•</span>
   </div>
 
-  <div class="visualization-container">
-    <T3x3SunburstStandalone 
-      title="My Taylor Swift T3x3" 
-      centerLabel="Swiftie T3x3"
-      height="600px"
-      userSelectedAlbums={musicContext.selectedAlbums}
-      userSelectedSongs={musicContext.selectedSongsByAlbum}
-    />
-  </div>
+  <section class="visualization-section t11x3-section">
+    <div class="section-header">
+      <h2>T11×3 Sunburst</h2>
+      <p>A visualization of all 11 albums with 3 songs each</p>
+    </div>
+
+    <div class="info-card">
+      <h3>Coming Soon</h3>
+      <p>This visualization will include all 11 Taylor Swift albums with 3 songs from each album.</p>
+      
+      <div class="albums-preview">
+        <h4>Additional Albums to be Included:</h4>
+        <ul class="album-list">
+          <li><strong>Debut</strong>: "Our Song", "Teardrops on My Guitar", "Picture to Burn"</li>
+          <li><strong>Fearless TV</strong>: "Love Story", "You Belong With Me", "Fifteen"</li>
+          <li><strong>Speak Now TV</strong>: "Enchanted", "Mean", "Sparks Fly"</li>
+          <li><strong>1989 TV</strong>: "Blank Space", "Style", "Wildest Dreams"</li>
+          <li><strong>folklore</strong>: "cardigan", "august", "exile"</li>
+          <li><strong>evermore</strong>: "willow", "champagne problems", "no body, no crime"</li>
+          <li><strong>Midnights</strong>: "Anti-Hero", "Lavender Haze", "Bejeweled"</li>
+          <li><strong>The Tortured Poets Department</strong>: "Fortnight", "The Alchemy", "Down Bad"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="visualization-container placeholder">
+      <div class="placeholder-content">
+        <div class="placeholder-icon">📊</div>
+        <h3>T11×3 Visualization Coming Soon</h3>
+        <p>A more comprehensive visualization with all 11 Taylor Swift albums will appear here.</p>
+      </div>
+    </div>
+  </section>
 </div>
 
 <style>
-  .container {
+  .page-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
   h1 {
     color: #1DB954;
-    text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
   }
 
-  .description {
-    text-align: center;
-    margin-bottom: 2rem;
+  .subtitle {
     color: #666;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 1.2rem;
+    margin-bottom: 0;
   }
 
-  .demo-info {
+  .visualization-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+  }
+
+  .section-header p {
+    color: #666;
+    margin-top: 0;
+  }
+
+  .info-card {
     background-color: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
-  .demo-info h2 {
+  .info-card h3 {
     margin-top: 0;
     color: #333;
     font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 
-  .demo-info ul {
+  .album-list {
     padding-left: 1.5rem;
+    margin-bottom: 0;
   }
 
-  .demo-info li {
-    margin-bottom: 0.5rem;
+  .album-list li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
   }
 
   .visualization-container {
     background-color: white;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .section-divider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3rem 0;
+    color: #ccc;
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+  }
+
+  .placeholder {
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 2px dashed #ddd;
+  }
+
+  .placeholder-content {
+    text-align: center;
+    padding: 2rem;
+    max-width: 500px;
+  }
+
+  .placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .albums-preview {
+    margin-top: 1.5rem;
+  }
+
+  .albums-preview h4 {
+    margin-bottom: 1rem;
+    color: #555;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 1rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .section-header h2 {
+      font-size: 1.5rem;
+    }
+    
+    .info-card, .visualization-container {
+      padding: 1rem;
+    }
   }
 </style>
