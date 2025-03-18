@@ -19,6 +19,11 @@
         // Navigate to albums page with quick-share parameter
         goto(`${base}/albums?quick-share=true`);
     }
+    
+    function handleSunburst() {
+        // Navigate to the T3x3 Sunburst demo page
+        goto(`${base}/t3x3-sunburst-demo`);
+    }
 </script>
 
 <StandardLayout>
@@ -47,6 +52,11 @@
                     variant="secondary"
                     on:click={handleQuickShare}>
                     Quick Share
+                </Button>
+                <Button 
+                    variant="secondary"
+                    on:click={handleSunburst}>
+                    Sunburst
                 </Button>
                 <Button 
                     variant="primary"
@@ -88,4 +98,10 @@
     }
 
     /* Using the standardized button-container from forms.css */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        width: 100%;
+    }
 </style>
