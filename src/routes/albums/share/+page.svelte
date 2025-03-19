@@ -10,12 +10,14 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    import T3x3SunburstStandalone from '$lib/components/visualizations/T3x3SunburstStandalone.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
     // Initialize with default display option
-    let selectedDisplayOption = $state(1);
+    let selectedDisplayOption = $state(0);
     const displayOptions = [
+        { id: 0, name: 'Onion' },
         { id: 1, name: 'List' },
         { id: 2, name: 'Grid' },
         { id: 3, name: 'Free Style' }
@@ -130,7 +132,22 @@
     </div>
 
     <div class="flex-1 p-6">
-        {#if selectedDisplayOption === 1}
+        {#if selectedDisplayOption === 0}
+            <!-- Sunburst Option -->
+            {#if music.selectedAlbums.length === 3 && music.selectedSongsCount >= 9}
+                <T3x3SunburstStandalone
+                    title="My Taylor Swift T3x3"
+                    centerLabel="Swiftie T3x3"
+                    height="600px"
+                    userSelectedAlbums={music.selectedAlbums}
+                    userSelectedSongs={music.selectedSongsByAlbum}
+                />
+            {:else}
+                <p class="text-center py-4">
+                    Select 3 albums and at least 3 songs per album to generate your unique T3x3 visualization.
+                </p>
+            {/if}
+        {:else if selectedDisplayOption === 1}
             <!-- Default View (Same as results page) -->
             {#if mounted}
                 <div class="results-container">
