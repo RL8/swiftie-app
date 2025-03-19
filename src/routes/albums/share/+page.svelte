@@ -95,6 +95,11 @@
     onMount(() => {
         mounted = true;
         
+        // If user has 3 albums and at least 9 songs, show the sunburst visualization by default
+        if (music.selectedAlbums.length === 3 && music.selectedSongsCount() >= 9) {
+            selectedDisplayOption = 0; // Set to Onion visualization
+        }
+        
         // Start animation sequence after a short delay
         setTimeout(() => {
             // Start animation for first album
@@ -134,7 +139,13 @@
     <div class="flex-1 p-6">
         {#if selectedDisplayOption === 0}
             <!-- Sunburst Option -->
-            {#if music.selectedAlbums.length === 3 && music.selectedSongsCount >= 9}
+            {#if music.selectedAlbums.length === 3 && music.selectedSongsCount() >= 9}
+                <!-- Debug info -->
+                <div class="debug-info" style="display: none;">
+                    <p>Albums count: {music.selectedAlbums.length}</p>
+                    <p>Songs count: {music.selectedSongsCount()}</p>
+                </div>
+                
                 <T3x3SunburstStandalone
                     title="My Taylor Swift T3x3"
                     centerLabel="Swiftie T3x3"

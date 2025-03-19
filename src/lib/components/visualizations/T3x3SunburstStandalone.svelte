@@ -14,15 +14,22 @@
     title = 'My Top 3×3',
     width = '100%', 
     height = '500px',
-    centerLabel = 'T3×3'
-  } = $props();
+    centerLabel = 'T3×3',
+    userSelectedAlbums = [],
+    userSelectedSongs = new Map()
+  } = $props<{
+    title?: string;
+    width?: string;
+    height?: string;
+    centerLabel?: string;
+    userSelectedAlbums?: Album[];
+    userSelectedSongs?: Map<string, string[]>;
+  }>();
   
   // State variables with proper typing
   let data = $state<ReturnType<typeof generateT3x3SunburstData> | null>(null);
   let chartInstance = $state<any | null>(null);
   let container = $state<HTMLDivElement | null>(null);
-  let userSelectedAlbums = $state<Album[]>([]);
-  let userSelectedSongs = $state<Map<string, string[]>>(new Map());
 
   // Function to generate data based on user's actual selections
   function generateDataFromUserSelections() {
