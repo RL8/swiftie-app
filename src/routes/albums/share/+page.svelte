@@ -10,16 +10,21 @@
     import Button from '$lib/components/Button/Button.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    import T3x3SunburstStandalone from '$lib/components/visualizations/T3x3SunburstStandalone.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
     // Initialize with default display option
-    let selectedDisplayOption = $state(1);
+    let selectedDisplayOption = $state(0);
     const displayOptions = [
+        { id: 0, name: 'Layered' },
         { id: 1, name: 'List' },
         { id: 2, name: 'Grid' },
         { id: 3, name: 'Free Style' }
     ];
+
+    // State for delayed loading of the Layered view
+    let showLayeredChart = $state(false);
 
     function handleBack() {
         goto(`${base}/albums/results`);
@@ -27,6 +32,16 @@
 
     function handleDisplayOptionChange(id: number) {
         selectedDisplayOption = id;
+        if (id === 0) {
+            // Delayed loading of the Layered view
+            setTimeout(() => {
+                initializeLayeredView();
+            }, 500); // adjust the delay time as needed
+        }
+    }
+
+    function initializeLayeredView() {
+        showLayeredChart = true;
     }
 
     function isColorLight(color: string) {
@@ -130,7 +145,16 @@
     </div>
 
     <div class="flex-1 p-6">
-        {#if selectedDisplayOption === 1}
+        {#if selectedDisplayOption === 0}
+            <!-- Layered View -->
+            {#if showLayeredChart}
+                <div class="layered-view" in:fade={{duration: 300}}>
+                    <T3x3SunburstStandalone 
+                        height="600px"
+                        centerLabel={username} />
+                </div>
+            {/if}
+        {:else if selectedDisplayOption === 1}
             <!-- Default View (Same as results page) -->
             {#if mounted}
                 <div class="results-container">
@@ -968,7 +992,6 @@
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        flex-shrink: 0;
     }
     
     .suggestion-text {
@@ -1012,5 +1035,15 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+    
+    .layered-view {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        background-color: var(--color-background);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-md);
     }
 </style>
