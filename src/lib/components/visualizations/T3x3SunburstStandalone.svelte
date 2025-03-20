@@ -82,6 +82,8 @@
         .height(parseInt(height))
         .label('name')
         .size('value')
+        .tooltipTitle((d: any) => d.name)
+        .tooltipContent((d: any) => d.value ? `Popularity: ${d.value}` : '')
         .color((d: any, parent: any) => {
           // Get album colors from the app's data for the first level
           if (d.depth === 1 && userSelectedAlbums.length > 0) {
@@ -101,11 +103,17 @@
             '#9B59B6', // Purple (Songs)
           ];
           return colors[d.depth] || colors[0];
-        })
-        .centerLabel(centerLabel)
-        .tooltipTitle((d: any) => d.name)
-        .tooltipContent((d: any) => d.value ? `Popularity: ${d.value}` : '')
-        .transitionDuration(0); // Disable animations to prevent errors
+        });
+      
+      // Try to set center label separately if supported
+      try {
+        // @ts-ignore - Attempt to set center label
+        if (typeof chartInstance.centerLabel === 'function') {
+          chartInstance.centerLabel(centerLabel);
+        }
+      } catch (labelError) {
+        // Silently ignore if centerLabel is not supported
+      }
       
     } catch (error) {
       console.error('Error creating chart', error);
