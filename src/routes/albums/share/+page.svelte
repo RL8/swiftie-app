@@ -11,6 +11,8 @@
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
     import T3x3SunburstStandalone from '$lib/components/visualizations/T3x3SunburstStandalone.svelte';
+    import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
+    import SignUpOverlay from '$lib/components/overlay/SignUpOverlay.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -25,6 +27,13 @@
 
     // State for the Layered view
     let showLayeredChart = $state(true); // Initialize as true to show immediately
+
+    // State for the sign up overlay
+    let showSignUpOverlay = $state(true);
+
+    function dismissOverlay() {
+        showSignUpOverlay = false;
+    }
 
     function handleBack() {
         goto(`${base}/albums/results`);
@@ -458,22 +467,19 @@
         {/if}
     </div>
 
+    {#if showSignUpOverlay}
+        <SignUpOverlay onDismiss={dismissOverlay} />
+    {/if}
+
     {#snippet footer()}
         <Footer variant="button">
-            <div class="button-container">
-                <Button 
-                    variant="primary"
-                    onclick={handleBack}
-                >
-                    Back
-                </Button>
-                <Button 
-                    variant="secondary"
-                    disabled={false}
-                >
-                    Export
-                </Button>
-            </div>
+            <StepNavigation
+                backLabel="Back to Your T3×3 Results"
+                backPath="/albums/results"
+                forwardLabel="Export Your T3×3"
+                onBack={handleBack}
+                showForwardButton={true}
+            />
         </Footer>
     {/snippet}
 </StandardLayout>

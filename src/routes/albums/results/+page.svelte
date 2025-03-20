@@ -12,6 +12,7 @@
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
     import { page } from '$app/stores';
+    import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -62,16 +63,6 @@
         }, 300);
     });
 
-    // Check if this is a quick share flow and handle automatic navigation to share
-    onMount(() => {
-        const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
-        if (isQuickShare) {
-            // Delay to allow the animations on the results page to play
-            setTimeout(() => {
-                handleShare();
-            }, 2000);
-        }
-    });
 </script>
 
 <StandardLayout>
@@ -200,20 +191,19 @@
 
     {#snippet footer()}
         <Footer variant="button" >
-            <div class="button-container">
-                <Button 
-                    variant="secondary"
-                    on:click={handleShare}
-                >
-                    Share
-                </Button>
-                <Button 
-                    variant="primary"
-                    on:click={handleProceed}
-                >
-                    Proceed
-                </Button>
-            </div>
+            <StepNavigation
+                backLabel="Back to Songs for {music.selectedAlbums[2].title}"
+                backPath="/albums/songs"
+                forwardLabel="Share Your T3×3"
+                forwardPath="/albums/share"
+                onBack={() => goto(`${base}/albums/songs`)}
+                onForward={handleShare}
+                showBackButton={true}
+                showForwardButton={true}
+                currentStep={4}
+                totalSteps={4}
+                showProgressBar={true}
+            />
         </Footer>
     {/snippet}
 </StandardLayout>

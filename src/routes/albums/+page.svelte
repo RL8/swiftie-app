@@ -10,6 +10,7 @@
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
+    import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
     
     const music = getContext<() => MusicContext>('music')();
     
@@ -89,13 +90,17 @@
 
     {#snippet footer()}
         <Footer variant="button" >
-            <Button 
-                variant="primary"
-                disabled={music.selectedAlbums.length < 3}
-                on:click={handleContinue}
-            >
-                Continue
-            </Button>
+            <StepNavigation
+                backLabel="Return to Home"
+                backPath="/"
+                forwardLabel="Continue with {music.selectedAlbums.length} Albums"
+                forwardPath="/albums/confirm"
+                disableForward={music.selectedAlbums.length < 3}
+                onForward={handleContinue}
+                currentStep={1}
+                totalSteps={4}
+                showProgressBar={true}
+            />
         </Footer>
     {/snippet}
 </StandardLayout>

@@ -11,6 +11,7 @@
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
     import { page } from '$app/stores';
+    import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
 
     const music = getContext<() => MusicContext>('music')();
 
@@ -142,18 +143,17 @@
     {#snippet footer()}
         <Footer variant="button" >
             {#if mounted}
-                <Button 
-                    variant="secondary"
-                    on:click={handleEdit}
-                    fullWidth={true}>
-                    Edit Selection
-                </Button>
-                <Button 
-                    variant="primary"
-                    on:click={handleContinue}
-                    fullWidth={true}>
-                    Continue to Songs
-                </Button>
+                <StepNavigation
+                    backLabel="Edit Album Selection"
+                    backPath="/albums"
+                    forwardLabel="Select Songs for {music.selectedAlbums[0].title}"
+                    forwardPath="/albums/songs"
+                    onBack={handleEdit}
+                    onForward={handleContinue}
+                    currentStep={2}
+                    totalSteps={4}
+                    showProgressBar={true}
+                />
             {/if}
         </Footer>
     {/snippet}
@@ -230,52 +230,20 @@
 
     .vinyl-content {
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .rank-number {
         position: absolute;
-        left: -4rem;
-        font-size: 4rem;
-        font-weight: 800;
-        line-height: 1;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
-                     0 0 20px currentColor;
-        font-family: 'Playfair Display', serif;
-        letter-spacing: -0.02em;
+        top: -1rem;
+        left: -1rem;
+        font-size: 3rem;
+        font-weight: 900;
+        z-index: 10;
+        text-shadow: 2px 2px 0 white;
     }
 
     :global(.confirm-vinyl) {
         width: 13rem;
         height: 13rem;
-    }
-
-    .button-primary {
-        width: 100%;
-        padding: 0.75rem 1.5rem;
-        background: rgb(244, 63, 94);
-        color: white;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transform-origin: center;
-        transition: transform 100ms ease;
-    }
-
-    .button-secondary {
-        width: 100%;
-        padding: 0.75rem 1.5rem;
-        background: rgb(254, 242, 242);
-        color: rgb(244, 63, 94);
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transform-origin: center;
-        transition: transform 100ms ease;
-    }
-
-    .button-primary:active,
-    .button-secondary:active {
-        transform: scale(0.98);
     }
 </style>

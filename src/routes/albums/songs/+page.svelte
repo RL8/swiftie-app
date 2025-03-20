@@ -11,6 +11,7 @@
     import { tapAnimation } from '$lib/actions/tapAnimation';
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
+    import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
     
     const music = getContext<() => MusicContext>('music')();
     let currentSongSelections = $state<string[]>([]);
@@ -152,16 +153,18 @@
     {#snippet footer()}
         <Footer 
             variant="button">
-            <Button variant="secondary" on:click={handleBack}>
-                {currentAlbumIndex > 0 ? 'Previous Album' : 'Back'}
-            </Button>
-            <Button 
-                variant="primary"
-                disabled={currentSongSelections.length < 3}
-                on:click={handleContinue}
-            >
-                {currentAlbumIndex < 2 ? 'Next Album' : 'See Results'}
-            </Button>
+            <StepNavigation
+                backLabel={currentAlbumIndex > 0 ? `Back to Songs for ${music.selectedAlbums[currentAlbumIndex-1].title}` : "Back to Albums"}
+                backPath={currentAlbumIndex > 0 ? '' : '/albums/confirm'}
+                forwardLabel={currentAlbumIndex < 2 ? `Next: Songs for ${music.selectedAlbums[currentAlbumIndex+1].title}` : "View Your T3×3 Results"}
+                forwardPath={currentAlbumIndex < 2 ? '' : '/albums/results'}
+                onBack={handleBack}
+                onForward={handleContinue}
+                disableForward={currentSongSelections.length < 3}
+                currentStep={3}
+                totalSteps={4}
+                showProgressBar={true}
+            />
         </Footer>
     {/snippet}
 </StandardLayout>

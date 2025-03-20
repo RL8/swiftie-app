@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Overlay Mockup</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .mockup-container {
+            max-width: 390px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 700px;
+        }
+        
+        .header {
+            background-color: #f8f8f8;
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            background-color: #fff;
+            border-bottom: 1px solid #eaeaea;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .tab-button.active {
+            color: #ff1493;
+            border-bottom: 2px solid #ff1493;
+        }
+        
+        .content-area {
+            position: relative;
+            height: 580px;
+            background-color: #fafafa;
+            overflow: hidden;
+        }
+        
+        .blurred-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://placehold.co/350x580/f8d7e6/fff?text=T3×3+Visualization');
+            background-size: cover;
+            background-position: center;
+            filter: blur(3px);
+            opacity: 0.8;
+        }
+        
+        .signup-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        
+        .overlay-content {
+            max-width: 300px;
+        }
+        
+        .overlay-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ff1493;
+        }
+        
+        .overlay-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #333;
+        }
+        
+        .overlay-description {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            color: #555;
+        }
+        
+        .benefits-list {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .benefit-icon {
+            margin-right: 10px;
+            color: #ff1493;
+        }
+        
+        .cta-button {
+            background-color: #ff1493;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 20, 147, 0.3);
+        }
+        
+        .cta-button:hover {
+            background-color: #e60082;
+        }
+        
+        .skip-link {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #666;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .footer {
+            background-color: #f8f8f8;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eaeaea;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .footer-button {
+            padding: 8px 16px;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .footer-button.primary {
+            background-color: #ff1493;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Share Your Top 3</h1>
+            <p>Choose how to display your favorites</p>
+        </div>
+        
+        <!-- Tab Buttons (not covered by overlay) -->
+        <div class="tab-buttons">
+            <button class="tab-button active">Layered</button>
+            <button class="tab-button">List</button>
+            <button class="tab-button">Grid</button>
+            <button class="tab-button">Free Style</button>
+        </div>
+        
+        <!-- Content Area with Overlay -->
+        <div class="content-area">
+            <!-- Blurred Background Content -->
+            <div class="blurred-content"></div>
+            
+            <!-- Sign Up Overlay -->
+            <div class="signup-overlay">
+                <div class="overlay-content">
+                    <div class="overlay-icon">🎵</div>
+                    <h2 class="overlay-title">Unlock the Full T3×3 Experience!</h2>
+                    <p class="overlay-description">
+                        Create a free account to save your T3×3 and share it with the world.
+                    </p>
+                    
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <span>Save multiple T3×3 collections</span>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <span>Share with friends on social media</span>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <span>Discover T3×3s from other fans</span>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <span>Get personalized recommendations</span>
+                        </div>
+                    </div>
+                    
+                    <button class="cta-button">Sign Up Now - It's Free!</button>
+                    
+                    <div class="skip-link">
+                        Continue without an account
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Navigation -->
+        <div class="footer">
+            <button class="footer-button">Back to Results</button>
+            <button class="footer-button primary">Export</button>
+        </div>
+    </div>
+</body>
+</html>
