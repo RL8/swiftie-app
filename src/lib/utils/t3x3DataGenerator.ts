@@ -6,16 +6,19 @@ export type T3x3Node = {
   name: string;
   value?: number;
   children?: T3x3Node[];
+  color?: string;
 };
 
 export type T3x3Category = {
   name: string;
   items: T3x3Item[];
+  color?: string;
 };
 
 export type T3x3Item = {
   name: string;
   value: number;
+  color?: string;
 };
 
 /**
@@ -52,7 +55,8 @@ export function generateT3x3SunburstData(
     const categoryNode: T3x3Node = {
       name: category.name,
       value: categoryTotal,
-      children: []
+      children: [],
+      color: category.color
     };
     
     console.log('T3x3DataGenerator: Created category node', categoryNode.name, 'with total value', categoryTotal);
@@ -62,7 +66,8 @@ export function generateT3x3SunburstData(
       console.log('T3x3DataGenerator: Adding item', item.name, 'with value', item.value, 'to category', category.name);
       categoryNode.children?.push({
         name: item.name,
-        value: item.value
+        value: item.value,
+        color: item.color || category.color
       });
     });
     
@@ -83,29 +88,32 @@ export function generateSampleT3x3Data(): T3x3Node {
   const categories: T3x3Category[] = [
     {
       name: "Top Artists",
+      color: "#ff69b4",
       items: [
-        { name: "Taylor Swift", value: 300 },
-        { name: "Drake", value: 250 },
-        { name: "The Weeknd", value: 200 },
-        { name: "Billie Eilish", value: 150 }
+        { name: "Taylor Swift", value: 300, color: "#ff99cc" },
+        { name: "Drake", value: 250, color: "#66d9ef" },
+        { name: "The Weeknd", value: 200, color: "#8e24aa" },
+        { name: "Billie Eilish", value: 150, color: "#4caf50" }
       ]
     },
     {
       name: "Top Albums",
+      color: "#4caf50",
       items: [
-        { name: "Midnights", value: 200 },
-        { name: "After Hours", value: 180 },
-        { name: "Certified Lover Boy", value: 170 },
-        { name: "Happier Than Ever", value: 150 }
+        { name: "Midnights", value: 200, color: "#8bc34a" },
+        { name: "After Hours", value: 180, color: "#3e8e41" },
+        { name: "Certified Lover Boy", value: 170, color: "#2ecc71" },
+        { name: "Happier Than Ever", value: 150, color: "#1abc9c" }
       ]
     },
     {
       name: "Top Genres",
+      color: "#9c27b0",
       items: [
-        { name: "Pop", value: 200 },
-        { name: "Hip Hop", value: 150 },
-        { name: "R&B", value: 100 },
-        { name: "Alternative", value: 50 }
+        { name: "Pop", value: 200, color: "#e91e63" },
+        { name: "Hip Hop", value: 150, color: "#9c27b0" },
+        { name: "R&B", value: 100, color: "#673ab7" },
+        { name: "Alternative", value: 50, color: "#3f51b5" }
       ]
     }
   ];
@@ -188,7 +196,8 @@ export function mergeT3x3Datasets(datasets: T3x3Node[], rootName: string = "Merg
         mergedCategory = {
           name: category.name,
           value: 0,
-          children: []
+          children: [],
+          color: category.color
         };
         categoryMap.set(category.name, mergedCategory);
         mergedData.children?.push(mergedCategory);
@@ -211,7 +220,8 @@ export function mergeT3x3Datasets(datasets: T3x3Node[], rootName: string = "Merg
         if (!mergedItem) {
           mergedItem = {
             name: item.name,
-            value: 0
+            value: 0,
+            color: item.color || category.color
           };
           itemMap.set(item.name, mergedItem);
           mergedCategory?.children?.push(mergedItem);

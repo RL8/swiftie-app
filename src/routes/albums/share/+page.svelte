@@ -23,8 +23,8 @@
         { id: 3, name: 'Free Style' }
     ];
 
-    // State for delayed loading of the Layered view
-    let showLayeredChart = $state(false);
+    // State for the Layered view
+    let showLayeredChart = $state(true); // Initialize as true to show immediately
 
     function handleBack() {
         goto(`${base}/albums/results`);
@@ -33,10 +33,8 @@
     function handleDisplayOptionChange(id: number) {
         selectedDisplayOption = id;
         if (id === 0) {
-            // Delayed loading of the Layered view
-            setTimeout(() => {
-                initializeLayeredView();
-            }, 500); // adjust the delay time as needed
+            // No delay needed since we want to show it immediately
+            showLayeredChart = true;
         }
     }
 
@@ -123,6 +121,9 @@
                 }, 200);
             }, 200);
         }, 300);
+        
+        // Initialize layered view immediately
+        showLayeredChart = true;
     });
 </script>
 
@@ -148,10 +149,11 @@
         {#if selectedDisplayOption === 0}
             <!-- Layered View -->
             {#if showLayeredChart}
-                <div class="layered-view" in:fade={{duration: 300}}>
+                <div in:fade={{duration: 300}} class="w-full">
                     <T3x3SunburstStandalone 
                         height="600px"
-                        centerLabel={username} />
+                        centerLabel={music.userName} 
+                        title="My Taylor Swift Top 3×3" />
                 </div>
             {/if}
         {:else if selectedDisplayOption === 1}
@@ -1035,15 +1037,5 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-    
-    .layered-view {
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 1rem;
-        background-color: var(--color-background);
-        border-radius: var(--border-radius-lg);
-        box-shadow: var(--shadow-md);
     }
 </style>

@@ -8,6 +8,11 @@
   import { generateT3x3SunburstData, type T3x3Category } from '$lib/utils/t3x3DataGenerator';
   import { albums } from '$lib/data/albums';
   import type { Album } from '$lib/types/album';
+  import { getContext } from 'svelte';
+  import type { MusicContext } from '$lib/context/music.svelte.ts';
+  
+  // Get music context
+  const music = getContext<() => MusicContext>('music')();
   
   // Props with default values using Svelte 5 syntax
   const { 
@@ -21,46 +26,35 @@
   let data = $state<ReturnType<typeof generateT3x3SunburstData> | null>(null);
   let chartInstance = $state<any | null>(null);
   let container = $state<HTMLDivElement | null>(null);
-  let userSelectedAlbums = $state<Album[]>([]);
-  let userSelectedSongs = $state<Map<string, string[]>>(new Map());
   
-  // Generate some test data for the test chart
-  const testData = {
-    name: 'Taylor Swift T3×3',
-    children: [
-      {
-        name: 'Red TV',
-        value: 300,
-        children: [
-          { name: 'All Too Well (10 Minute Version)', value: 100 },
-          { name: 'State of Grace', value: 100 },
-          { name: 'Red', value: 100 },
-        ]
-      },
-      {
-        name: 'Folklore',
-        value: 300,
-        children: [
-          { name: 'Cardigan', value: 100 },
-          { name: 'August', value: 100 },
-          { name: 'The Last Great American Dynasty', value: 100 },
-        ]
-      },
-      {
-        name: 'Lover',
-        value: 300,
-        children: [
-          { name: 'Cruel Summer', value: 100 },
-          { name: 'Lover', value: 100 },
-          { name: 'Daylight', value: 100 },
-        ]
-      }
-    ]
-  };
-  
-  // Initialize with test data
+  // Generate data from music context
   $effect(() => {
-    data = testData;
+    // Convert music context data to T3x3 format
+    const categories: T3x3Category[] = [];
+    
+    // Only proceed if we have selected albums
+    if (music.selectedAlbums.length > 0) {
+      // Process each album as a category
+      music.selectedAlbums.forEach(album => {
+        const songs = music.selectedSongsByAlbum.get(album.id) || [];
+        
+        // Create items for this category (songs)
+        const items = songs.map(songTitle => ({
+          name: songTitle,
+          value: 100 // Equal weight for now
+        }));
+        
+        // Add this album as a category with its color
+        categories.push({
+          name: album.title,
+          items: items,
+          color: album.color // Store the album color directly
+        });
+      });
+      
+      // Generate the sunburst data
+      data = generateT3x3SunburstData(categories, title);
+    }
   });
   
   // Function to create and render the sunburst chart
@@ -84,16 +78,10 @@
         .size('value')
         .tooltipTitle((d: any) => d.name)
         .tooltipContent((d: any) => d.value ? `Popularity: ${d.value}` : '')
-        .color((d: any, parent: any) => {
-          // Get album colors from the app's data for the first level
-          if (d.depth === 1 && userSelectedAlbums.length > 0) {
-            // Try to find the album in user's selections
-            const album = userSelectedAlbums.find((a: Album) => a.title === d.name);
-            if (album) return album.color;
-            
-            // Try to find in all albums if not in user selections
-            const allAlbum = albums.find(a => a.title === d.name);
-            if (allAlbum) return allAlbum.color;
+        .color((d: any) => {
+          // If the node has a color property, use it directly
+          if (d.color) {
+            return d.color;
           }
           
           // Different color schemes for different levels as fallback
@@ -120,7 +108,7 @@
     }
   }
   
-  // Watch for container changes
+  // Watch for container changes and data updates
   $effect(() => {
     if (container && data) {
       // Add slight delay to ensure container dimensions are calculated
@@ -148,7 +136,8 @@
   .chart-container {
     width: 100%;
     height: 100%;
-    min-height: 300px;
+    min-height: 600px;
     position: relative;
+    margin: 0 auto;
   }
 </style>
