@@ -1,5 +1,6 @@
 import { supabase } from '$lib/supabase/client';
 import type { Album, Song, UserFavoriteAlbum, UserFavoriteSong, SelectionsSummary } from '$lib/types/supabase';
+import type { PremiumUser, PaymentRecord, EarlyAdopterCount } from '$lib/types/stripe';
 import { Tables, Views } from '$lib/types/supabase';
 
 /**
@@ -200,4 +201,125 @@ export const getUserSelectionsSummary = async (): Promise<SelectionsSummary[]> =
   }
   
   return data || [];
+};
+
+/**
+ * Gets the premium status for the current user
+ */
+export const getUserPremiumStatus = async (): Promise<PremiumUser | null> => {
+  const { data, error } = await supabase
+    .from('premium_users')
+    .select('*')
+    .single();
+  
+  if (error) {
+    console.error('Error fetching user premium status:', error);
+    return null;
+  }
+  
+  return data;
+};
+
+/**
+ * Creates or updates a user's premium status
+ */
+export const updateUserPremiumStatus = async (
+  isPremium: boolean,
+  subscriptionType: 'early_adopter' | 'quarterly' | 'none',
+  startDate?: Date,
+  endDate?: Date
+): Promise<boolean> => {
+  const { error } = await supabase
+    .from('premium_users')
+    .upsert({
+      is_premium: isPremium,
+      subscription_type: subscriptionType,
+      subscription_start_date: startDate?.toISOString(),
+      subscription_end_date: endDate?.toISOString(),
+      updated_at: new Date().toISOString()
+    });
+  
+  if (error) {
+    console.error('Error updating user premium status:', error);
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Records a new payment in the database
+ */
+export const recordPayment = async (
+  stripePaymentId: string,
+  amount: number,
+  currency: string = 'usd',
+  status: 'succeeded' | 'pending' | 'failed',
+  type: 'one_time' | 'subscription'
+): Promise<boolean> => {
+  const { error } = await supabase
+    .from('payment_records')
+    .insert({
+      stripe_payment_id: stripePaymentId,
+      amount,
+      currency,
+      payment_status: status,
+      payment_type: type
+    });
+  
+  if (error) {
+    console.error('Error recording payment:', error);
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Gets the current early adopter count
+ */
+export const getEarlyAdopterCount = async (): Promise<EarlyAdopterCount | null> => {
+  const { data, error } = await supabase
+    .from('early_adopter_count')
+    .select('*')
+    .eq('id', 1)
+    .single();
+  
+  if (error) {
+    console.error('Error fetching early adopter count:', error);
+    return null;
+  }
+  
+  return data;
+};
+
+/**
+ * Checks if early adopter slots are available
+ */
+export const checkEarlyAdopterAvailability = async (): Promise<boolean> => {
+  const { data, error } = await supabase
+    .rpc('check_early_adopter_availability');
+  
+  if (error) {
+    console.error('Error checking early adopter availability:', error);
+    return false;
+  }
+  
+  return !!data;
+};
+
+/**
+ * Increments the early adopter count when a new early adopter signs up
+ * Returns the new count, or -1 if the maximum has been reached
+ */
+export const incrementEarlyAdopterCount = async (): Promise<number> => {
+  const { data, error } = await supabase
+    .rpc('increment_early_adopter_count');
+  
+  if (error) {
+    console.error('Error incrementing early adopter count:', error);
+    return -1;
+  }
+  
+  return data;
 };
