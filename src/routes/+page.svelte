@@ -34,6 +34,12 @@
         goto(`${base}/t11x3-sunburst-demo`);
         showDropdown = false;
     }
+    
+    function handlePremium() {
+        // Navigate to the premium page
+        goto(`${base}/premium`);
+        showDropdown = false;
+    }
 
     function toggleDropdown() {
         showDropdown = !showDropdown;
@@ -104,6 +110,9 @@
                             </div>
                             <div class="dropdown-item" on:click={handleT11x3Sunburst}>
                                 T11x3 Sunburst
+                            </div>
+                            <div class="dropdown-item premium-item" on:click={handlePremium}>
+                                Premium Access ✨
                             </div>
                         </div>
                     {/if}
@@ -195,5 +204,10 @@
 
     .dropdown-item:not(:last-child) {
         border-bottom: 1px solid #eee;
+    }
+    
+    .premium-item {
+        color: #9333ea;
+        font-weight: 600;
     }
 </style>
