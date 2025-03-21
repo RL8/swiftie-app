@@ -3,6 +3,7 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     import { supabase } from '$lib/supabase/client';
+    import RedditLoginButton from '$lib/components/auth/RedditLoginButton.svelte';
     
     // Using Svelte 5 runes for state management
     const state = $state({
@@ -126,6 +127,10 @@
             </svg>
             Google
         </button>
+        
+        <div class="mt-3">
+            <RedditLoginButton fullWidth={true} />
+        </div>
         
         <div class="mt-6 text-center">
             <p class="text-sm text-gray-600">

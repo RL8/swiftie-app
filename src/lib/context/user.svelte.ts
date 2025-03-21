@@ -1,4 +1,5 @@
 import type { ProfileState, UserProfile } from '$lib/types/user';
+import { initiateRedditAuth as startRedditAuth } from '$lib/reddit';
 
 export function createUserProfileContext() {
     // Initialize user profile state with default values
@@ -6,7 +7,9 @@ export function createUserProfileContext() {
         username: '',
         profileState: 'unregistered',
         albumsRated: 0,
-        listsCreated: 0
+        listsCreated: 0,
+        redditUsername: '',
+        redditVerified: false
     });
 
     // Methods for managing user profile
@@ -15,11 +18,19 @@ export function createUserProfileContext() {
     }
 
     async function initiateRedditAuth() {
-        // TODO: Implement Reddit OAuth flow
-        // Placeholder implementation
-        profile.profileState = 'free';
-        profile.username = 'SwiftFan123';
-        profile.redditUsername = 'swift_enthusiast';
+        // Implement Reddit OAuth flow using the reddit.ts module
+        startRedditAuth();
+    }
+
+    function setRedditUser(username: string, verified: boolean = false) {
+        profile.redditUsername = username;
+        profile.redditVerified = verified;
+        
+        if (verified) {
+            // Update profile state when Reddit verification is successful
+            profile.profileState = 'free';
+            profile.username = username;
+        }
     }
 
     async function initiateUpgrade() {
@@ -34,7 +45,8 @@ export function createUserProfileContext() {
             profileState: profile.profileState,
             albumsRated: profile.albumsRated,
             listsCreated: profile.listsCreated,
-            redditUsername: profile.redditUsername
+            redditUsername: profile.redditUsername,
+            redditVerified: profile.redditVerified
         };
     }
 
@@ -50,9 +62,12 @@ export function createUserProfileContext() {
         get username() { return profile.username; },
         get listsCreated() { return profile.listsCreated; },
         get albumsRated() { return profile.albumsRated; },
+        get redditUsername() { return profile.redditUsername; },
+        get redditVerified() { return profile.redditVerified; },
         getProfileState,
         getUserDetails,
         initiateRedditAuth,
+        setRedditUser,
         initiateUpgrade,
         incrementAlbumsRated,
         incrementListsCreated

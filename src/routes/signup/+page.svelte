@@ -4,6 +4,7 @@
     import { supabase } from '$lib/supabase/client';
     import { getContext } from 'svelte';
     import type { UserProfileContext } from '$lib/context/user.svelte';
+    import RedditLoginButton from '$lib/components/auth/RedditLoginButton.svelte';
     
     // Get user context function but don't invoke it immediately
     const getUserContext = getContext<() => UserProfileContext>('user');
@@ -160,6 +161,10 @@
                 </svg>
                 Sign up with Google
             </button>
+        </div>
+        
+        <div class="mt-3">
+            <RedditLoginButton fullWidth={true} />
         </div>
         
         <div class="mt-6 text-center">

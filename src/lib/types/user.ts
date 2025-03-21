@@ -15,5 +15,7 @@ export interface UserProfile {
     profileState: ProfileState;
     albumsRated: number;
     listsCreated: number;
+    redditUsername?: string;   // Reddit username if authenticated via Reddit
+    redditVerified?: boolean;  // Whether user is verified as a Swiftie on Reddit
     // Add other user profile fields as needed
 }
