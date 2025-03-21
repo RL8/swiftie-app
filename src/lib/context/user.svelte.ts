@@ -14,6 +14,10 @@ export function createUserProfileContext() {
         return profile.profileState;
     }
 
+    function setUsername(username: string) {
+        profile.username = username;
+    }
+
     async function initiateRedditAuth() {
         // TODO: Implement Reddit OAuth flow
         // Placeholder implementation
@@ -50,14 +54,28 @@ export function createUserProfileContext() {
         get username() { return profile.username; },
         get listsCreated() { return profile.listsCreated; },
         get albumsRated() { return profile.albumsRated; },
+        get profileState() { return profile.profileState; },
         getProfileState,
-        getUserDetails,
+        setUsername,
         initiateRedditAuth,
         initiateUpgrade,
+        getUserDetails,
         incrementAlbumsRated,
         incrementListsCreated
     };
 }
 
 // Type for the context return value
-export type UserProfileContext = ReturnType<typeof createUserProfileContext>;
+export interface UserProfileContext {
+    username: string;
+    listsCreated: number;
+    albumsRated: number;
+    profileState: ProfileState;
+    getProfileState: () => ProfileState;
+    setUsername: (username: string) => void;
+    initiateRedditAuth: () => Promise<void>;
+    initiateUpgrade: () => Promise<void>;
+    getUserDetails: () => any;
+    incrementAlbumsRated: () => void;
+    incrementListsCreated: () => void;
+}
