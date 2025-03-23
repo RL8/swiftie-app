@@ -1,0 +1,17 @@
+{
+  "name": "supabase-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for Supabase operations",
+  "type": "module",
+  "scripts": {
+    "count-users": "node count-users.js",
+    "create-test-user": "node create-test-user.js",
+    "check-env": "node check-env.js",
+    "add-service-key": "node temp-env.js",
+    "check-env-vars": "node check-env-vars.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.7",
+    "dotenv": "^16.4.5"
+  }
+}

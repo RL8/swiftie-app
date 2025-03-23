@@ -3,6 +3,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
+  import { loadStripe } from '@stripe/stripe-js';
   
   let stripe;
   let elements;
@@ -31,14 +32,13 @@
         }
         
         // Load Stripe
-        const stripeJs = await import('@stripe/stripe-js');
         const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
         
         if (!stripePublishableKey) {
           throw new Error('Stripe publishable key is not configured');
         }
         
-        stripe = await stripeJs.loadStripe(stripePublishableKey);
+        stripe = await loadStripe(stripePublishableKey);
         
         // Create Elements instance
         elements = stripe.elements({

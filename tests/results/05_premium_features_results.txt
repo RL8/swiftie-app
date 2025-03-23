@@ -1,0 +1,36 @@
+BEGIN
+ plan 
+------
+ 1..5
+(1 row)
+
+                                   ok                                   
+------------------------------------------------------------------------
+ ok 1 - check_early_adopter_availability function should return a value
+(1 row)
+
+                   col_type_is                   
+-------------------------------------------------
+ ok 2 - subscription_type should be of type text
+(1 row)
+
+               col_is_null                
+------------------------------------------
+ ok 3 - subscription_end_date can be null
+(1 row)
+
+                      ok                      
+----------------------------------------------
+ ok 4 - Email pattern should match test users
+(1 row)
+
+                         ok                          
+-----------------------------------------------------
+ ok 5 - Email pattern should not match regular users
+(1 row)
+
+ finish 
+--------
+(0 rows)
+
+ROLLBACK

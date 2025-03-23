@@ -23,9 +23,12 @@ export default defineConfig({
   resolve: {
     alias: {
       $lib: path.resolve('./src/lib'),
-      $app: path.resolve('./src/mocks/app'),
+      '$app/navigation': path.resolve('./src/mocks/sveltekit.ts'),
+      '$app/forms': path.resolve('./src/mocks/sveltekit.ts'),
+      '$app/stores': path.resolve('./src/mocks/sveltekit.ts'),
+      '$app/environment': path.resolve('./src/mocks/sveltekit.ts'),
       // Add other SvelteKit aliases as needed
-      '__sveltekit': path.resolve('./src/mocks/sveltekit')
+      '__sveltekit': path.resolve('./src/mocks/sveltekit.ts')
     },
   },
 });

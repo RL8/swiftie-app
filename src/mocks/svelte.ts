@@ -15,6 +15,27 @@ export const getContext = vi.fn();
 export const setContext = vi.fn();
 export const hasContext = vi.fn();
 
+// Mock mount function for Svelte 5 compatibility with testing-library
+export const mount = vi.fn((component, { target, props = {} } = {}) => {
+  const instance = {
+    $set: vi.fn(),
+    $on: vi.fn(),
+    $destroy: vi.fn()
+  };
+  return instance;
+});
+
+// Mock unmount function for Svelte 5 compatibility
+export const unmount = vi.fn();
+
+// Mock flushSync function for Svelte 5 compatibility
+export const flushSync = vi.fn((fn) => {
+  if (typeof fn === 'function') {
+    return fn();
+  }
+  return undefined;
+});
+
 // Mock stores
 export const writable = (value) => {
   const subscribers = new Set();
@@ -58,3 +79,26 @@ export const readable = (value, start) => {
 };
 
 export const derived = writable;
+
+// Svelte 5 runes support
+export const state = (initialValue) => initialValue;
+export const derived$ = vi.fn((deps, fn) => fn(deps));
+export const effect = vi.fn((callback) => {
+  callback();
+  return () => {};
+});
+export const untrack = vi.fn((fn) => fn());
+export const render = vi.fn();
+export const mounted = vi.fn();
+export const beforeRender = vi.fn();
+export const afterRender = vi.fn();
+
+// Export these as both functions and properties for different import styles
+export const $state = state;
+export const $derived = derived$;
+export const $effect = effect;
+export const $untrack = untrack;
+export const $render = render;
+export const $mounted = mounted;
+export const $beforeRender = beforeRender;
+export const $afterRender = afterRender;

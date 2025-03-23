@@ -1,0 +1,81 @@
+BEGIN
+ plan  
+-------
+ 1..14
+(1 row)
+
+             has_table              
+------------------------------------
+ ok 1 - Profiles table should exist
+(1 row)
+
+                has_table                
+-----------------------------------------
+ ok 2 - Premium users table should exist
+(1 row)
+
+                 has_table                 
+-------------------------------------------
+ ok 3 - Payment records table should exist
+(1 row)
+
+                   has_table                   
+-----------------------------------------------
+ ok 4 - Early adopter count table should exist
+(1 row)
+
+                 has_column                  
+---------------------------------------------
+ ok 5 - Profiles table should have id column
+(1 row)
+
+                    has_column                     
+---------------------------------------------------
+ ok 6 - Profiles table should have username column
+(1 row)
+
+                     has_column                      
+-----------------------------------------------------
+ ok 7 - Profiles table should have created_at column
+(1 row)
+
+                     has_column                      
+-----------------------------------------------------
+ ok 8 - Profiles table should have updated_at column
+(1 row)
+
+                    has_column                    
+--------------------------------------------------
+ ok 9 - Premium users table should have id column
+(1 row)
+
+                        has_column                         
+-----------------------------------------------------------
+ ok 10 - Premium users table should have is_premium column
+(1 row)
+
+                            has_column                            
+------------------------------------------------------------------
+ ok 11 - Premium users table should have subscription_type column
+(1 row)
+
+                     col_is_pk                     
+---------------------------------------------------
+ ok 12 - id should be the primary key for profiles
+(1 row)
+
+                       col_is_pk                        
+--------------------------------------------------------
+ ok 13 - id should be the primary key for premium_users
+(1 row)
+
+                        col_is_pk                         
+----------------------------------------------------------
+ ok 14 - id should be the primary key for payment_records
+(1 row)
+
+ finish 
+--------
+(0 rows)
+
+ROLLBACK

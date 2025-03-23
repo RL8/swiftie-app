@@ -1,0 +1,31 @@
+BEGIN
+ plan 
+------
+ 1..4
+(1 row)
+
+                         ok                          
+-----------------------------------------------------
+ ok 1 - RLS should be enabled on premium_users table
+(1 row)
+
+                          ok                           
+-------------------------------------------------------
+ ok 2 - RLS should be enabled on payment_records table
+(1 row)
+
+                            ok                             
+-----------------------------------------------------------
+ ok 3 - RLS should be enabled on early_adopter_count table
+(1 row)
+
+                       ok                       
+------------------------------------------------
+ ok 4 - RLS should be enabled on profiles table
+(1 row)
+
+ finish 
+--------
+(0 rows)
+
+ROLLBACK
