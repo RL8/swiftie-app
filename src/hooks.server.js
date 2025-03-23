@@ -1,6 +1,6 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { createServerClient } from '@supabase/ssr';
-import { redirect } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
@@ -49,7 +49,7 @@ export async function handle({ event, resolve }) {
   const isRequestingUsernameCreation = event.url.pathname.startsWith('/create-username');
 
   if (!session && isRequestingProtectedRoute) {
-    throw redirect(303, `/login?redirectTo=${event.url.pathname}`);
+    throw redirect(303, `/auth-error?type=Authentication+Required&message=You+must+be+logged+in+to+view+this+page&targetRoute=${encodeURIComponent(event.url.pathname)}`);
   }
 
   // If user is authenticated and has a session, check if they need to create a username
