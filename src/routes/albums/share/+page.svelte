@@ -13,8 +13,15 @@
     import T3x3SunburstStandalone from '$lib/components/visualizations/T3x3SunburstStandalone.svelte';
     import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
     import SignUpOverlay from '$lib/components/overlay/SignUpOverlay.svelte';
+    import { page } from '$app/stores';
+    import { getSafeMusicContext } from '$lib/utils/context-helpers';
 
-    const music = getContext<() => MusicContext>('music')();
+    // Use safe context helper instead of direct context access
+    const music = getSafeMusicContext();
+
+    // Get session data from the page store (populated by our centralized auth system)
+    const session = $derived($page.data.session);
+    const isAuthenticated = $derived(!!session);
 
     // Initialize with default display option
     let selectedDisplayOption = $state(0);
@@ -29,7 +36,8 @@
     let showLayeredChart = $state(true); // Initialize as true to show immediately
 
     // State for the sign up overlay
-    let showSignUpOverlay = $state(true);
+    // Only show it if user is not authenticated
+    let showSignUpOverlay = $state(true && !isAuthenticated);
 
     function dismissOverlay() {
         showSignUpOverlay = false;
@@ -467,7 +475,7 @@
         {/if}
     </div>
 
-    {#if showSignUpOverlay}
+    {#if showSignUpOverlay && !isAuthenticated}
         <SignUpOverlay onDismiss={dismissOverlay} />
     {/if}
 

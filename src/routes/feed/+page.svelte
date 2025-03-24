@@ -1,22 +1,31 @@
 <script lang="ts">
-    import { getContext } from 'svelte';
     import { onMount } from 'svelte';
     import type { AppContext } from '$lib/context/app.svelte';
     import type { MusicContext } from '$lib/context/music.svelte';
     import { fade, fly } from 'svelte/transition';
     import Header from '$lib/components/layout/Header.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
+    import ContextPlaceholder from '$lib/components/ContextPlaceholder.svelte';
+    import { getSafeAppContext, getSafeMusicContext, isContextAvailable } from '$lib/utils/context-helpers';
 
-    const app = getContext<() => AppContext>('app')();
-    const music = getContext<() => MusicContext>('music')();
+    // Use safe context helpers instead of direct context access
+    const app = getSafeAppContext();
+    const music = getSafeMusicContext();
+    
+    // Check if contexts are available
+    const hasAppContext = $state(isContextAvailable('app'));
+    const hasMusicContext = $state(isContextAvailable('music'));
     
     // When the feed is accessed after completing orientation
     // mark the orientation as complete in the app context
     onMount(() => {
-        if (music.selectedAlbums.length === 3 && 
-            music.selectedSongsCount >= 9 && 
-            !app.state.hasCompletedOrientation) {
-            app.completeOrientation();
+        // Only run this logic if both contexts are available
+        if (hasAppContext && hasMusicContext) {
+            if (music.selectedAlbums.length === 3 && 
+                music.selectedSongsCount >= 9 && 
+                !app.state.hasCompletedOrientation) {
+                app.completeOrientation();
+            }
         }
     });
 
@@ -60,152 +69,176 @@
     }
 </script>
 
-<div class="feed-page">
-    <Header 
-        title="Feed"
-        subtitle="Latest Swiftie updates" />
-
-    <main class="feed-container">
-        <div class="welcome-card" in:fly={{y: 20, duration: 400}}>
-            <h2>Welcome, Swiftie!</h2>
-            <p>
-                {#if music.selectedAlbums.length > 0}
-                    Based on your album selections, we think you'll love these activities and updates.
-                {:else}
-                    Discover Taylor Swift content, create lists, and connect with other fans.
-                {/if}
-            </p>
-        </div>
-
-        {#each feedItems as item, i (item.id)}
-            <div class="feed-item" in:fly={{y: 20, duration: 400, delay: 200 + (i * 100)}}>
-                {#if item.type === 'welcome'}
-                    <div class="welcome-item">
-                        <div class="item-icon">📣</div>
-                        <div class="item-content">
-                            <p>{item.content}</p>
-                            <span class="timestamp">{formatTime(item.timestamp)}</span>
-                        </div>
-                    </div>
-                {:else if item.type === 'activity'}
-                    <div class="activity-item">
-                        <div class="item-icon">👤</div>
-                        <div class="item-content">
-                            <p><span class="username">{item.user}</span> {item.action}</p>
-                            <p class="content-preview">"{item.content}"</p>
-                            <span class="timestamp">{formatTime(item.timestamp)}</span>
-                        </div>
-                    </div>
-                {:else if item.type === 'suggestion'}
-                    <div class="suggestion-item">
-                        <div class="item-icon">💡</div>
-                        <div class="item-content">
-                            <p>{item.content}</p>
-                            <span class="timestamp">{formatTime(item.timestamp)}</span>
-                        </div>
-                    </div>
-                {/if}
-            </div>
-        {/each}
-
-        {#if feedItems.length === 0}
-            <div class="empty-feed" in:fade={{duration: 300}}>
-                <p>No updates yet. Check back soon!</p>
+<StandardLayout>
+    <svelte:fragment slot="header">
+        <Header title="Your Feed" />
+    </svelte:fragment>
+    
+    <div class="feed-page">
+        {#if !hasAppContext || !hasMusicContext}
+            <div class="placeholders-container">
+                <ContextPlaceholder 
+                    contextName="app" 
+                    actionUrl="/albums" 
+                    actionText="Set Up Your Profile" 
+                    customMessage={!hasAppContext && !hasMusicContext ? 
+                        "App settings and music preferences not available. Complete the music selection process to personalize your feed." :
+                        !hasAppContext ? 
+                            "App settings not available. Some features may be limited." :
+                            "Music preferences not available. Complete the music selection process to personalize your feed."}
+                />
             </div>
         {/if}
-    </main>
-</div>
+        
+        <div class="feed-container">
+            <div class="welcome-card" in:fly={{y: 20, duration: 400}}>
+                <h2>Welcome, Swiftie!</h2>
+                <p>
+                    {#if music.selectedAlbums.length > 0}
+                        Based on your album selections, we think you'll love these activities and updates.
+                    {:else}
+                        Discover Taylor Swift content, create lists, and connect with other fans.
+                    {/if}
+                </p>
+            </div>
 
-<style>
-    .feed-page {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    
-    .feed-container {
-        padding: var(--dynamic-spacing-md);
-        display: flex;
-        flex-direction: column;
-        gap: var(--dynamic-spacing-md);
-        overflow-y: auto;
-        flex: 1;
-    }
-    
-    .welcome-card {
-        background-color: var(--color-primary-alpha);
-        border-radius: var(--radius-lg);
-        padding: var(--dynamic-spacing-md);
-        color: var(--text-primary);
-        box-shadow: var(--shadow-sm);
-    }
-    
-    .welcome-card h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.25rem;
-    }
-    
-    .welcome-card p {
-        margin: 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    .feed-item {
-        background-color: white;
-        border-radius: var(--radius-lg);
-        padding: var(--dynamic-spacing-md);
-        box-shadow: var(--shadow-sm);
-    }
-    
-    .welcome-item,
-    .activity-item,
-    .suggestion-item {
-        display: flex;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-    
-    .item-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--bg-gradient-start);
-        border-radius: 50%;
-        font-size: 1.25rem;
-        flex-shrink: 0;
-    }
-    
-    .item-content {
-        flex: 1;
-    }
-    
-    .item-content p {
-        margin: 0 0 0.5rem 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    .username {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-    
-    .content-preview {
-        font-style: italic;
-        color: var(--text-secondary);
-    }
-    
-    .timestamp {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-    
-    .empty-feed {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-secondary);
-    }
-</style>
+            {#each feedItems as item, i (item.id)}
+                <div class="feed-item" in:fly={{y: 20, duration: 400, delay: 200 + (i * 100)}}>
+                    {#if item.type === 'welcome'}
+                        <div class="welcome-item">
+                            <div class="item-icon">📣</div>
+                            <div class="item-content">
+                                <p>{item.content}</p>
+                                <span class="timestamp">{formatTime(item.timestamp)}</span>
+                            </div>
+                        </div>
+                    {:else if item.type === 'activity'}
+                        <div class="activity-item">
+                            <div class="item-icon">👤</div>
+                            <div class="item-content">
+                                <p><span class="username">{item.user}</span> {item.action}</p>
+                                <p class="content-preview">"{item.content}"</p>
+                                <span class="timestamp">{formatTime(item.timestamp)}</span>
+                            </div>
+                        </div>
+                    {:else if item.type === 'suggestion'}
+                        <div class="suggestion-item">
+                            <div class="item-icon">💡</div>
+                            <div class="item-content">
+                                <p>{item.content}</p>
+                                <span class="timestamp">{formatTime(item.timestamp)}</span>
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            {/each}
+
+            {#if feedItems.length === 0}
+                <div class="empty-feed" in:fade={{duration: 300}}>
+                    <p>No updates yet. Check back soon!</p>
+                </div>
+            {/if}
+        </div>
+    </div>
+
+    <style>
+        .feed-page {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .feed-container {
+            padding: var(--dynamic-spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--dynamic-spacing-md);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .welcome-card {
+            background-color: var(--color-primary-alpha);
+            border-radius: var(--radius-lg);
+            padding: var(--dynamic-spacing-md);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .welcome-card h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+        }
+        
+        .welcome-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .feed-item {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--dynamic-spacing-md);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .welcome-item,
+        .activity-item,
+        .suggestion-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .item-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-gradient-start);
+            border-radius: 50%;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .item-content {
+            flex: 1;
+        }
+        
+        .item-content p {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .username {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .content-preview {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        
+        .timestamp {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-feed {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .placeholders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</StandardLayout>
