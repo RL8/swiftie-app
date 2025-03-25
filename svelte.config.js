@@ -7,7 +7,7 @@ const config = {
 		// Use Vercel adapter for better integration with Vercel platform
 		adapter: adapter({
 			// Vercel adapter options
-			runtime: 'nodejs18.x'
+			runtime: 'nodejs20.x'
 		}),
 		paths: {
 			base: process.env.BASE_PATH || ''
