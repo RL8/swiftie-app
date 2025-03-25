@@ -133,19 +133,19 @@ export class AuthService {
       
       if (error) {
         console.error('AuthService: Error getting session:', error);
-        return { status: 'error', userType: UserType.UNREGISTERED };
+        return { status: 'error', userType: UserType.VISITOR };
       }
       
       const session = data.session;
       
       // Check if we have a session
       if (!session) {
-        return { status: 'not-authenticated', userType: UserType.UNREGISTERED };
+        return { status: 'not-authenticated', userType: UserType.VISITOR };
       }
       
       // We have an auth session, therefore the status is authenticated (or higher)
       // So it's safe to query premium status
-      let userType = UserType.AUTHENTICATED;
+      let userType = UserType.BASIC_USER;
       let isPremium = false;
       
       try {
@@ -158,13 +158,13 @@ export class AuthService {
         
         if (premiumError) {
           console.error('AuthService: Error getting premium status:', premiumError);
-          // Fallback to free user if there's an error
-          userType = UserType.FREE_USER;
+          // Fallback to basic user if there's an error
+          userType = UserType.BASIC_USER;
         } else {
           isPremium = premiumUser?.is_premium || false;
           
-          // Set user type to Premium or Free
-          userType = isPremium ? UserType.PREMIUM_USER : UserType.FREE_USER;
+          // Set user type to Premium or Basic
+          userType = isPremium ? UserType.PREMIUM_USER : UserType.BASIC_USER;
         }
       } catch (premiumErr) {
         console.error('AuthService: Exception while checking premium status:', premiumErr);
@@ -175,7 +175,7 @@ export class AuthService {
     } catch (e) {
       console.error('AuthService: Unexpected error getting auth status:', e);
       // Handle unexpected errors
-      return { status: 'error', userType: UserType.UNREGISTERED };
+      return { status: 'error', userType: UserType.VISITOR };
     }
   }
 }
