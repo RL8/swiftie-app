@@ -24,7 +24,10 @@ const config = {
 
 				// otherwise fail the build
 				throw new Error(message);
-			}
+			},
+			// Disable prerendering for the entire application
+			// This is a common approach for apps with authentication flows
+			entries: []
 		}
 	},
 	compilerOptions: {

@@ -1,0 +1,24 @@
+# Large generated files
+**/*.pnp.cjs
+**/__snapshots__/**
+**/*.svg
+**/*.woff
+**/*.ttf
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+
+# Test fixtures and examples
+**/test/fixtures/**
+examples/**
+
+# Build artifacts
+**/dist/**
+**/node_modules/**
+**/.next/**
+
+# Misc large files
+**/*.min.js
+**/*.lock
+**/*.log

@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { getSupabase } from '$lib/supabase/client';
+import { getSupabase } from '$lib/supabase/server';
 import type { RequestEvent } from '@sveltejs/kit';
 
 /**
@@ -13,7 +13,7 @@ export async function GET(event: RequestEvent) {
   }
 
   try {
-    const { supabaseClient } = await getSupabase(event);
+    const supabaseClient = await getSupabase();
     
     // Get the current user
     const { data: { session } } = await supabaseClient.auth.getSession();

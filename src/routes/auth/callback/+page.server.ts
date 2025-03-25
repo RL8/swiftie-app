@@ -43,3 +43,5 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     // If no code, redirect to home
     throw redirect(303, '/');
 };
+
+export const prerender = false;
