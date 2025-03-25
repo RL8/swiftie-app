@@ -1,16 +1,13 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		// Instead of auto adapter, we'll use the static adapter
+		// Use Vercel adapter for better integration with Vercel platform
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: 'index.html',
-			precompress: false,
-			strict: false
+			// Vercel adapter options
+			runtime: 'nodejs18.x'
 		}),
 		paths: {
 			base: process.env.BASE_PATH || ''
