@@ -6,10 +6,19 @@ export const handleFetch = ({ request, fetch }) => {
 };
 
 // Initialize the Supabase client in the browser
-export const handleClientError = async ({ error, event }) => {
+/** @type {import('@sveltejs/kit').HandleClientError} */
+export const handleError = async ({ error, event }) => {
   console.error('Client error:', error);
   return {
     message: 'An unexpected error occurred.',
     status: 500
   };
 };
+
+/** @type {import('@sveltejs/kit').ClientInit} */
+export function init() {
+  // Client initialization code
+  return {
+    // Return any props that should be available to all pages
+  };
+}
