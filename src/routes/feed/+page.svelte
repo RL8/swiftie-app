@@ -7,6 +7,11 @@
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
     import ContextPlaceholder from '$lib/components/ContextPlaceholder.svelte';
     import { getSafeAppContext, getSafeMusicContext, isContextAvailable } from '$lib/utils/context-helpers';
+    import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
+
+    // Get data from the server using page store instead of export
+    const pageData = $derived($page.data);
 
     // Use safe context helpers instead of direct context access
     const app = getSafeAppContext();
@@ -15,6 +20,9 @@
     // Check if contexts are available
     const hasAppContext = $state(isContextAvailable('app'));
     const hasMusicContext = $state(isContextAvailable('music'));
+    
+    // Check for authentication errors
+    const authError = $derived(pageData?.authError);
     
     // When the feed is accessed after completing orientation
     // mark the orientation as complete in the app context
@@ -27,35 +35,32 @@
                 app.completeOrientation();
             }
         }
+        
+        // If there's an authentication error related to cookies, try to refresh the session
+        if (authError && authError.type === 'session_cookie_mismatch') {
+            // Wait a moment before attempting to refresh
+            setTimeout(async () => {
+                try {
+                    // Try to refresh the page to restore the session
+                    window.location.reload();
+                } catch (e) {
+                    console.error('Failed to refresh session:', e);
+                }
+            }, 1000);
+        }
     });
 
-    // Set up feed data
-    const feedItems = $state([
-        {
-            id: 1,
-            type: 'welcome',
-            timestamp: new Date(),
-            content: 'Welcome to your Swiftie feed! Here you\'ll see updates, activities, and content tailored to your favorites.'
-        },
-        {
-            id: 2,
-            type: 'activity',
-            timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-            user: 'TaylorFan2013',
-            action: 'created a new list',
-            content: 'Top 10 Taylor Swift Bridges'
-        },
-        {
-            id: 3,
-            type: 'suggestion',
-            timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-            content: 'Try the List Keeper to create your own custom rankings!'
-        }
-    ]);
+    // Use feed items from the server
+    const feedItems = $derived(pageData?.feedItems || []);
+    
+    // Function to handle login redirect
+    function handleLogin() {
+        goto('/login?redirectTo=/feed');
+    }
 
     function formatTime(date: Date): string {
         const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
+        const diffMs = now.getTime() - new Date(date).getTime();
         const diffMins = Math.floor(diffMs / (1000 * 60));
         
         if (diffMins < 1) return 'just now';
@@ -75,7 +80,26 @@
     </svelte:fragment>
     
     <div class="feed-page">
-        {#if !hasAppContext || !hasMusicContext}
+        {#if authError}
+            <div class="auth-error-container" in:fade={{duration: 300}}>
+                <div class="auth-error-card">
+                    <h2>Authentication Issue</h2>
+                    <p>{authError.message}</p>
+                    
+                    {#if authError.type === 'session_cookie_mismatch'}
+                        <p>Trying to restore your session...</p>
+                        <div class="loading-spinner"></div>
+                    {:else}
+                        <button 
+                            class="login-button"
+                            onclick={handleLogin}
+                        >
+                            Sign In
+                        </button>
+                    {/if}
+                </div>
+            </div>
+        {:else if !hasAppContext || !hasMusicContext}
             <div class="placeholders-container">
                 <ContextPlaceholder 
                     contextName="app" 
@@ -133,112 +157,160 @@
                 </div>
             {/each}
 
-            {#if feedItems.length === 0}
+            {#if feedItems.length === 0 && !authError}
                 <div class="empty-feed" in:fade={{duration: 300}}>
                     <p>No updates yet. Check back soon!</p>
                 </div>
             {/if}
         </div>
     </div>
-
-    <style>
-        .feed-page {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .feed-container {
-            padding: var(--dynamic-spacing-md);
-            display: flex;
-            flex-direction: column;
-            gap: var(--dynamic-spacing-md);
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        .welcome-card {
-            background-color: var(--color-primary-alpha);
-            border-radius: var(--radius-lg);
-            padding: var(--dynamic-spacing-md);
-            color: var(--text-primary);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .welcome-card h2 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.25rem;
-        }
-        
-        .welcome-card p {
-            margin: 0;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        
-        .feed-item {
-            background-color: white;
-            border-radius: var(--radius-lg);
-            padding: var(--dynamic-spacing-md);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .welcome-item,
-        .activity-item,
-        .suggestion-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-        
-        .item-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bg-gradient-start);
-            border-radius: 50%;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-        
-        .item-content {
-            flex: 1;
-        }
-        
-        .item-content p {
-            margin: 0 0 0.5rem 0;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        
-        .username {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .content-preview {
-            font-style: italic;
-            color: var(--text-secondary);
-        }
-        
-        .timestamp {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-        
-        .empty-feed {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-        }
-        
-        .placeholders-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-    </style>
 </StandardLayout>
+
+<style>
+    .feed-page {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .feed-container {
+        padding: var(--dynamic-spacing-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--dynamic-spacing-md);
+        overflow-y: auto;
+        flex: 1;
+    }
+    
+    .welcome-card {
+        background-color: var(--color-primary-alpha);
+        border-radius: var(--radius-lg);
+        padding: var(--dynamic-spacing-md);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .welcome-card h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+    }
+    
+    .welcome-card p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .feed-item {
+        background-color: white;
+        border-radius: var(--radius-lg);
+        padding: var(--dynamic-spacing-md);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .welcome-item,
+    .activity-item,
+    .suggestion-item {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .item-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-gradient-start);
+        border-radius: 50%;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .item-content {
+        flex: 1;
+    }
+    
+    .item-content p {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .username {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    .content-preview {
+        font-style: italic;
+        color: var(--text-secondary);
+    }
+    
+    .timestamp {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+    
+    .empty-feed {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+    }
+    
+    .placeholders-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .auth-error-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    
+    .auth-error-card {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .auth-error-card h2 {
+        color: #e74c3c;
+        margin-top: 0;
+    }
+    
+    .login-button {
+        background-color: #6741d9;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.2s;
+    }
+    
+    .login-button:hover {
+        background-color: #5a36c0;
+    }
+    
+    .loading-spinner {
+        margin: 1rem auto;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0,0,0,0.1);
+        border-radius: 50%;
+        border-top-color: #6741d9;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>

@@ -53,6 +53,7 @@
                 <input
                     id="email"
                     type="email"
+                    autocomplete="email"
                     bind:value={state.email}
                     class="form-input"
                     placeholder="your@email.com"
@@ -65,6 +66,7 @@
                 <input
                     id="password"
                     type="password"
+                    autocomplete="current-password"
                     bind:value={state.password}
                     class="form-input"
                     placeholder="••••••••"
