@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    // Import correct modules for Svelte 5 runes mode
+    import { effect } from 'svelte';
     import type { AppContext } from '$lib/context/app.svelte';
     import type { MusicContext } from '$lib/context/music.svelte';
     import { fade, fly } from 'svelte/transition';
@@ -8,7 +9,8 @@
     import ContextPlaceholder from '$lib/components/ContextPlaceholder.svelte';
     import { getSafeAppContext, getSafeMusicContext, isContextAvailable } from '$lib/utils/context-helpers';
     import { page } from '$app/stores';
-    import { goto } from '$app/navigation';
+    import { goto, invalidate } from '$app/navigation';
+    import { supabase } from '$lib/supabase/client';
 
     // Get data from the server using page store instead of export
     const pageData = $derived($page.data);
@@ -24,9 +26,36 @@
     // Check for authentication errors
     const authError = $derived(pageData?.authError);
     
-    // When the feed is accessed after completing orientation
-    // mark the orientation as complete in the app context
-    onMount(() => {
+    // Auth state subscription state
+    const authStateSubscription = $state(null);
+    
+    // Auth state change listener using $effect instead of onMount
+    $effect(() => {
+        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log(`Auth state changed: ${event}`);
+            // Only invalidate on actual sign in/out events, NOT on initial session
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                // Invalidate all dependencies that rely on session data
+                invalidate('supabase:auth').then(() => {
+                    // Force a page reload if necessary
+                    window.location.reload();
+                });
+            }
+        });
+        
+        // Store the subscription
+        authStateSubscription = data;
+        
+        // Cleanup function that runs when the component is destroyed
+        return () => {
+            if (authStateSubscription?.subscription) {
+                authStateSubscription.subscription.unsubscribe();
+            }
+        };
+    });
+    
+    // Replace onMount with $effect for handling authentication errors and orientation completion
+    $effect(() => {
         // Only run this logic if both contexts are available
         if (hasAppContext && hasMusicContext) {
             if (music.selectedAlbums.length === 3 && 

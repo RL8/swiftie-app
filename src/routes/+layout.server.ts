@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { AuthService } from '$lib/services/AuthService';
 
-export const load: LayoutServerLoad = async ({ locals, url }) => {
+export const load = async ({ locals, url }) => {
   // Get auth error and protected route flag from hooks
   const authError = locals.authError || null;
   const isProtectedRouteWithoutAuth = locals.isProtectedRouteWithoutAuth || false;
@@ -26,6 +26,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
     }
   }
   
+  // Return data that can be accessed in layout and pages
   return {
     authError,
     isProtectedRouteWithoutAuth,

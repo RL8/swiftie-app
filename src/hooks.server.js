@@ -30,6 +30,7 @@ export async function handle({ event, resolve }) {
             secure: secure,
             sameSite: 'lax',
             maxAge: key.includes('refresh') ? 60 * 60 * 24 * 30 : undefined, // 30 days for refresh token
+            domain: "." + event.url.host, // Add domain setting for proper cookie scope
             ...options,
           });
         },
@@ -61,7 +62,7 @@ export async function handle({ event, resolve }) {
   // Helper function to get user's session
   event.locals.getSession = async () => {
     const {
-      data: { session },
+      data: { session } = {data:{session:null}}, // Add default value to prevent null reference
     } = await event.locals.supabase.auth.getSession();
     return session;
   };
@@ -97,68 +98,6 @@ async function authenticateAndAuthorize(event) {
   
   const currentPath = event.url.pathname;
   
-  // Get cookies directly for diagnostic purposes - check for both generic and project-specific names
-  let accessToken = event.cookies.get('sb-access-token');
-  let refreshToken = event.cookies.get('sb-refresh-token');
-  
-  // If not found with generic names, try to find with project-specific prefixes
-  if (!accessToken || !refreshToken) {
-    const cookieHeader = event.request.headers.get('cookie') || '';
-    const allCookies = cookieHeader.split(';').map(c => c.trim());
-    
-    // Look for any cookie that might be an auth token
-    const authTokenCookie = allCookies.find(cookie => 
-      cookie.startsWith('sb-') && cookie.includes('-auth-token=')
-    );
-    
-    const refreshTokenCookie = allCookies.find(cookie => 
-      cookie.startsWith('sb-') && cookie.includes('-refresh-token=')
-    );
-    
-    // If we found project-specific cookies, consider them as valid
-    if (authTokenCookie && !accessToken) {
-      accessToken = 'found-with-project-prefix';
-      console.log('🔍 Found auth token with project-specific prefix');
-    }
-    
-    if (refreshTokenCookie && !refreshToken) {
-      refreshToken = 'found-with-project-prefix';
-      console.log('🔍 Found refresh token with project-specific prefix');
-    }
-  }
-  
-  // Get session state
-  const sessionResult = await authService.getSession();
-  
-  // Check for critical inconsistency: session exists but cookies are missing
-  if (sessionResult.success && (!accessToken || !refreshToken)) {
-    console.error('⚠️ SESSION/COOKIE INCONSISTENCY DETECTED', {
-      path: currentPath,
-      hasSession: !!sessionResult.success,
-      accessToken: !!accessToken,
-      refreshToken: !!refreshToken
-    });
-    
-    // Instead of redirecting, set an auth error that the page can display
-    if (!currentPath.includes('/auth/callback') && 
-        !publicPaths.some(p => currentPath.startsWith(p)) && 
-        protectedPaths.some(p => currentPath.startsWith(p))) {
-      console.log('🔄 Session-cookie inconsistency detected');
-      
-      event.locals.authError = {
-        type: 'session_cookie_mismatch',
-        message: 'Your session exists but authentication cookies are missing',
-        details: {
-          path: currentPath,
-          hasSession: true,
-          hasCookies: false,
-          suggestedAction: 'Please try logging in again to refresh your session'
-        }
-      };
-    }
-    // Otherwise, just log the issue but don't set error
-  }
-  
   // Centralized Protected route logic
   if (protectedPaths.some(path => currentPath.startsWith(path))) {
     // Require authentication for protected routes
@@ -173,7 +112,6 @@ async function authenticateAndAuthorize(event) {
           path: currentPath,
           status: authResult.status,
           reason: authResult.status === 'unknown' ? 'Session not found' : 
-                  (!accessToken && !refreshToken) ? 'Authentication cookies missing' : 
                   'Invalid authentication state'
         }
       };
