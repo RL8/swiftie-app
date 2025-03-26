@@ -1,0 +1,28 @@
+### Repomix Export Command Pattern
+
+Command to pack any repository into a single AI-friendly file with timestamp:
+
+```bash
+npx repomix -o "C:\Users\Bravo\Downloads\{repository_name}_{timestamp}.txt"```
+
+Format:
+
+*   repository\_name: Name of the current repository
+*   timestamp: DDMMMMHHmm format (e.g., 24FEB1045)
+
+Example:
+
+```bash
+npx repomix -o "C:\Users\Bravo\Downloads\my-repo_24FEB1045.txt"
+Use code with caution.
+Text
+This command will:
+
+Pack the repository into an AI-friendly format
+
+Save it to the user's Downloads folder
+
+Name it with repository name and timestamp
+
+Include all relevant files by default
+
