@@ -1,6 +1,6 @@
 <script lang="ts">
     // Import correct modules for Svelte 5 runes mode
-    import { effect } from 'svelte';
+    // $effect is a built-in rune in Svelte 5 and doesn't need to be imported
     import type { AppContext } from '$lib/context/app.svelte';
     import type { MusicContext } from '$lib/context/music.svelte';
     import { fade, fly } from 'svelte/transition';
@@ -26,8 +26,8 @@
     // Check for authentication errors
     const authError = $derived(pageData?.authError);
     
-    // Auth state subscription state
-    const authStateSubscription = $state(null);
+    // Auth state subscription state - using let instead of const to allow reassignment
+    let authStateSubscription = $state(null);
     
     // Auth state change listener using $effect instead of onMount
     $effect(() => {
@@ -43,8 +43,10 @@
             }
         });
         
-        // Store the subscription
-        authStateSubscription = data;
+        // Store the subscription - this approach will work in Svelte 5
+        if (data) {
+            authStateSubscription = data;
+        }
         
         // Cleanup function that runs when the component is destroyed
         return () => {
