@@ -180,19 +180,25 @@ async function authenticateAndAuthorize(event) {
       
       // Add a clear flag for the layout to know this is a protected route with no auth
       event.locals.isProtectedRouteWithoutAuth = true;
-    } else if (authResult.status === 'unverified' && !currentPath.startsWith(verificationPath)) {
-      // If user is authenticated but email is not verified, redirect to verification page
-      console.log(`📧 Redirecting to verification page: Email not verified`);
-      throw redirect(303, verificationPath);
-    } else {
-      // If authentication is successful, ensure session is available to the page
-      event.locals.authenticatedSession = {
-        session: event.locals.session,
-        authResult
-      };
       
-      console.log(`✅ Access granted to ${currentPath}: User authenticated`);
+      // Return without redirecting - the layout will handle showing appropriate UI
+      return;
     }
+    
+    // TEMPORARY: Skip verification check and redirect
+    // Original code:
+    // // If authenticated but email not verified, redirect to verification page
+    // if (authResult.status === 'unverified' && !currentPath.startsWith(verificationPath)) {
+    //   console.log(`🔄 Redirecting to verification page from ${currentPath}`);
+    //   throw redirect(303, verificationPath);
+    // }
+    
+    // User is authenticated and verified, continue
+    console.log(`✅ Access granted to ${currentPath}`);
+    
+    // Make session available to routes
+    event.locals.authenticatedSession = authResult.authData;
+    return;
   }
   
   // Premium-only routes

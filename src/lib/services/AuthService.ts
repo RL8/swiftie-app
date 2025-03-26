@@ -147,8 +147,9 @@ export class AuthService {
         };
       }
       
-      // Check if email is confirmed
-      const isVerified = !!data.session.user.email_confirmed_at;
+      // TEMPORARY: Skip email verification check and always return true
+      // Original code: const isVerified = !!data.session.user.email_confirmed_at;
+      const isVerified = true; // Temporarily bypass email verification
       
       return {
         success: true,
@@ -259,32 +260,25 @@ export class AuthService {
    */
   async getAuthStatus(): Promise<{ status: string, userType: UserType, authData?: User, isVerified?: boolean }> {
     try {
-      const { data, error } = await supabase.auth.getSession();
+      // Get the current session
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      if (error) {
-        console.error('AuthService: Error getting session:', error);
-        return { status: 'error', userType: UserType.VISITOR };
+      // If there's an error or no session, return unauthenticated
+      if (error || !session) {
+        return { status: 'unauthenticated', userType: UserType.VISITOR };
       }
       
-      const session = data.session;
-      
-      // Check if we have a session
-      if (!session) {
-        return { status: 'not-authenticated', userType: UserType.VISITOR };
-      }
-      
-      // Check if email is verified
-      const isVerified = !!session.user.email_confirmed_at;
-      
-      // If email is not verified, return early with verification status
-      if (!isVerified) {
-        return { 
-          status: 'unverified', 
-          userType: UserType.BASIC_USER, 
-          authData: session.user,
-          isVerified: false
-        };
-      }
+      // TEMPORARY: Skip email verification check
+      // Original code:
+      // const { verified: isVerified } = await this.isEmailVerified();
+      // if (!isVerified) {
+      //   return { 
+      //     status: 'unverified', 
+      //     userType: UserType.BASIC_USER, 
+      //     authData: session.user,
+      //     isVerified: false
+      //   };
+      // }
       
       // We have an auth session, therefore the status is authenticated (or higher)
       // So it's safe to query premium status
