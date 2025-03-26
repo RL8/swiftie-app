@@ -258,7 +258,7 @@ export class AuthService {
    * Get the authentication status and user type of the current user
    * @returns Object with status, userType and optional authData
    */
-  async getAuthStatus(): Promise<{ status: string, userType: UserType, authData?: User, isVerified?: boolean }> {
+  async getAuthStatus(): Promise<{ status: string, userType: UserType, authData?: User, isVerified?: boolean, session?: Session }> {
     try {
       // Get the current session
       const { data: { session }, error } = await supabase.auth.getSession();
@@ -307,12 +307,13 @@ export class AuthService {
         console.error('AuthService: Exception while checking premium status:', premiumErr);
       }
       
-      // User is Authenticated
+      // User is Authenticated - ensure we're returning the full user data
       return { 
         status: 'authenticated', 
         userType: userType, 
         authData: session.user,
-        isVerified: true
+        isVerified: true,
+        session: session // Add the full session object
       };
     } catch (e) {
       console.error('AuthService: Unexpected error getting auth status:', e);

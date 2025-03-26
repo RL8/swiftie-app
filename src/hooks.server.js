@@ -196,8 +196,13 @@ async function authenticateAndAuthorize(event) {
     // User is authenticated and verified, continue
     console.log(`✅ Access granted to ${currentPath}`);
     
-    // Make session available to routes
-    event.locals.authenticatedSession = authResult.authData;
+    // Make session available to routes - ensure we're setting the full session data
+    event.locals.authenticatedSession = {
+      session: event.locals.session,
+      user: event.locals.session?.user,
+      authResult
+    };
+    
     return;
   }
   
