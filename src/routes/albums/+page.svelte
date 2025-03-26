@@ -11,14 +11,33 @@
     import Button from '$lib/components/Button/Button.svelte';
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
     import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
+    import { anonymousSelections } from '$lib/stores/anonymousSelections';
     
     const music = getContext<() => MusicContext>('music')();
+    
+    // Track if the user is authenticated
+    const isAuthenticated = $page.data.authenticatedSession !== undefined;
     
     function handleAlbumClick(album: typeof music.albums[0]) {
         if (music.selectedAlbums.some(a => a.id === album.id)) {
             music.removeAlbum(album.id);
+            
+            // If not authenticated, also remove from anonymous selections
+            if (!isAuthenticated) {
+                anonymousSelections.removeSelection(album.id, 'album');
+            }
         } else if (music.selectedAlbums.length < 3) {
             music.selectAlbum(album);
+            
+            // If not authenticated, save to anonymous selections
+            if (!isAuthenticated) {
+                anonymousSelections.addSelection({
+                    id: album.id,
+                    type: 'album',
+                    name: album.title,
+                    imageUrl: album.coverArt
+                });
+            }
         }
     }
     
@@ -33,12 +52,27 @@
         // Clear any previous selections
         music.clearSelections();
         
+        // If not authenticated, also clear anonymous selections
+        if (!isAuthenticated) {
+            anonymousSelections.clearSelections();
+        }
+        
         // Shuffle albums and select 3 random ones
         const shuffledAlbums = [...music.albums].sort(() => Math.random() - 0.5).slice(0, 3);
         
         // Select each album
         for (const album of shuffledAlbums) {
             music.selectAlbum(album);
+            
+            // If not authenticated, save to anonymous selections
+            if (!isAuthenticated) {
+                anonymousSelections.addSelection({
+                    id: album.id,
+                    type: 'album',
+                    name: album.title,
+                    imageUrl: album.coverArt
+                });
+            }
         }
         
         // Navigate to confirmation page
@@ -50,6 +84,26 @@
         const isQuickShare = $page.url.searchParams.get('quick-share') === 'true';
         if (isQuickShare) {
             performQuickShareSelection();
+            return;
+        }
+        
+        // If not authenticated, load anonymous selections
+        if (!isAuthenticated) {
+            const savedAlbumSelections = anonymousSelections.getSelectionsByType('album');
+            
+            // Clear existing selections first
+            music.clearSelections();
+            
+            // Add each saved album to the music context selections
+            // Only add up to 3 albums
+            const albumsToAdd = savedAlbumSelections.slice(0, 3);
+            
+            for (const savedAlbum of albumsToAdd) {
+                const albumData = music.albums.find(a => a.id === savedAlbum.id);
+                if (albumData) {
+                    music.selectAlbum(albumData);
+                }
+            }
         }
     });
 </script>
@@ -57,7 +111,6 @@
 <StandardLayout>
     {#snippet header()}
         <Header 
-            
             variant="progress"
             title="Pick Your Top 3"
             subtitle="Choose your favorite Taylor Swift albums"

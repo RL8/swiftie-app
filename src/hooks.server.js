@@ -93,6 +93,7 @@ async function authenticateAndAuthorize(event) {
   // Check for protected routes that require authentication
   const protectedPaths = ['/feed', '/premium', '/profile', '/video-upload', '/swiftivities'];
   const publicPaths = ['/login', '/signup', '/create-username', '/auth/callback'];
+  const verificationPath = '/auth/verify';
   
   const currentPath = event.url.pathname;
   
@@ -161,7 +162,7 @@ async function authenticateAndAuthorize(event) {
   // Centralized Protected route logic
   if (protectedPaths.some(path => currentPath.startsWith(path))) {
     // Require authentication for protected routes
-    if (authResult.status !== 'authenticated') {
+    if (authResult.status !== 'authenticated' && authResult.status !== 'unverified') {
       console.log(`🔒 Access denied to ${currentPath}: Not authenticated`);
       
       // Set auth error and a clear flag so pages know not to initialize contexts
@@ -179,6 +180,10 @@ async function authenticateAndAuthorize(event) {
       
       // Add a clear flag for the layout to know this is a protected route with no auth
       event.locals.isProtectedRouteWithoutAuth = true;
+    } else if (authResult.status === 'unverified' && !currentPath.startsWith(verificationPath)) {
+      // If user is authenticated but email is not verified, redirect to verification page
+      console.log(`📧 Redirecting to verification page: Email not verified`);
+      throw redirect(303, verificationPath);
     } else {
       // If authentication is successful, ensure session is available to the page
       event.locals.authenticatedSession = {

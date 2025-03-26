@@ -16,7 +16,6 @@
   // Get query parameters
   let clientSecret = '';
   let amount = 0;
-  let isEarlyAdopter = false;
   
   onMount(async () => {
     try {
@@ -25,7 +24,6 @@
         const params = new URLSearchParams(window.location.search);
         clientSecret = params.get('client_secret');
         amount = parseFloat(params.get('amount') || '0');
-        isEarlyAdopter = params.get('is_early_adopter') === 'true';
         
         if (!clientSecret) {
           throw new Error('Missing payment information');
@@ -124,7 +122,7 @@
           <div>
             <p class="font-medium">Premium Access</p>
             <p class="text-sm text-gray-600">
-              {isEarlyAdopter ? 'Lifetime access (Early Adopter)' : 'Quarterly subscription'}
+              Lifetime access
             </p>
           </div>
           <div class="text-xl font-bold">${(amount / 100).toFixed(2)}</div>

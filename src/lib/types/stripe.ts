@@ -4,9 +4,8 @@
 export interface PremiumUser {
   id: string;
   is_premium: boolean;
-  subscription_type: 'early_adopter' | 'quarterly' | 'none';
+  subscription_type: 'lifetime' | 'none';
   subscription_start_date: string | null;
-  subscription_end_date: string | null;
   created_at: string;
   updated_at: string;
 }

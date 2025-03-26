@@ -7,12 +7,8 @@
   let isLoading = true;
   let error = null;
   let isPremium = false;
-  let isEarlyAdopterAvailable = false;
-  let earlyAdopterSpots = 0;
-  let totalEarlyAdopterSpots = 0;
   let pricing = {
-    earlyAdopter: 4900, // $49.00
-    quarterly: 1499     // $14.99
+    lifetime: 1313 // $13.13 in cents
   };
   
   onMount(async () => {
@@ -36,19 +32,6 @@
       
       const premiumData = await premiumResponse.json();
       isPremium = premiumData.isPremium;
-      
-      // Fetch early adopter availability
-      const earlyAdopterResponse = await fetch('/api/payments/early-adopter-status');
-      
-      if (!earlyAdopterResponse.ok) {
-        const errorData = await earlyAdopterResponse.json();
-        throw new Error(errorData.message || 'Failed to fetch early adopter status');
-      }
-      
-      const earlyAdopterData = await earlyAdopterResponse.json();
-      isEarlyAdopterAvailable = earlyAdopterData.isAvailable;
-      earlyAdopterSpots = earlyAdopterData.remainingSpots;
-      totalEarlyAdopterSpots = earlyAdopterData.totalSpots;
     } catch (err) {
       console.error('Error loading premium data:', err);
       error = err.message;
@@ -57,7 +40,7 @@
     }
   });
   
-  async function handlePurchase(isEarlyAdopter) {
+  async function handlePurchase() {
     try {
       isLoading = true;
       
@@ -77,7 +60,7 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          isEarlyAdopter
+          isLifetime: true
         })
       });
       
@@ -89,7 +72,7 @@
       const data = await response.json();
       
       // Redirect to checkout
-      goto(`/premium/checkout?client_secret=${data.clientSecret}&amount=${isEarlyAdopter ? pricing.earlyAdopter : pricing.quarterly}&is_early_adopter=${isEarlyAdopter}`);
+      goto(`/premium/checkout?client_secret=${data.clientSecret}&amount=${pricing.lifetime}`);
     } catch (err) {
       console.error('Error initiating payment:', err);
       error = err.message;
@@ -122,101 +105,48 @@
       Back to Home
     </button>
   {:else}
-    <div class="grid md:grid-cols-2 gap-6">
-      {#if isEarlyAdopterAvailable}
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden border-2 border-purple-500 transform hover:scale-105 transition-transform duration-300">
-          <div class="bg-purple-600 text-white p-4">
-            <h2 class="text-xl font-bold">Early Adopter</h2>
-            <p class="text-sm opacity-90">Limited time offer</p>
-          </div>
-          <div class="p-6">
-            <div class="mb-4">
-              <span class="text-3xl font-bold">$49</span>
-              <span class="text-gray-600">/ lifetime</span>
-            </div>
-            <div class="mb-6">
-              <div class="h-2 bg-gray-200 rounded-full">
-                <div class="h-2 bg-purple-600 rounded-full" style="width: {((totalEarlyAdopterSpots - earlyAdopterSpots) / totalEarlyAdopterSpots) * 100}%"></div>
-              </div>
-              <p class="text-sm text-gray-600 mt-1">Only {earlyAdopterSpots} spots left!</p>
-            </div>
-            <ul class="mb-6 space-y-2">
-              <li class="flex items-center">
-                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Lifetime access to all premium features
-              </li>
-              <li class="flex items-center">
-                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Early access to new features
-              </li>
-              <li class="flex items-center">
-                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Priority support
-              </li>
-              <li class="flex items-center">
-                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                No recurring payments
-              </li>
-            </ul>
-            <button 
-              on:click={() => handlePurchase(true)}
-              class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
-            >
-              Get Lifetime Access
-            </button>
-          </div>
-        </div>
-      {/if}
-      
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-        <div class="bg-gray-800 text-white p-4">
-          <h2 class="text-xl font-bold">Quarterly</h2>
-          <p class="text-sm opacity-90">Flexible subscription</p>
+    <div class="flex justify-center">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden border-2 border-purple-500 transform hover:scale-105 transition-transform duration-300 max-w-md w-full">
+        <div class="bg-purple-600 text-white p-4">
+          <h2 class="text-xl font-bold">Lifetime Premium</h2>
+          <p class="text-sm opacity-90">One-time payment</p>
         </div>
         <div class="p-6">
           <div class="mb-4">
-            <span class="text-3xl font-bold">$14.99</span>
-            <span class="text-gray-600">/ quarter</span>
+            <span class="text-3xl font-bold">$13.13</span>
+            <span class="text-gray-600">/ lifetime</span>
           </div>
           <ul class="mb-6 space-y-2">
             <li class="flex items-center">
               <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              Access to all premium features
+              Lifetime access to all premium features
             </li>
             <li class="flex items-center">
               <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              Cancel anytime
+              Early access to new features
             </li>
             <li class="flex items-center">
               <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              Regular updates
+              Access to premium-only Swiftivities
             </li>
             <li class="flex items-center">
               <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              Email support
+              No recurring payments
             </li>
           </ul>
           <button 
-            on:click={() => handlePurchase(false)}
-            class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
+            on:click={() => handlePurchase()}
+            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
           >
-            Subscribe Quarterly
+            Get Lifetime Access
           </button>
         </div>
       </div>

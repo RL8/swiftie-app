@@ -1,7 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { transferAnonymousSelections } from '$lib/services/database';
 
-export const load: PageServerLoad = async ({ url, locals }) => {
+export const load: PageServerLoad = async ({ url, locals, cookies }) => {
     const code = url.searchParams.get('code');
     
     if (code) {
@@ -30,6 +31,16 @@ export const load: PageServerLoad = async ({ url, locals }) => {
             .select('username')
             .eq('id', session.user.id)
             .single();
+            
+        // Set a cookie to indicate that anonymous selections should be transferred
+        // This will be used by client-side code to transfer selections
+        cookies.set('transfer_anonymous_selections', 'true', {
+            path: '/',
+            maxAge: 300, // 5 minutes
+            httpOnly: false, // Allow JavaScript access
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
         
         // If no username, redirect to username creation page
         if (!profile?.username) {

@@ -1,6 +1,7 @@
 import { supabase } from '$lib/supabase/client';
 import type { Album, Song, UserFavoriteAlbum, UserFavoriteSong, SelectionsSummary } from '$lib/types/supabase';
 import type { PremiumUser, PaymentRecord, EarlyAdopterCount } from '$lib/types/stripe';
+import type { AnonymousSelection } from '$lib/stores/anonymousSelections';
 import { Tables, Views } from '$lib/types/supabase';
 
 /**
@@ -225,17 +226,15 @@ export const getUserPremiumStatus = async (): Promise<PremiumUser | null> => {
  */
 export const updateUserPremiumStatus = async (
   isPremium: boolean,
-  subscriptionType: 'early_adopter' | 'quarterly' | 'none',
-  startDate?: Date,
-  endDate?: Date
+  subscriptionType: 'lifetime' | 'none' = 'lifetime',
+  startDate?: Date
 ): Promise<boolean> => {
   const { error } = await supabase
     .from('premium_users')
     .upsert({
       is_premium: isPremium,
       subscription_type: subscriptionType,
-      subscription_start_date: startDate?.toISOString(),
-      subscription_end_date: endDate?.toISOString(),
+      subscription_start_date: startDate?.toISOString() || new Date().toISOString(),
       updated_at: new Date().toISOString()
     });
   
@@ -322,4 +321,149 @@ export const incrementEarlyAdopterCount = async (): Promise<number> => {
   }
   
   return data;
+};
+
+/**
+ * Transfer anonymous selections to a user's account in the database
+ * @param userId The user ID to associate the selections with
+ * @param selections Array of anonymous selections to transfer
+ * @returns Object with success status and error message (if failed)
+ */
+export const transferAnonymousSelections = async (
+  userId: string,
+  selections: AnonymousSelection[]
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    if (!selections || selections.length === 0) {
+      return { success: true }; // No selections to transfer
+    }
+
+    // Group selections by type
+    const albumSelections = selections.filter(s => s.type === 'album');
+    const songSelections = selections.filter(s => s.type === 'song');
+    const artistSelections = selections.filter(s => s.type === 'artist');
+    const swiftivitySelections = selections.filter(s => s.type === 'swiftivity');
+
+    // Process album selections
+    if (albumSelections.length > 0) {
+      const { error: albumError } = await supabase.from('user_album_selections').insert(
+        albumSelections.map(selection => ({
+          user_id: userId,
+          album_id: selection.id,
+          selected_at: selection.selectedAt
+        }))
+      );
+
+      if (albumError) {
+        console.error('Error transferring album selections:', albumError);
+        return { success: false, error: albumError.message };
+      }
+    }
+
+    // Process song selections
+    if (songSelections.length > 0) {
+      const { error: songError } = await supabase.from('user_song_selections').insert(
+        songSelections.map(selection => ({
+          user_id: userId,
+          song_id: selection.id,
+          selected_at: selection.selectedAt
+        }))
+      );
+
+      if (songError) {
+        console.error('Error transferring song selections:', songError);
+        return { success: false, error: songError.message };
+      }
+    }
+
+    // Process artist selections
+    if (artistSelections.length > 0) {
+      const { error: artistError } = await supabase.from('user_artist_selections').insert(
+        artistSelections.map(selection => ({
+          user_id: userId,
+          artist_id: selection.id,
+          selected_at: selection.selectedAt
+        }))
+      );
+
+      if (artistError) {
+        console.error('Error transferring artist selections:', artistError);
+        return { success: false, error: artistError.message };
+      }
+    }
+
+    // Process swiftivity selections
+    if (swiftivitySelections.length > 0) {
+      const { error: swiftivityError } = await supabase.from('user_swiftivity_selections').insert(
+        swiftivitySelections.map(selection => ({
+          user_id: userId,
+          swiftivity_id: selection.id,
+          selected_at: selection.selectedAt
+        }))
+      );
+
+      if (swiftivityError) {
+        console.error('Error transferring swiftivity selections:', swiftivityError);
+        return { success: false, error: swiftivityError.message };
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in transferAnonymousSelections:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error transferring selections' 
+    };
+  }
+};
+
+/**
+ * Get user selections by type
+ * @param userId The user ID to get selections for
+ * @param type The type of selections to get (album, song, artist, swiftivity)
+ * @returns Array of selection IDs
+ */
+export const getUserSelectionsByType = async (
+  userId: string,
+  type: 'album' | 'song' | 'artist' | 'swiftivity'
+): Promise<string[]> => {
+  try {
+    let tableName = '';
+    let idColumn = '';
+    
+    switch (type) {
+      case 'album':
+        tableName = 'user_album_selections';
+        idColumn = 'album_id';
+        break;
+      case 'song':
+        tableName = 'user_song_selections';
+        idColumn = 'song_id';
+        break;
+      case 'artist':
+        tableName = 'user_artist_selections';
+        idColumn = 'artist_id';
+        break;
+      case 'swiftivity':
+        tableName = 'user_swiftivity_selections';
+        idColumn = 'swiftivity_id';
+        break;
+    }
+    
+    const { data, error } = await supabase
+      .from(tableName)
+      .select(idColumn)
+      .eq('user_id', userId);
+    
+    if (error) {
+      console.error(`Error getting user ${type} selections:`, error);
+      return [];
+    }
+    
+    return data.map(item => item[idColumn]);
+  } catch (error) {
+    console.error(`Error in getUserSelectionsByType for ${type}:`, error);
+    return [];
+  }
 };

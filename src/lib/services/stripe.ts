@@ -57,21 +57,12 @@ export async function checkEarlyAdopterAvailability(supabaseClient: any) {
  */
 export async function getCurrentPrice(supabaseClient: any) {
   try {
-    const isEarlyAdopterAvailable = await checkEarlyAdopterAvailability(supabaseClient);
-    
-    if (isEarlyAdopterAvailable) {
-      return {
-        amount: 1313, // $13.13 in cents
-        type: 'early_adopter',
-        isOneTime: true
-      };
-    } else {
-      return {
-        amount: 1989, // $19.89 in cents
-        type: 'quarterly',
-        isOneTime: false
-      };
-    }
+    // Simplified to single lifetime price of $13.13
+    return {
+      amount: 1313, // $13.13 in cents
+      type: 'lifetime',
+      isOneTime: true
+    };
   } catch (error) {
     console.error('Error getting current price:', error);
     throw error;

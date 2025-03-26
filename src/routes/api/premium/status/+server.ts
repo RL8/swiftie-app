@@ -22,7 +22,7 @@ export async function GET(event: RequestEvent) {
       return json({ 
         isPremium: false,
         subscriptionType: 'none',
-        subscriptionEndDate: null
+        subscriptionStartDate: null
       });
     }
 
@@ -30,8 +30,7 @@ export async function GET(event: RequestEvent) {
     return json({
       isPremium: premiumStatus.is_premium,
       subscriptionType: premiumStatus.subscription_type,
-      subscriptionStartDate: premiumStatus.subscription_start_date,
-      subscriptionEndDate: premiumStatus.subscription_end_date
+      subscriptionStartDate: premiumStatus.subscription_start_date
     });
   } catch (error) {
     console.error('Error checking premium status:', error);
