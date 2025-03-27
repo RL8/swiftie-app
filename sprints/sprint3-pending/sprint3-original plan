@@ -1,0 +1,15 @@
+### Main App Pages
+
+
+>> Start by confirming what is being stored on the browser and if supabase is still in use
+* Profile Page: Personal profile with username and basic info that the user can add or edit. Default username is the unique userID allocated to them, but they can change it to their preferred username without altereing their unique user ID
+* Feed Page: Summarises all the user's actions in the app in feed-style chronological order e.g. they selected their 3 albums with 3 respective songs 
+* Swiftivities:   
+  * This is a list of potential activities the user can do in the app.   
+  * For example, the onboarding exercise of selecting top 3 songs on top 3 albums is part of the List Keeper swiftivity.   
+  * Therefore, the user has already engaged in this activity, and they can access this 3x3 list within the list keeper activity. 		  
+  * From here, they can edit their selections by going through the album/song selection again with their original choices still visible. 	  
+  * Other potential lists in addition to the 3x3 discussed above are also available under List Keeper, such as 11x3 and 5x10 which have a similar format to 3x3 but different numbers of albums and/or songs   
+  * Clicking on the 3x3 option takes you to a view of what is currently the "share page" with relevant options now that the user has already gone through the initial process
+* Sharing swiftivity content: each swiftivity has the ability to be shared to social media, including ability to add custom text to accompany the image
+

@@ -17,10 +17,10 @@
             ariaLabel: 'Swiftivities page' 
         },
         { 
-            path: `${base}/list-keeper`, 
-            label: 'Lists', 
-            icon: '📝',
-            ariaLabel: 'Lists page' 
+            path: `${base}/settings`, 
+            label: 'Settings', 
+            icon: '⚙️',
+            ariaLabel: 'Settings page' 
         },
         { 
             path: `${base}/profile`, 

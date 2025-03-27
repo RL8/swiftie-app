@@ -6,10 +6,9 @@
     import { fade, fly } from 'svelte/transition';
     import Header from '$lib/components/layout/Header.svelte';
     import StandardLayout from '$lib/components/layout/StandardLayout.svelte';
-    import ContextPlaceholder from '$lib/components/ContextPlaceholder.svelte';
+    // ContextPlaceholder removed as it's obsolete with authentication suspended
     import { getSafeAppContext, getSafeMusicContext, isContextAvailable } from '$lib/utils/context-helpers';
     import { page } from '$app/stores';
-    import { goto, invalidate } from '$app/navigation';
     import { supabase } from '$lib/supabase/client';
 
     // Get data from the server using page store instead of export
@@ -19,44 +18,11 @@
     const app = getSafeAppContext();
     const music = getSafeMusicContext();
     
-    // Check if contexts are available
-    const hasAppContext = $state(isContextAvailable('app'));
-    const hasMusicContext = $state(isContextAvailable('music'));
+    // Always assume contexts are available since authentication is suspended
+    const hasAppContext = $state(true);
+    const hasMusicContext = $state(true);
     
-    // Check for authentication errors
-    const authError = $derived(pageData?.authError);
-    
-    // Auth state subscription state - using let instead of const to allow reassignment
-    let authStateSubscription = $state(null);
-    
-    // Auth state change listener using $effect instead of onMount
-    $effect(() => {
-        const { data } = supabase.auth.onAuthStateChange((event, session) => {
-            console.log(`Auth state changed: ${event}`);
-            // Only invalidate on actual sign in/out events, NOT on initial session
-            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-                // Invalidate all dependencies that rely on session data
-                invalidate('supabase:auth').then(() => {
-                    // Force a page reload if necessary
-                    window.location.reload();
-                });
-            }
-        });
-        
-        // Store the subscription - this approach will work in Svelte 5
-        if (data) {
-            authStateSubscription = data;
-        }
-        
-        // Cleanup function that runs when the component is destroyed
-        return () => {
-            if (authStateSubscription?.subscription) {
-                authStateSubscription.subscription.unsubscribe();
-            }
-        };
-    });
-    
-    // Replace onMount with $effect for handling authentication errors and orientation completion
+    // Replace onMount with $effect for handling orientation completion
     $effect(() => {
         // Only run this logic if both contexts are available
         if (hasAppContext && hasMusicContext) {
@@ -66,28 +32,10 @@
                 app.completeOrientation();
             }
         }
-        
-        // If there's an authentication error related to cookies, try to refresh the session
-        if (authError && authError.type === 'session_cookie_mismatch') {
-            // Wait a moment before attempting to refresh
-            setTimeout(async () => {
-                try {
-                    // Try to refresh the page to restore the session
-                    window.location.reload();
-                } catch (e) {
-                    console.error('Failed to refresh session:', e);
-                }
-            }, 1000);
-        }
     });
 
     // Use feed items from the server
     const feedItems = $derived(pageData?.feedItems || []);
-    
-    // Function to handle login redirect
-    function handleLogin() {
-        goto('/login?redirectTo=/feed');
-    }
 
     function formatTime(date: Date): string {
         const now = new Date();
@@ -111,40 +59,6 @@
     </svelte:fragment>
     
     <div class="feed-page">
-        {#if authError}
-            <div class="auth-error-container" in:fade={{duration: 300}}>
-                <div class="auth-error-card">
-                    <h2>Authentication Issue</h2>
-                    <p>{authError.message}</p>
-                    
-                    {#if authError.type === 'session_cookie_mismatch'}
-                        <p>Trying to restore your session...</p>
-                        <div class="loading-spinner"></div>
-                    {:else}
-                        <button 
-                            class="login-button"
-                            onclick={handleLogin}
-                        >
-                            Sign In
-                        </button>
-                    {/if}
-                </div>
-            </div>
-        {:else if !hasAppContext || !hasMusicContext}
-            <div class="placeholders-container">
-                <ContextPlaceholder 
-                    contextName="app" 
-                    actionUrl="/albums" 
-                    actionText="Set Up Your Profile" 
-                    customMessage={!hasAppContext && !hasMusicContext ? 
-                        "App settings and music preferences not available. Complete the music selection process to personalize your feed." :
-                        !hasAppContext ? 
-                            "App settings not available. Some features may be limited." :
-                            "Music preferences not available. Complete the music selection process to personalize your feed."}
-                />
-            </div>
-        {/if}
-        
         <div class="feed-container">
             <div class="welcome-card" in:fly={{y: 20, duration: 400}}>
                 <h2>Welcome, Swiftie!</h2>
@@ -188,7 +102,7 @@
                 </div>
             {/each}
 
-            {#if feedItems.length === 0 && !authError}
+            {#if feedItems.length === 0}
                 <div class="empty-feed" in:fade={{duration: 300}}>
                     <p>No updates yet. Check back soon!</p>
                 </div>
@@ -202,60 +116,57 @@
         display: flex;
         flex-direction: column;
         height: 100%;
+        padding: 1rem;
     }
     
     .feed-container {
-        padding: var(--dynamic-spacing-md);
         display: flex;
         flex-direction: column;
-        gap: var(--dynamic-spacing-md);
-        overflow-y: auto;
-        flex: 1;
+        gap: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
     }
     
     .welcome-card {
-        background-color: var(--color-primary-alpha);
-        border-radius: var(--radius-lg);
-        padding: var(--dynamic-spacing-md);
-        color: var(--text-primary);
-        box-shadow: var(--shadow-sm);
+        background-color: var(--color-primary-light);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
     
     .welcome-card h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.25rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        color: var(--color-primary-dark);
     }
     
     .welcome-card p {
         margin: 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
+        color: var(--color-primary-dark);
     }
     
     .feed-item {
         background-color: white;
-        border-radius: var(--radius-lg);
-        padding: var(--dynamic-spacing-md);
-        box-shadow: var(--shadow-sm);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
-    .welcome-item,
-    .activity-item,
-    .suggestion-item {
+    .welcome-item, .activity-item, .suggestion-item {
         display: flex;
         gap: 1rem;
-        align-items: flex-start;
     }
     
     .item-icon {
         width: 2.5rem;
         height: 2.5rem;
+        border-radius: 50%;
+        background-color: #f0f0f0;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--bg-gradient-start);
-        border-radius: 50%;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         flex-shrink: 0;
     }
     
@@ -265,83 +176,26 @@
     
     .item-content p {
         margin: 0 0 0.5rem 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    .username {
-        font-weight: 600;
-        color: var(--text-primary);
     }
     
     .content-preview {
         font-style: italic;
-        color: var(--text-secondary);
+        color: #555;
+    }
+    
+    .username {
+        font-weight: bold;
+        color: var(--color-primary);
     }
     
     .timestamp {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: 0.8rem;
+        color: #777;
     }
     
     .empty-feed {
         text-align: center;
         padding: 2rem;
-        color: var(--text-secondary);
-    }
-    
-    .placeholders-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .auth-error-container {
-        max-width: 600px;
-        margin: 2rem auto;
-    }
-    
-    .auth-error-card {
-        background-color: #fff;
-        border-radius: 8px;
-        padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    
-    .auth-error-card h2 {
-        color: #e74c3c;
-        margin-top: 0;
-    }
-    
-    .login-button {
-        background-color: #6741d9;
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 1rem;
-        transition: background-color 0.2s;
-    }
-    
-    .login-button:hover {
-        background-color: #5a36c0;
-    }
-    
-    .loading-spinner {
-        margin: 1rem auto;
-        width: 40px;
-        height: 40px;
-        border: 4px solid rgba(0,0,0,0.1);
-        border-radius: 50%;
-        border-top-color: #6741d9;
-        animation: spin 1s ease-in-out infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
+        color: #777;
     }
 </style>

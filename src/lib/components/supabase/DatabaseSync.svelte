@@ -1,51 +1,35 @@
 <script lang="ts">
     import { getContext, onMount } from 'svelte';
     import type { MusicContext } from '$lib/context/music.svelte';
-    import { supabase } from '$lib/supabase/client';
+    import { browser } from '$app/environment';
+    import { saveUserSelections, mapToRecord } from '$lib/utils/localStorageUtils';
     
     // Get the music context function but don't invoke it immediately
     const getMusicContext = getContext<() => MusicContext>('music');
     
-    // Setup effects to handle authentication state changes
-    let isAuthenticated: boolean = $state(false);
-    
-    function checkAuth() {
-        supabase.auth.getSession().then(({ data }) => {
-            isAuthenticated = !!data.session;
-            
-            // Initialize the music context with database data if authenticated
-            if (isAuthenticated) {
-                // Invoke the function to get the music context when needed
-                const music = getMusicContext();
-                music.initialize();
+    // Setup effects to handle music context changes and save to localStorage
+    function setupLocalStorageSyncing() {
+        // Get the music context
+        const music = getMusicContext();
+        
+        // Watch for changes to the music context and save to localStorage
+        $effect(() => {
+            if (browser) {
+                // Save selections whenever they change
+                saveUserSelections({
+                    selectedAlbums: music.selectedAlbums,
+                    selectedSongsByAlbum: mapToRecord(music.selectedSongsByAlbum),
+                    userName: music.userName,
+                    lastUpdated: new Date().toISOString()
+                });
             }
         });
     }
     
-    // Listen for auth state changes
+    // Initialize the component
     onMount(() => {
-        // Initial check
-        checkAuth();
-        
-        // Set up auth state change listener
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-            isAuthenticated = !!session;
-            
-            if (event === 'SIGNED_IN') {
-                // User just signed in, load their data
-                const music = getMusicContext();
-                music.initialize();
-            } else if (event === 'SIGNED_OUT') {
-                // Clear selections when user signs out
-                const music = getMusicContext();
-                music.clearSelections();
-            }
-        });
-        
-        // Cleanup subscription on component destroy
-        return () => {
-            subscription.unsubscribe();
-        };
+        // Setup localStorage syncing
+        setupLocalStorageSyncing();
     });
 </script>
 

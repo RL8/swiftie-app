@@ -12,7 +12,6 @@
     import VinylRecord from '$lib/components/music/VinylRecord.svelte';
     import T3x3SunburstStandalone from '$lib/components/visualizations/T3x3SunburstStandalone.svelte';
     import StepNavigation from '$lib/components/navigation/StepNavigation.svelte';
-    import SignUpOverlay from '$lib/components/overlay/SignUpOverlay.svelte';
     import { page } from '$app/stores';
     import { getSafeMusicContext } from '$lib/utils/context-helpers';
 
@@ -34,14 +33,6 @@
 
     // State for the Layered view
     let showLayeredChart = $state(true); // Initialize as true to show immediately
-
-    // State for the sign up overlay
-    // Only show it if user is not authenticated
-    let showSignUpOverlay = $state(true && !isAuthenticated);
-
-    function dismissOverlay() {
-        showSignUpOverlay = false;
-    }
 
     function handleBack() {
         goto(`${base}/albums/results`);
@@ -118,6 +109,11 @@
     function getAlbumFont(albumTitle: string): string {
         // Type assertion to fix TypeScript indexing error
         return (albumFonts as Record<string, string>)[albumTitle] || "'Helvetica Neue', sans-serif";
+    }
+
+    function handleExport() {
+        // Navigate to feed page instead of export
+        goto(`${base}/feed`);
     }
 
     onMount(() => {
@@ -475,17 +471,15 @@
         {/if}
     </div>
 
-    {#if showSignUpOverlay && !isAuthenticated}
-        <SignUpOverlay onDismiss={dismissOverlay} />
-    {/if}
-
     {#snippet footer()}
         <Footer variant="button">
             <StepNavigation
                 backLabel="Back to Your T3×3 Results"
                 backPath="/albums/results"
                 forwardLabel="Export Your T3×3"
+                forwardPath="/feed"
                 onBack={handleBack}
+                onForward={handleExport}
                 showForwardButton={true}
             />
         </Footer>

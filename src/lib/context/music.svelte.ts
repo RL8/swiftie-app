@@ -1,5 +1,7 @@
 import { albums } from '$lib/data/albums';
 import type { Album } from '$lib/types/components';
+import { saveUserSelections, mapToRecord } from '$lib/utils/localStorageUtils';
+import { browser } from '$app/environment';
 
 export function createMusicContext() {
     // Core state
@@ -26,6 +28,9 @@ export function createMusicContext() {
         selectedAlbums.push(album);
         // Initialize empty song selection for this album
         selectedSongsByAlbum.set(album.id, []);
+        
+        // Save to localStorage
+        saveToLocalStorage();
     }
 
     function removeAlbum(albumId: string) {
@@ -33,17 +38,38 @@ export function createMusicContext() {
         if (index !== -1) {
             selectedAlbums.splice(index, 1);
             selectedSongsByAlbum.delete(albumId);
+            
+            // Save to localStorage
+            saveToLocalStorage();
         }
     }
 
     function updateSelectedSongs(albumId: string, songs: string[]) {
         // Accept any number of songs for testing purposes (previously required exactly 3)
         selectedSongsByAlbum.set(albumId, songs);
+        
+        // Save to localStorage
+        saveToLocalStorage();
     }
 
     function clearSelections() {
         selectedAlbums.length = 0;
         selectedSongsByAlbum.clear();
+        
+        // Save to localStorage
+        saveToLocalStorage();
+    }
+    
+    // Helper function to save to localStorage
+    function saveToLocalStorage() {
+        if (browser) {
+            saveUserSelections({
+                selectedAlbums,
+                selectedSongsByAlbum: mapToRecord(selectedSongsByAlbum),
+                userName,
+                lastUpdated: new Date().toISOString()
+            });
+        }
     }
     
     // Return read-only access to state and methods

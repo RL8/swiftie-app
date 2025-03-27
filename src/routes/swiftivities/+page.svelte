@@ -6,14 +6,14 @@
     import Header from '$lib/components/layout/Header.svelte';
     import Footer from '$lib/components/layout/Footer.svelte';
     import Button from '$lib/components/Button/Button.svelte';
-    import ContextPlaceholder from '$lib/components/ContextPlaceholder.svelte';
+    // ContextPlaceholder removed as it's obsolete with authentication suspended
     import { getSafeAppContext, isContextAvailable } from '$lib/utils/context-helpers';
 
     // Use safe context helper instead of direct context access
     const app = getSafeAppContext();
     
-    // Check if context is available
-    const hasAppContext = $state(isContextAvailable('app'));
+    // Always assume context is available since authentication is suspended
+    const hasAppContext = $state(true);
 
     // Activity types for the Swiftivities section
     const activities = [
@@ -61,16 +61,7 @@
         <Header title="Swiftivities" subtitle="Fun Taylor-inspired activities" />
     </svelte:fragment>
     
-    {#if !hasAppContext}
-        <div class="context-warning">
-            <ContextPlaceholder 
-                contextName="app"
-                actionUrl="/"
-                actionText="Return to Home"
-                customMessage="App settings not available. Some features may be limited. Try returning to the home page to initialize the app properly."
-            />
-        </div>
-    {/if}
+    <!-- ContextPlaceholder removed as it's obsolete with authentication suspended -->
     
     <div class="swiftivities-page">
         <main class="activities-container">
@@ -79,7 +70,7 @@
                     class="activity-card" 
                     style="background-color: {activity.color}36;" 
                     in:fly={{y: 20, duration: 400, delay: i * 100}}
-                    on:click={() => navigateToActivity(activity.path)}
+                    onclick={() => navigateToActivity(activity.path)}
                 >
                     <div class="activity-icon" style="background-color: {activity.color};">
                         <span>{activity.icon}</span>
@@ -166,7 +157,5 @@
         margin: 0;
     }
 
-    .context-warning {
-        margin: 1rem;
-    }
+    /* Removed context-warning class as it's no longer needed */
 </style>

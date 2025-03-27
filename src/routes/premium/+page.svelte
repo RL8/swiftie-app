@@ -4,25 +4,16 @@
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
   
-  let isLoading = true;
-  let error = null;
-  let isPremium = false;
+  let isLoading = $state(true);
+  let error = $state(null);
+  let isPremium = $state(false);
   let pricing = {
     lifetime: 1313 // $13.13 in cents
   };
   
   onMount(async () => {
     try {
-      // Check if user is logged in
-      const session = $page.data.session;
-      
-      if (!session) {
-        // Redirect to login if not authenticated
-        goto('/login?redirect=/premium');
-        return;
-      }
-      
-      // Fetch premium status
+      // Fetch premium status - now always returns premium access
       const premiumResponse = await fetch('/api/premium/status');
       
       if (!premiumResponse.ok) {
@@ -44,35 +35,12 @@
     try {
       isLoading = true;
       
-      // Check if user is logged in
-      const session = $page.data.session;
+      // Simulate successful purchase
+      setTimeout(() => {
+        isPremium = true;
+        isLoading = false;
+      }, 1000);
       
-      if (!session) {
-        // Redirect to login if not authenticated
-        goto('/login?redirect=/premium');
-        return;
-      }
-      
-      // Create payment intent
-      const response = await fetch('/api/payments/create-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          isLifetime: true
-        })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create payment');
-      }
-      
-      const data = await response.json();
-      
-      // Redirect to checkout
-      goto(`/premium/checkout?client_secret=${data.clientSecret}&amount=${pricing.lifetime}`);
     } catch (err) {
       console.error('Error initiating payment:', err);
       error = err.message;
@@ -99,7 +67,7 @@
     </div>
     
     <button 
-      on:click={() => goto('/')}
+      onclick={() => goto('/')}
       class="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
     >
       Back to Home
@@ -143,7 +111,7 @@
             </li>
           </ul>
           <button 
-            on:click={() => handlePurchase()}
+            onclick={() => handlePurchase()}
             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
           >
             Get Lifetime Access

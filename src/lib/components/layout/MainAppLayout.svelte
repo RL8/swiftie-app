@@ -20,7 +20,7 @@
         { path: `${base}/feed`, label: 'Feed', icon: 'FeedIcon' }, // Replace 'FeedIcon' with actual component or SVG path
         { path: `${base}/swiftivities`, label: 'Swiftivities', icon: 'SwiftivitiesIcon' }, // Same here
         { path: `${base}/profile`, label: 'Profile', icon: 'ProfileIcon' }, // And here
-        { path: `${base}/about-us`, label: 'About Us', icon: 'AboutUsIcon' }
+        { path: `${base}/settings`, label: 'Settings', icon: 'SettingsIcon' }
     ];
 
     let currentPath = $derived($page.url.pathname);

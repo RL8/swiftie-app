@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
     try {
-        // This will redirect to login if user is not authenticated
+        // This will now provide a mock session without authentication
         const { session } = await requireAuth(event);
         
         // Create feed items on the server
@@ -44,26 +44,16 @@ export const load: PageServerLoad = async (event) => {
             feedItems
         };
     } catch (e) {
-        // If there's an authentication error that wasn't caught by requireAuth
-        // (which would have redirected), handle it here
+        // For errors, provide default data without authentication
         console.error('Error loading feed data:', e);
         
-        // Check if it's an authentication error from the hooks
-        if (event.locals.authError) {
-            // Return a graceful error state that the client can handle
-            return {
-                session: null,
-                userData: null,
-                feedItems: [],
-                authError: event.locals.authError
-            };
-        }
-        
-        // For other errors, throw a proper error response
-        throw error(500, {
-            message: 'Error loading feed data',
-            code: 'FEED_LOAD_ERROR'
-        });
+        // Return default data that the client can use
+        return {
+            session: null,
+            userData: null,
+            feedItems: [],
+            authError: null
+        };
     }
 };
 
